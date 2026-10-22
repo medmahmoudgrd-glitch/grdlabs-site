@@ -1,0 +1,827 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="../img/grdlabs-app-icon.svg" type="image/svg+xml"></head><body><title>لوحة تحكم Grdlabs</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: an app-style console. Fixed side rail (top tabs on phones), one page at a time; editing happens in a side sheet. */
+:root{
+  --bg:#eef1f8; --rail:#f7f8fc; --panel:#ffffff; --sunk:#f3f5fa; --line:#dfe3ee; --fg:#141c30; --mute:#5f6880; --faint:#8a92a8;
+  --accent:#0b6ee8; --accent-ink:#fff; --accent-soft:#e4eefd; --mark:#3fb34f;
+  --ok:#1d8a3a; --ok-soft:#e2f3e6; --warn:#a45f00; --warn-soft:#fcefd8; --bad:#c3302a; --bad-soft:#fbe4e2; --off:#626a80; --off-soft:#eceef4;
+  --sans:'IBM Plex Sans Arabic',-apple-system,'SF Arabic','Segoe UI',Tahoma,sans-serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d121d; --rail:#111827; --panel:#161e2e; --sunk:#111827; --line:#263048; --fg:#e8ecf6; --mute:#9aa3ba; --faint:#6f7891;
+  --accent:#5aa2ff; --accent-ink:#06152b; --accent-soft:#17294a; --mark:#55c766;
+  --ok:#5fd07a; --ok-soft:#13301f; --warn:#f0b357; --warn-soft:#382a12; --bad:#ff8077; --bad-soft:#3a1a19; --off:#a3abc0; --off-soft:#232b3d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d121d; --rail:#111827; --panel:#161e2e; --sunk:#111827; --line:#263048; --fg:#e8ecf6; --mute:#9aa3ba; --faint:#6f7891;
+  --accent:#5aa2ff; --accent-ink:#06152b; --accent-soft:#17294a; --mark:#55c766;
+  --ok:#5fd07a; --ok-soft:#13301f; --warn:#f0b357; --warn-soft:#382a12; --bad:#ff8077; --bad-soft:#3a1a19; --off:#a3abc0; --off-soft:#232b3d; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:14px;line-height:1.55}
+h1,h2,h3{margin:0;text-wrap:balance}
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+/* Rail */
+.rail{background:var(--rail);border-inline-start:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:18px;position:sticky;top:0;height:100vh}
+.brand{padding:0 8px;display:flex;flex-direction:column;gap:2px}
+.brand b{font-size:22px;font-weight:700;letter-spacing:-.3px}
+.brand b i{font-style:normal;color:var(--mark)}
+.brand span{font-size:12px;color:var(--mute)}
+nav{display:flex;flex-direction:column;gap:2px}
+nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:500}
+nav a svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;color:var(--mute)}
+nav a:hover{background:var(--sunk)}
+nav a[aria-current="page"]{background:var(--accent-soft);color:var(--accent)}
+nav a[aria-current="page"] svg{color:var(--accent)}
+nav a .badge{margin-inline-start:auto;font-size:11px;font-weight:700;border-radius:999px;padding:0 7px;background:var(--bad);color:#fff;font-variant-numeric:tabular-nums}
+.railfoot{margin-top:auto;font-size:12px;color:var(--mute);padding:0 8px;display:flex;flex-direction:column;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;margin-inline-end:6px}
+.dot.bad{background:var(--bad)}
+/* Main */
+main{padding-block:26px 56px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));min-width:0}
+.page{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+.head h1{font-size:24px;font-weight:700}
+.head p{margin:2px 0 0;color:var(--mute)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 0}
+.card-h h2{font-size:15px;font-weight:600}
+.card-b{padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.kpi{padding:14px 14px 12px;display:flex;flex-direction:column;gap:2px;text-align:right;font:inherit;color:inherit;cursor:pointer}
+.kpi:hover{border-color:var(--accent)}
+.kpi small{color:var(--mute);font-size:12px}
+.kpi strong{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}
+.kpi em{font-style:normal;font-size:11.5px;color:var(--faint)}
+.kpi.t-warn strong{color:var(--warn)} .kpi.t-bad strong{color:var(--bad)} .kpi.t-ok strong{color:var(--ok)}
+.two{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tools .grow{flex:1;min-width:180px}
+input,select,textarea{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 11px;width:100%}
+textarea{resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible,tr:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:7px 13px;font-weight:500;white-space:nowrap}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+button.ghost{border-color:transparent;background:transparent;color:var(--accent);padding-inline:6px}
+button.danger{color:var(--bad)}
+button.sm{padding:4px 10px;font-size:12.5px}
+button:disabled{opacity:.55;cursor:default}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border-radius:999px;padding:4px 12px;font-size:12.5px}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:right;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12px;color:var(--mute);font-weight:500;background:var(--sunk);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover{background:var(--accent-soft)}
+.name{font-weight:600}
+.sub{color:var(--mute);font-size:12px}
+.code{font-family:var(--mono);font-size:12.5px;direction:ltr;unicode-bidi:isolate;letter-spacing:.3px}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.p-active{background:var(--ok-soft);color:var(--ok)} .p-soon{background:var(--warn-soft);color:var(--warn)}
+.p-expired{background:var(--bad-soft);color:var(--bad)} .p-suspended{background:var(--off-soft);color:var(--off)}
+.p-new{background:var(--bad-soft);color:var(--bad)} .p-done{background:var(--ok-soft);color:var(--ok)}
+.list{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.li .grow{flex:1;min-width:0}
+.empty{padding:22px 4px;color:var(--mute);display:flex;flex-direction:column;gap:8px}
+.empty b{color:var(--fg)}
+.steps{margin:0;padding-inline-start:20px;display:flex;flex-direction:column;gap:6px}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--mute);font-family:var(--sans);font-size:11px}
+.health{display:flex;gap:12px;align-items:flex-start}
+.health .ring{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none;font-weight:700}
+.ring.ok{background:var(--ok-soft);color:var(--ok)} .ring.bad{background:var(--bad-soft);color:var(--bad)}
+.plan{padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;text-align:right;font:inherit;color:inherit}
+.plan:hover{border-color:var(--accent)}
+.plan h3{font-size:16px}
+.plan .price{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.plan .sub{line-height:1.6}
+/* Sheet */
+.scrim{position:fixed;inset:0;background:rgba(8,13,25,.38);z-index:20}
+.sheet{position:fixed;top:0;bottom:0;left:0;width:min(540px,100%);background:var(--bg);border-inline-end:1px solid var(--line);z-index:21;overflow-y:auto;
+  padding:calc(18px + env(safe-area-inset-top,0px)) max(18px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:slide .18s ease-out}@keyframes slide{from{transform:translateX(-24px);opacity:.4}}}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sheet-h h2{font-size:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mute);min-width:0}
+.quick{display:flex;flex-wrap:wrap;gap:6px}
+.feats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.feat{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel);cursor:pointer}
+.switch{position:relative;width:38px;height:22px;flex:none}
+.switch input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.switch span{position:absolute;inset:0;border-radius:999px;background:var(--off-soft);border:1px solid var(--line);transition:background .15s}
+.switch span::after{content:"";position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:var(--panel);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:right .15s}
+.switch input:checked+span{background:var(--accent)}
+.switch input:checked+span::after{right:18px}
+.switch input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{flex:1;border:0;border-radius:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.seg button.stop[aria-pressed="true"]{background:var(--bad);color:#fff}
+.mono-box{font-family:var(--mono);font-size:12px;direction:ltr;min-height:92px;word-break:break-all}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.note{font-size:12.5px;color:var(--mute);margin:0}
+.confirm{border:1px solid var(--bad);background:var(--bad-soft);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.toast{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));right:50%;transform:translateX(50%);background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:10px;font-weight:500;z-index:30;max-width:calc(100% - 32px)}
+.banner{padding:14px 16px;background:var(--warn-soft);color:var(--warn);border:1px solid var(--line);border-radius:var(--r)}
+.fault{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed var(--line)}
+.fault:last-child{border-bottom:0}
+.fault .msg{font-family:var(--mono);font-size:12px;direction:ltr;text-align:left;word-break:break-word;flex:1;min-width:0}
+.tag{font-size:11px;border-radius:6px;padding:1px 7px;background:var(--sunk);color:var(--mute);white-space:nowrap}
+@media (max-width:980px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.two{grid-template-columns:1fr}}
+@media (max-width:760px){
+  .app{grid-template-columns:1fr}
+  .rail{position:sticky;top:0;height:auto;z-index:10;flex-direction:row;align-items:center;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));gap:10px;border-inline-start:0;border-bottom:1px solid var(--line);overflow-x:auto}
+  .brand span,.railfoot{display:none}
+  nav{flex-direction:row;gap:4px}
+  nav a{padding:7px 9px;white-space:nowrap}
+  nav a svg{display:none}
+  main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .three,.grid2,.feats{grid-template-columns:1fr}
+}
+</style>
+
+<div class="app" dir="rtl" lang="ar">
+  <aside class="rail">
+    <div class="brand"><b>Grdlabs<i>*</i></b><span>لوحة التحكم</span></div>
+    <nav id="nav" aria-label="الصفحات">
+      <a href="#overview" data-page="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>نظرة عامة</a>
+      <a href="#companies" data-page="companies"><svg viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16"/><path d="M15 9h3a2 2 0 0 1 2 2v10"/><path d="M8 7h3M8 11h3M8 15h3M2 21h20"/></svg>الشركات</a>
+      <a href="#plans" data-page="plans"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg>الباقات</a>
+      <a href="#payments" data-page="payments"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg>المدفوعات</a>
+      <a href="#faults" data-page="faults"><svg viewBox="0 0 24 24"><path d="M12 3l9.5 17h-19L12 3z"/><path d="M12 10v4M12 17.5v.01"/></svg>الأعطال<span class="badge" id="faultBadge" hidden></span></a>
+      <a href="#keys" data-page="keys"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/></svg>المفتاح والأكواد</a>
+    </nav>
+    <div class="railfoot"><div><span class="dot" id="keydot"></span><span id="keytext">جارٍ فتح السجل…</span></div><div id="railver"></div></div>
+  </aside>
+
+  <main>
+    <div class="banner" id="unavailable" hidden><b>السجل غير متاح في هذا العرض.</b> افتح اللوحة من حسابك على claude.ai. البيانات لك فقط.</div>
+
+    <!-- Overview -->
+    <section class="page" id="p-overview" data-title="نظرة عامة">
+      <div class="head"><div><h1>نظرة عامة</h1><p id="ov-date"></p></div><button class="primary" type="button" data-new-company>إضافة شركة</button></div>
+      <div class="kpis">
+        <button class="card kpi" type="button" data-go="companies:all"><small>كل الشركات</small><strong id="k-all">0</strong><em id="k-all-sub">في سجلك</em></button>
+        <button class="card kpi t-ok" type="button" data-go="companies:active"><small>مفتوحة</small><strong id="k-active">0</strong><em>تعمل الآن</em></button>
+        <button class="card kpi t-warn" type="button" data-go="companies:soon"><small>تنتهي خلال 7 أيام</small><strong id="k-soon">0</strong><em>تحتاج تجديد</em></button>
+        <button class="card kpi t-bad" type="button" data-go="companies:expired"><small>منتهية</small><strong id="k-expired">0</strong><em>متوقفة عند الزبون</em></button>
+        <button class="card kpi" type="button" data-go="payments"><small>إيراد هذا الشهر</small><strong id="k-rev">0</strong><em id="k-rev-sub">د.ع</em></button>
+        <button class="card kpi" type="button" data-go="faults"><small>أعطال جديدة</small><strong id="k-faults">0</strong><em id="k-faults-sub">من تقارير الزبائن</em></button>
+      </div>
+      <div class="two">
+        <div class="card"><div class="card-h"><h2>الإيراد آخر 6 أشهر</h2><span class="sub" id="rev-total"></span></div><div class="card-b chart" id="rev-chart"></div></div>
+        <div class="card"><div class="card-h"><h2>حالة التطبيق</h2></div><div class="card-b" id="health"></div></div>
+      </div>
+      <div class="two">
+        <div class="card"><div class="card-h"><h2>تحتاج انتباهك</h2><span class="sub">تنتهي قريباً أو منتهية</span></div><div class="card-b"><div class="list" id="attention"></div></div></div>
+        <div class="card"><div class="card-h"><h2>آخر الأكواد</h2></div><div class="card-b"><div class="list" id="recent"></div></div></div>
+      </div>
+    </section>
+
+    <!-- Companies -->
+    <section class="page" id="p-companies" data-title="الشركات" hidden>
+      <div class="head"><div><h1>الشركات</h1><p>كل شركة لها رمز يطلع بتطبيق الزبون في الإعدادات ← الاشتراك.</p></div><button class="primary" type="button" data-new-company>إضافة شركة</button></div>
+      <div class="tools">
+        <div class="grow"><input id="q" type="search" placeholder="ابحث بالاسم أو الرمز أو رقم التواصل" aria-label="بحث"></div>
+        <div class="chips" id="chips">
+          <button class="chip" type="button" data-f="all">الكل</button><button class="chip" type="button" data-f="active">مفتوحة</button><button class="chip" type="button" data-f="soon">قريبة الانتهاء</button><button class="chip" type="button" data-f="expired">منتهية</button><button class="chip" type="button" data-f="suspended">مغلقة</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty" id="c-empty" style="padding:22px 20px">
+          <b>ما في شركات بعد.</b>
+          <ol class="steps">
+            <li>الزبون يفتح <b>الإعدادات ← الاشتراك</b> بالتطبيق وينسخ <b>رمز الشركة</b> ويرسله إلك.</li>
+            <li>اضغط <b>إضافة شركة</b>، الصق الرمز، واختر الباقة والميزات.</li>
+            <li>اضغط <b>حفظ وإصدار الكود</b> وأرسل الكود للزبون؛ يلصقه بنفس المكان ويتفعّل بدون إنترنت.</li>
+          </ol>
+          <span>كل شركة جديدة تشتغل 14 يوم تجريبي بكل الميزات، وبعدها تحتاج كود منك.</span>
+        </div>
+        <div class="tbl" id="c-table" hidden><table style="min-width:820px"><thead><tr><th>الشركة</th><th>رمز الشركة</th><th>الباقة</th><th>ينتهي</th><th>الحالة</th><th>الإصدار</th><th>ميزات مطفأة</th></tr></thead><tbody id="c-rows"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- Plans -->
+    <section class="page" id="p-plans" data-title="الباقات" hidden>
+      <div class="head"><div><h1>الباقات</h1><p>الباقة تحدد المدة والسعر والميزات الافتراضية. تختارها للشركة وتعدّل عليها إذا تحتاج.</p></div><button class="primary" type="button" id="newPlan">باقة جديدة</button></div>
+      <div class="three" id="plansGrid"></div>
+    </section>
+
+    <!-- Payments -->
+    <section class="page" id="p-payments" data-title="المدفوعات" hidden>
+      <div class="head"><div><h1>المدفوعات</h1><p>كل مبلغ تسجّله عند إصدار كود، أو تضيفه يدوياً.</p></div><button class="primary" type="button" id="newPay">تسجيل دفعة</button></div>
+      <div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="card kpi" style="cursor:default"><small>هذا الشهر</small><strong id="pay-month">0</strong><em>د.ع</em></div>
+        <div class="card kpi" style="cursor:default"><small>هذه السنة</small><strong id="pay-year">0</strong><em>د.ع</em></div>
+        <div class="card kpi" style="cursor:default"><small>عدد الدفعات</small><strong id="pay-count">0</strong><em>كل الفترات</em></div>
+      </div>
+      <div class="card">
+        <div class="empty" id="pay-empty" style="padding:22px 20px"><b>ما في دفعات مسجّلة.</b><span>اكتب «المبلغ المستلم» عند إصدار كود لأي شركة وتنضاف هنا تلقائياً.</span></div>
+        <div class="tbl" id="pay-table" hidden><table style="min-width:640px"><thead><tr><th>التاريخ</th><th>الشركة</th><th>الباقة</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead><tbody id="pay-rows"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- Faults -->
+    <section class="page" id="p-faults" data-title="الأعطال" hidden>
+      <div class="head"><div><h1>الأعطال</h1><p>الزبون يضغط «نسخ التقرير» في الإعدادات ← تقرير الأعطال ويرسله إلك، وأنت تلصقه هنا.</p></div></div>
+      <div class="card"><div class="card-b">
+        <label class="f" for="reportIn">تقرير من زبون</label>
+        <textarea id="reportIn" class="mono-box" rows="3" placeholder="GRDR.…"></textarea>
+        <div class="row"><button class="primary" type="button" id="readReport">قراءة التقرير</button><span class="note" id="reportMsg"></span></div>
+      </div></div>
+      <div class="two">
+        <div class="card"><div class="card-h"><h2>الإصدارات عند الزبائن</h2></div><div class="card-b" id="versions"></div></div>
+        <div class="card"><div class="card-h"><h2>الأكثر تكراراً</h2></div><div class="card-b"><div class="list" id="topFaults"></div></div></div>
+      </div>
+      <div class="card"><div class="card-h"><h2>التقارير</h2></div><div class="card-b"><div class="list" id="reports"></div></div></div>
+    </section>
+
+    <!-- Keys -->
+    <section class="page" id="p-keys" data-title="المفتاح والأكواد" hidden>
+      <div class="head"><div><h1>المفتاح والأكواد</h1><p>كيف يشتغل الاشتراك، ونسخة احتياطية من مفتاح التوقيع.</p></div></div>
+      <div class="two">
+        <div class="card"><div class="card-h"><h2>مفتاح التوقيع</h2></div><div class="card-b">
+          <div class="health"><div class="ring" id="keyRing">✓</div><div><b id="keyState">…</b><p class="note">كل كود يتوقّع بهذا المفتاح، والتطبيق يرفض أي كود ما موقّع بيه. المفتاح محفوظ بسجلك الخاص وما يشوفه غيرك.</p></div></div>
+          <div class="row"><button type="button" id="backupKey">حفظ نسخة من المفتاح</button></div>
+          <p class="note">احفظ النسخة بمكان آمن وما ترسلها لأحد. إذا ضاع المفتاح، الأكواد القديمة تبقى تشتغل لحد تاريخها، بس الجديدة تحتاج تحديث للتطبيق.</p>
+        </div></div>
+        <div class="card"><div class="card-h"><h2>نسخة احتياطية ونقل البيانات</h2></div><div class="card-b">
+          <p class="note" id="whereData"></p>
+          <div class="row"><button type="button" class="primary" id="exportAll">تصدير كل البيانات</button><button type="button" id="importBtn">استيراد ملف</button><input type="file" id="importFile" accept="application/json,.json" hidden></div>
+          <p class="note" id="lastBackup"></p>
+          <p class="note">الملف يحتوي الشركات والباقات والمدفوعات والتقارير ومفتاح التوقيع، فاحفظه بمكان آمن. الاستيراد يضيف ويحدّث وما يحذف شي.</p>
+        </div></div>
+        <div class="card"><div class="card-h"><h2>دورة الاشتراك</h2></div><div class="card-b">
+          <ol class="steps">
+            <li>شركة جديدة: 14 يوم تجريبي بكل الميزات.</li>
+            <li>بعدها تنقفل وتطلب كود. البيانات تبقى على جهاز الزبون.</li>
+            <li>الكود يحدد الباقة وتاريخ الانتهاء والميزات المطفأة، ومربوط برمز الشركة فما يشتغل لشركة ثانية.</li>
+            <li>بتاريخ الانتهاء تنقفل الشركة تلقائياً لحد ما ترسل كود جديد.</li>
+            <li>لإغلاق شركة فوراً: اختر «مغلق» وأرسل الكود. التطبيق يرفض أي كود أقدم من آخر كود دخل.</li>
+          </ol>
+        </div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="sheet" id="sheet" hidden dir="rtl" lang="ar" aria-labelledby="sheetTitle"></aside>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="js/nacl-fast.min.js"></script>
+<script src="js/firebase-app-compat.js"></script>
+<script src="js/firebase-auth-compat.js"></script>
+<script src="js/firebase-firestore-compat.js"></script>
+<script src="js/config.js"></script>
+<script src="js/web.js"></script>
+<script>
+(() => {
+  const LATEST = '1.8.0';
+  const FEATURES = [['quotes','عروض الأسعار'],['expenses','المصروفات'],['projects','المشاريع'],['contracts','العقود الشهرية'],['hr','الموارد البشرية'],['journal','دليل الحسابات والقيود'],['reports','التقارير'],['team','الفريق والدعوات']];
+  const FEAT_AR = Object.fromEntries(FEATURES);
+  const CODE_RE = /^[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}$/;
+  const PAGES = ['overview','companies','plans','payments','faults','keys'];
+  const STATE_AR = { active: 'مفتوح', soon: 'قريب الانتهاء', expired: 'منتهي', suspended: 'مغلق' };
+  const $ = (id) => document.getElementById(id);
+  const S = { db: null, downloads: null, key: null, companies: [], plans: [], payments: [], reports: [], page: 'overview', filter: 'all' };
+
+  // ---------- helpers ----------
+  function h(tag, attrs, ...kids) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null || v === false) continue;
+      if (k === 'class') el.className = v; else if (k.startsWith('on')) el.addEventListener(k.slice(2), v); else el.setAttribute(k, v === true ? '' : v);
+    }
+    for (const kid of kids.flat()) if (kid != null && kid !== false) el.append(kid instanceof Node ? kid : String(kid));
+    return el;
+  }
+  const toast = (t) => { const el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, 2600); };
+  const money = (n) => new Intl.NumberFormat('en-US').format(Math.round(n || 0));
+  const dayStr = (iso) => iso ? new Date(iso).toLocaleDateString('ar-IQ', { year: 'numeric', month: 'short', day: 'numeric' }) : 'بلا انتهاء';
+  const whenStr = (iso) => new Date(iso).toLocaleString('ar-IQ', { dateStyle: 'medium', timeStyle: 'short' });
+  const monthKey = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+  const normCode = (s) => { const x = String(s || '').toUpperCase().replace(/[^A-F0-9]/g, ''); return x.length === 12 ? x.match(/.{4}/g).join('-') : String(s || '').trim().toUpperCase(); };
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  const vnum = (v) => String(v || '0').split('.').map(Number).reduce((a, x) => a * 1000 + (x || 0), 0);
+  function state(c) {
+    if (c.status === 'suspended') return 'suspended';
+    if (!c.expiresAt) return 'active';
+    const left = (Date.parse(c.expiresAt) - Date.now()) / 864e5;
+    return left < 0 ? 'expired' : left <= 7 ? 'soon' : 'active';
+  }
+  const pill = (s, text) => h('span', { class: 'pill p-' + s }, text || STATE_AR[s]);
+  const reportFor = (code) => S.reports.find(r => r.code === code);
+  async function write(fn, ok) {
+    try { await fn(); if (ok) toast(ok); return true; }
+    catch (e) { toast(e && e.code === 'quota_exceeded' ? 'السجل امتلأ؛ احذف سجلات قديمة.' : 'ما انحفظ. تأكد من الاتصال وحاول مرة ثانية.'); return false; }
+  }
+  async function copy(text, done, fallbackEl) {
+    try { await navigator.clipboard.writeText(text); toast(done); }
+    catch { if (fallbackEl) { fallbackEl.focus(); fallbackEl.select(); } toast('حدّد النص وانسخه يدوياً'); }
+  }
+
+  // ---------- routing ----------
+  function go(page) {
+    if (!PAGES.includes(page)) page = 'overview';
+    S.page = page;
+    for (const p of PAGES) $('p-' + p).hidden = p !== page;
+    document.querySelectorAll('#nav a').forEach(a => a.setAttribute('aria-current', a.dataset.page === page ? 'page' : 'false'));
+    try { if (location.hash.slice(1) !== page) history.replaceState(null, '', '#' + page); } catch {}
+    render();
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', () => go(location.hash.slice(1)));
+  document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => {
+    const [p, f] = b.dataset.go.split(':'); if (f) S.filter = f; go(p);
+  }));
+
+  // ---------- render ----------
+  function render() {
+    const counts = { all: S.companies.length, active: 0, soon: 0, expired: 0, suspended: 0 };
+    for (const c of S.companies) counts[state(c)]++;
+    const now = new Date(), thisMonth = monthKey(now);
+    const monthRev = S.payments.filter(p => monthKey(new Date(p.at)) === thisMonth).reduce((a, p) => a + (p.amount || 0), 0);
+    const newFaults = S.reports.filter(r => !r.resolved).reduce((a, r) => a + (r.faults || []).length, 0);
+    $('faultBadge').hidden = !newFaults; $('faultBadge').textContent = newFaults;
+    $('railver').textContent = 'أحدث إصدار ' + LATEST;
+    if (S.page === 'overview') renderOverview(counts, monthRev, newFaults);
+    if (S.page === 'companies') renderCompanies();
+    if (S.page === 'plans') renderPlans();
+    if (S.page === 'payments') renderPayments();
+    if (S.page === 'faults') renderFaults();
+    if (S.page === 'keys') renderKeys();
+  }
+
+  function renderOverview(counts, monthRev, newFaults) {
+    $('ov-date').textContent = new Date().toLocaleDateString('ar-IQ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    $('k-all').textContent = counts.all; $('k-active').textContent = counts.active + counts.soon;
+    $('k-soon').textContent = counts.soon; $('k-expired').textContent = counts.expired;
+    $('k-all-sub').textContent = counts.suspended ? counts.suspended + ' مغلقة' : 'في سجلك';
+    $('k-rev').textContent = money(monthRev);
+    $('k-faults').textContent = newFaults;
+    $('k-faults-sub').textContent = S.reports.length ? S.reports.length + ' تقرير' : 'من تقارير الزبائن';
+    // revenue chart
+    const months = []; const d = new Date(); d.setDate(1);
+    for (let i = 5; i >= 0; i--) { const m = new Date(d.getFullYear(), d.getMonth() - i, 1); months.push({ k: monthKey(m), label: m.toLocaleDateString('ar-IQ', { month: 'short' }), v: 0 }); }
+    for (const p of S.payments) { const m = months.find(x => x.k === monthKey(new Date(p.at))); if (m) m.v += p.amount || 0; }
+    const total = months.reduce((a, m) => a + m.v, 0);
+    $('rev-total').textContent = total ? money(total) + ' د.ع' : '';
+    $('rev-chart').replaceChildren(revenueChart(months));
+    // health
+    const box = $('health'); box.replaceChildren();
+    const old = S.companies.filter(c => { const r = reportFor(c.code); return r && vnum(r.app) < vnum(LATEST); });
+    box.append(
+      h('div', { class: 'health' }, h('div', { class: 'ring ok' }, '✓'), h('div', {}, h('b', {}, 'إصدار ' + LATEST + ' سليم'), h('p', { class: 'note' }, 'نجحت كل اختبارات البناء (60 اختبار) والتجربة الكاملة للاشتراك والأقسام قبل الإرسال.'))),
+      h('div', { class: 'health' }, h('div', { class: 'ring ' + (newFaults ? 'bad' : 'ok') }, newFaults ? '!' : '✓'), h('div', {},
+        h('b', {}, newFaults ? newFaults + ' عطل جديد من الزبائن' : 'ما في أعطال جديدة من الزبائن'),
+        h('p', { class: 'note' }, S.reports.length ? 'من ' + S.reports.length + ' تقرير مستلم.' : 'تظهر هنا لما تلصق تقرير زبون بصفحة الأعطال.'))),
+      old.length ? h('div', { class: 'health' }, h('div', { class: 'ring bad' }, old.length), h('div', {}, h('b', {}, 'شركات على إصدار قديم'), h('p', { class: 'note' }, old.map(c => c.name || c.code).join('، ')))) : null
+    );
+    // attention
+    const att = $('attention'); att.replaceChildren();
+    const need = S.companies.filter(c => ['soon', 'expired'].includes(state(c))).sort((a, b) => Date.parse(a.expiresAt) - Date.parse(b.expiresAt)).slice(0, 6);
+    if (!need.length) att.append(h('div', { class: 'empty' }, S.companies.length ? 'كل الشركات تمام، ما في شي ينتهي خلال أسبوع.' : 'تظهر هنا الشركات اللي يقرب انتهاء اشتراكها.'));
+    for (const c of need) att.append(h('div', { class: 'li' },
+      h('div', { class: 'grow' }, h('div', { class: 'name' }, c.name || c.code), h('div', { class: 'sub num' }, 'ينتهي ' + dayStr(c.expiresAt) + (c.contact ? ' · ' + c.contact : ''))),
+      pill(state(c)), h('button', { class: 'sm', type: 'button', onclick: () => openCompany(c, { renew: true }) }, 'تجديد')));
+    // recent codes
+    const rec = $('recent'); rec.replaceChildren();
+    const issued = S.companies.flatMap(c => (c.issued || []).map(x => ({ ...x, c }))).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 6);
+    if (!issued.length) rec.append(h('div', { class: 'empty' }, 'لما تصدر كود لأي شركة يظهر هنا.'));
+    for (const x of issued) rec.append(h('div', { class: 'li' },
+      h('div', { class: 'grow' }, h('div', { class: 'name' }, x.c.name || x.c.code), h('div', { class: 'sub' }, whenStr(x.at))),
+      x.status === 'suspended' ? pill('suspended', 'إغلاق') : h('span', { class: 'sub' }, (x.plan || '') + ' · حتى ' + dayStr(x.expiresAt))));
+  }
+
+  function revenueChart(months) {
+    const W = 520, H = 190, pad = { t: 16, b: 28, l: 8, r: 8 };
+    const max = Math.max(...months.map(m => m.v), 1);
+    const step = (W - pad.l - pad.r) / months.length, bw = Math.min(46, step * 0.56);
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg'); svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'الإيراد الشهري: ' + months.map(m => m.label + ' ' + money(m.v)).join('، '));
+    const el = (t, a) => { const e = document.createElementNS(ns, t); for (const k in a) e.setAttribute(k, a[k]); svg.append(e); return e; };
+    const base = H - pad.b;
+    for (let i = 1; i <= 3; i++) el('line', { x1: pad.l, x2: W - pad.r, y1: base - (base - pad.t) * i / 3, y2: base - (base - pad.t) * i / 3, stroke: 'var(--line)', 'stroke-dasharray': '3 4' });
+    el('line', { x1: pad.l, x2: W - pad.r, y1: base, y2: base, stroke: 'var(--line)' });
+    months.forEach((m, i) => {
+      // RTL: the newest month sits at the left end, reading order runs right to left.
+      const x = W - pad.r - step * (i + 0.5) - bw / 2;
+      const hgt = m.v ? Math.max(3, (base - pad.t) * m.v / max) : 0;
+      const last = i === months.length - 1;
+      if (hgt) el('rect', { x, y: base - hgt, width: bw, height: hgt, rx: 5, fill: last ? 'var(--accent)' : 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': last ? 0 : 1 });
+      const t = el('text', { x: x + bw / 2, y: H - 9, 'text-anchor': 'middle' }); t.textContent = m.label;
+      if (m.v) { const v = el('text', { x: x + bw / 2, y: base - hgt - 5, 'text-anchor': 'middle' }); v.textContent = m.v >= 1e6 ? (m.v / 1e6).toFixed(1) + ' مليون' : m.v >= 1e3 ? Math.round(m.v / 1e3) + ' ألف' : money(m.v); }
+    });
+    if (!months.some(m => m.v)) { const t = el('text', { x: W / 2, y: H / 2, 'text-anchor': 'middle' }); t.textContent = 'سجّل مبلغ عند إصدار الأكواد ويظهر هنا'; }
+    return svg;
+  }
+
+  function renderCompanies() {
+    document.querySelectorAll('#chips .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === S.filter)));
+    const q = $('q').value.trim().toLowerCase();
+    const shown = S.companies.filter(c => {
+      const s = state(c);
+      if (S.filter !== 'all' && !(S.filter === s || (S.filter === 'active' && s === 'soon'))) return false;
+      return !q || [c.name, c.code, c.contact, c.note].some(v => String(v || '').toLowerCase().includes(q));
+    }).sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'ar'));
+    $('c-empty').hidden = S.companies.length > 0; $('c-table').hidden = !S.companies.length;
+    const body = $('c-rows'); body.replaceChildren();
+    for (const c of shown) {
+      const r = reportFor(c.code);
+      const tr = h('tr', { class: 'click', tabindex: '0', onclick: () => openCompany(c), onkeydown: (e) => { if (e.key === 'Enter') openCompany(c); } },
+        h('td', {}, h('div', { class: 'name' }, c.name || 'بدون اسم'), h('div', { class: 'sub' }, c.contact || '')),
+        h('td', {}, h('span', { class: 'code' }, c.code)),
+        h('td', {}, c.plan || '—'),
+        h('td', {}, h('span', { class: 'num' }, dayStr(c.expiresAt))),
+        h('td', {}, pill(state(c))),
+        h('td', {}, r ? h('span', { class: 'num ' + (vnum(r.app) < vnum(LATEST) ? '' : 'sub') }, r.app) : h('span', { class: 'sub' }, '—')),
+        h('td', {}, h('span', { class: 'sub' }, (c.off || []).length ? c.off.map(f => FEAT_AR[f] || f).join('، ') : 'لا شيء')));
+      body.append(tr);
+    }
+    if (S.companies.length && !shown.length) body.append(h('tr', {}, h('td', { colspan: '7', class: 'sub' }, 'ما في نتائج.')));
+  }
+  $('q').addEventListener('input', render);
+  document.querySelectorAll('#chips .chip').forEach(b => b.addEventListener('click', () => { S.filter = b.dataset.f; render(); }));
+
+  function renderPlans() {
+    const g = $('plansGrid'); g.replaceChildren();
+    if (!S.plans.length) g.append(h('div', { class: 'card empty', style: 'padding:20px' }, h('b', {}, 'ما في باقات.'), 'أضف باقة مثل «شهري» أو «سنوي» حتى تختارها بسرعة عند إصدار الأكواد.'));
+    const used = (p) => S.companies.filter(c => c.planId === p.id && state(c) !== 'expired' && state(c) !== 'suspended').length;
+    for (const p of [...S.plans].sort((a, b) => (a.months || 999) - (b.months || 999))) {
+      g.append(h('button', { class: 'card plan', type: 'button', onclick: () => openPlan(p) },
+        h('h3', {}, p.name),
+        h('div', { class: 'price' }, p.price ? money(p.price) + ' د.ع' : h('span', { class: 'sub' }, 'بدون سعر')),
+        h('div', { class: 'sub' }, p.months ? 'المدة ' + p.months + (p.months === 1 ? ' شهر' : p.months <= 10 ? ' أشهر' : ' شهر') : 'مدى الحياة'),
+        h('div', { class: 'sub' }, (p.off || []).length ? 'مطفأ: ' + p.off.map(f => FEAT_AR[f]).join('، ') : 'كل الميزات'),
+        h('div', { class: 'sub' }, used(p) + ' شركة مفتوحة عليها')));
+    }
+  }
+  $('newPlan').addEventListener('click', () => openPlan(null));
+
+  function renderPayments() {
+    const now = new Date(), m = monthKey(now), y = String(now.getFullYear());
+    $('pay-month').textContent = money(S.payments.filter(p => monthKey(new Date(p.at)) === m).reduce((a, p) => a + p.amount, 0));
+    $('pay-year').textContent = money(S.payments.filter(p => p.at.slice(0, 4) === y).reduce((a, p) => a + p.amount, 0));
+    $('pay-count').textContent = S.payments.length;
+    $('pay-empty').hidden = S.payments.length > 0; $('pay-table').hidden = !S.payments.length;
+    const body = $('pay-rows'); body.replaceChildren();
+    for (const p of [...S.payments].sort((a, b) => b.at.localeCompare(a.at))) {
+      const c = S.companies.find(x => x.code === p.code);
+      body.append(h('tr', {},
+        h('td', {}, h('span', { class: 'num' }, dayStr(p.at))),
+        h('td', {}, h('div', { class: 'name' }, c?.name || p.name || p.code), h('div', { class: 'sub code' }, p.code)),
+        h('td', {}, p.plan || '—'),
+        h('td', {}, h('b', { class: 'num' }, money(p.amount) + ' د.ع')),
+        h('td', {}, h('span', { class: 'sub' }, p.note || '')),
+        h('td', {}, h('button', { class: 'ghost sm', type: 'button', onclick: () => openPayment(p) }, 'تعديل'))));
+    }
+  }
+  $('newPay').addEventListener('click', () => openPayment(null));
+
+  function renderFaults() {
+    const v = $('versions'); v.replaceChildren();
+    const byVer = {};
+    for (const r of S.reports) byVer[r.app] = (byVer[r.app] || 0) + 1;
+    const vers = Object.entries(byVer).sort((a, b) => vnum(b[0]) - vnum(a[0]));
+    if (!vers.length) v.append(h('div', { class: 'empty' }, 'يظهر هنا كم شركة على كل إصدار حسب التقارير.'));
+    const maxN = Math.max(1, ...vers.map(x => x[1]));
+    for (const [ver, n] of vers) v.append(h('div', { class: 'row', style: 'gap:10px' },
+      h('span', { class: 'num', style: 'width:52px' }, ver),
+      h('div', { style: `flex:1;height:10px;border-radius:5px;background:var(--sunk);overflow:hidden` }, h('div', { style: `width:${n / maxN * 100}%;height:100%;background:${vnum(ver) < vnum(LATEST) ? 'var(--warn)' : 'var(--ok)'}` })),
+      h('span', { class: 'num sub' }, n + ' شركة')));
+    const top = $('topFaults'); top.replaceChildren();
+    const agg = {};
+    for (const r of S.reports) for (const f of r.faults || []) { const k = f.m; agg[k] ??= { m: f.m, w: f.w, n: 0, cos: new Set() }; agg[k].n += f.n || 1; agg[k].cos.add(r.code); }
+    const tops = Object.values(agg).sort((a, b) => b.cos.size - a.cos.size || b.n - a.n).slice(0, 6);
+    if (!tops.length) top.append(h('div', { class: 'empty' }, 'ما في أعطال مسجّلة.'));
+    for (const f of tops) top.append(h('div', { class: 'fault' }, h('span', { class: 'tag' }, WHERE_AR[f.w] || f.w), h('div', { class: 'msg' }, f.m), h('span', { class: 'sub num' }, f.cos.size + ' شركة · ' + f.n + ' مرة')));
+    const list = $('reports'); list.replaceChildren();
+    if (!S.reports.length) list.append(h('div', { class: 'empty' }, h('b', {}, 'ما في تقارير بعد.'), 'التطبيق يسجّل أي عطل غير متوقع على جهاز الزبون. الزبون ينسخ التقرير من الإعدادات ويرسله إلك.'));
+    for (const r of [...S.reports].sort((a, b) => (a.resolved - b.resolved) || b.received.localeCompare(a.received))) {
+      const c = S.companies.find(x => x.code === r.code);
+      const details = h('div', { hidden: true }, ...(r.faults || []).slice().reverse().map(f => h('div', { class: 'fault' }, h('span', { class: 'tag' }, WHERE_AR[f.w] || f.w), h('div', { class: 'msg' }, f.m), h('span', { class: 'sub num' }, (f.n > 1 ? f.n + '× · ' : '') + whenStr(f.at)))));
+      list.append(h('div', { style: 'border-bottom:1px solid var(--line);padding:10px 0' },
+        h('div', { class: 'li', style: 'border:0;padding:0' },
+          h('div', { class: 'grow' }, h('div', { class: 'name' }, c?.name || r.name || r.code), h('div', { class: 'sub' }, 'إصدار ' + r.app + ' · ' + (OS_AR[r.os] || r.os) + ' · وصل ' + whenStr(r.received))),
+          (r.faults || []).length ? pill(r.resolved ? 'done' : 'new', r.resolved ? 'تمت المعالجة' : (r.faults.length + ' عطل')) : pill('done', 'بدون أعطال'),
+          (r.faults || []).length ? h('button', { class: 'sm', type: 'button', onclick: (e) => { details.hidden = !details.hidden; e.currentTarget.textContent = details.hidden ? 'التفاصيل' : 'إخفاء'; } }, 'التفاصيل') : null,
+          (r.faults || []).length ? h('button', { class: 'sm', type: 'button', onclick: () => write(() => S.db.doc('reports/' + r.code).set({ ...r, resolved: !r.resolved }), r.resolved ? 'رجع جديد' : 'تعلّم كمعالج') }, r.resolved ? 'إرجاع' : 'تمت المعالجة') : null),
+        details));
+    }
+  }
+  const WHERE_AR = { app: 'التطبيق', screen: 'الواجهة', server: 'الخادم المحلي' };
+  const OS_AR = { 'darwin-arm64': 'Mac', 'darwin-x64': 'Mac Intel', 'win32-x64': 'Windows', 'linux-x64': 'Linux' };
+  $('readReport').addEventListener('click', async () => {
+    const raw = $('reportIn').value.replace(/\s+/g, '');
+    const msg = $('reportMsg');
+    let r;
+    try {
+      if (!raw.startsWith('GRDR.')) throw 0;
+      const b = raw.slice(5).replace(/-/g, '+').replace(/_/g, '/');
+      r = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b + '==='.slice((b.length + 3) % 4)), ch => ch.charCodeAt(0))));
+      if (r?.v !== 1 || !CODE_RE.test(r.c)) throw 0;
+    } catch { msg.textContent = 'هذا مو تقرير Grdlabs. خلي الزبون يضغط «نسخ التقرير» ويرسله كامل.'; return; }
+    // Customer-made and unsigned: keep only the expected fields, cut to size.
+    const str = (v, n) => String(v ?? '').slice(0, n);
+    const prev = reportFor(r.c);
+    const faults = [...(prev?.faults || [])];
+    for (const f of (Array.isArray(r.f) ? r.f : []).slice(0, 30)) {
+      const item = { at: str(f.at, 30), w: str(f.w, 10), m: str(f.m, 400), n: Math.max(1, Math.min(9999, Number(f.n) || 1)) };
+      const same = faults.find(x => x.m === item.m && x.w === item.w);
+      if (same) { same.n = Math.max(same.n, item.n); same.at = item.at > same.at ? item.at : same.at; } else faults.push(item);
+    }
+    const hasNew = faults.length > (prev?.faults || []).length || faults.some((f, i) => prev && prev.faults[i] && f.n !== prev.faults[i].n);
+    const doc = { code: r.c, name: str(r.n, 160), app: str(r.app, 20), os: str(r.os, 30), reportAt: str(r.at, 30), received: new Date().toISOString(),
+      license: { s: str(r.l?.s, 12), p: str(r.l?.p, 60), e: r.l?.e ? str(r.l.e, 30) : null, t: !!r.l?.t }, faults: faults.slice(-60), resolved: prev ? prev.resolved && !hasNew : false };
+    if (await write(() => S.db.doc('reports/' + r.c).set(doc))) {
+      $('reportIn').value = '';
+      const known = S.companies.some(c => c.code === r.c);
+      msg.textContent = (doc.faults.length ? 'انحفظ التقرير: ' + doc.faults.length + ' عطل' : 'انحفظ التقرير: ما في أعطال') + ' · إصدار ' + doc.app + (known ? '' : ' · الشركة مو مسجّلة عندك بعد');
+    }
+  });
+
+  function renderKeys() {
+    $('keyRing').className = 'ring ' + (S.key ? 'ok' : 'bad'); $('keyRing').textContent = S.key ? '✓' : '!';
+    $('keyState').textContent = S.key ? 'المفتاح جاهز' : 'المفتاح غير موجود';
+    $('backupKey').disabled = !S.key;
+    $('exportAll').disabled = !S.db;
+    $('whereData').textContent = S.web
+      ? 'البيانات محفوظة بقاعدة بيانات الموقع ومحمية بحسابك. المفتاح مشفّر بكلمة سر المفتاح، فلا تنساها.'
+      : S.local
+      ? 'هذي النسخة تحفظ البيانات داخل هذا المتصفح على هذا الجهاز. إذا مسحت بيانات المتصفح تروح، فصدّر نسخة احتياطية بانتظام.'
+      : 'البيانات محفوظة بحسابك على claude.ai. صدّرها حتى تفتحها بملف اللوحة برّه Claude.';
+    const last = S.meta?.lastBackup;
+    $('lastBackup').textContent = last ? 'آخر تصدير: ' + whenStr(last) : 'ما صدّرت نسخة بعد.';
+  }
+  // Outside claude.ai there is no downloads capability: a plain blob link works in a normal browser tab.
+  async function saveFile(name, text) {
+    if (S.downloads) { await S.downloads.save({ filename: name, data: text }); return; }
+    const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+    const a = h('a', { href: url, download: name }); document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+  $('backupKey').addEventListener('click', async () => {
+    try { await saveFile('grdlabs-signing-key.json', JSON.stringify({ note: 'مفتاح توقيع أكواد Grdlabs. لا ترسله لأي أحد.', seed: S.key.seed, public: S.key.public }, null, 2)); toast('انحفظ المفتاح'); }
+    catch (e) { if (!e || e.code !== 'declined') toast('ما انحفظ هنا'); }
+  });
+  $('exportAll').addEventListener('click', async () => {
+    const all = { kind: 'grdlabs-control-backup', v: 1, exportedAt: new Date().toISOString(), key: S.key, companies: S.companies, plans: S.plans, payments: S.payments, reports: S.reports };
+    try {
+      await saveFile('grdlabs-control-' + all.exportedAt.slice(0, 10) + '.json', JSON.stringify(all, null, 1));
+      await S.db.doc('meta/main').set({ ...(S.meta || {}), lastBackup: all.exportedAt });
+      toast('انحفظت النسخة');
+    } catch (e) { if (!e || e.code !== 'declined') toast('ما انحفظت النسخة هنا'); }
+  });
+  $('importBtn').addEventListener('click', () => $('importFile').click());
+  $('importFile').addEventListener('change', async (e) => {
+    const file = e.target.files?.[0]; e.target.value = '';
+    if (!file) return;
+    let all;
+    try { all = JSON.parse(await file.text()); } catch { return toast('الملف مو JSON صالح'); }
+    // A key-only backup is accepted too. The key must be the one the app trusts.
+    const key = all?.key ?? (all?.seed ? { seed: all.seed, public: all.public } : null);
+    if (key) {
+      let pub = '';
+      try { pub = b64(nacl.sign.keyPair.fromSeed(fromB64(key.seed)).publicKey); } catch {}
+      if (pub !== APP_PUBLIC) return toast('هذا مو مفتاح Grdlabs الصحيح، ما استوردت شي.');
+    }
+    if (!key && all?.kind !== 'grdlabs-control-backup') return toast('هذا مو ملف من لوحة Grdlabs');
+    const pick = (list, id) => (Array.isArray(list) ? list : []).filter(x => x && typeof x === 'object' && typeof x[id] === 'string' && /^[A-Za-z0-9_-]{1,60}$/.test(x[id]));
+    const writes = [
+      ...(key ? [['secret/key', { seed: key.seed, public: APP_PUBLIC }]] : []),
+      ...pick(all.companies, 'code').filter(c => CODE_RE.test(c.code)).map(c => ['companies/' + c.code, c]),
+      ...pick(all.plans, 'id').map(p => ['plans/' + p.id, p]),
+      ...pick(all.payments, 'id').map(p => ['payments/' + p.id, p]),
+      ...pick(all.reports, 'code').filter(r => CODE_RE.test(r.code)).map(r => ['reports/' + r.code, r]),
+    ];
+    const ok = await write(async () => { for (const [path, doc] of writes) await S.db.doc(path).set(doc); });
+    if (ok) toast('انستورد: ' + (all.companies?.length || 0) + ' شركة' + (key ? ' والمفتاح' : ''));
+  });
+
+  // ---------- sheet ----------
+  function sheet(title, ...body) {
+    const s = $('sheet'); s.replaceChildren(h('div', { class: 'sheet-h' }, h('h2', { id: 'sheetTitle' }, title), h('button', { type: 'button', onclick: closeSheet }, 'إغلاق')), ...body);
+    $('scrim').hidden = false; s.hidden = false;
+    setTimeout(() => s.querySelector('input:not([readonly]),select')?.focus(), 30);
+  }
+  function closeSheet() { $('scrim').hidden = true; $('sheet').hidden = true; }
+  $('scrim').addEventListener('click', closeSheet);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('sheet').hidden) closeSheet(); });
+  const card = (title, ...kids) => h('div', { class: 'card' }, title ? h('div', { class: 'card-h' }, h('h2', {}, title)) : null, h('div', { class: 'card-b' }, ...kids));
+  const field = (label, input) => h('label', { class: 'f' }, label, input);
+  function featureSwitches(off) {
+    return h('div', { class: 'feats' }, FEATURES.map(([k, label]) => {
+      const inp = h('input', { type: 'checkbox', id: 'feat-' + k });
+      inp.checked = !off.includes(k);
+      inp.addEventListener('change', () => { const i = off.indexOf(k); if (inp.checked && i >= 0) off.splice(i, 1); if (!inp.checked && i < 0) off.push(k); });
+      return h('label', { class: 'feat' }, h('span', {}, label), h('span', { class: 'switch' }, inp, h('span', {})));
+    }));
+  }
+  const addMonths = (fromIso, n) => { const base = fromIso && Date.parse(fromIso) > Date.now() ? new Date(fromIso) : new Date(); base.setMonth(base.getMonth() + n); return base.toISOString().slice(0, 10); };
+
+  // Company
+  document.querySelectorAll('[data-new-company]').forEach(b => b.addEventListener('click', () => { if (!S.db) return toast('السجل غير متاح هنا'); openCompany(null); }));
+  function openCompany(c, opts = {}) {
+    const f = c ? { ...c, off: [...(c.off || [])] } : { code: '', name: '', contact: '', note: '', plan: '', planId: '', status: 'active', message: '', expiresAt: null, off: [], issued: [] };
+    const plans = [...S.plans].sort((a, b) => (a.months || 999) - (b.months || 999));
+    const code = h('input', { id: 'f-code', class: 'code', placeholder: 'A1B2-C3D4-E5F6', autocomplete: 'off', spellcheck: 'false' }); code.value = f.code; code.readOnly = !!c;
+    const name = h('input', { id: 'f-name', autocomplete: 'off' }); name.value = f.name || '';
+    const contact = h('input', { id: 'f-contact', dir: 'auto', autocomplete: 'off' }); contact.value = f.contact || '';
+    const note = h('textarea', { id: 'f-note', rows: '2' }); note.value = f.note || '';
+    const plan = h('select', { id: 'f-plan' }, h('option', { value: '' }, 'بدون باقة (مخصص)'), plans.map(p => h('option', { value: p.id }, p.name + (p.price ? ' · ' + money(p.price) + ' د.ع' : ''))));
+    plan.value = plans.some(p => p.id === f.planId) ? f.planId : '';
+    const exp = h('input', { id: 'f-exp', type: 'date' }); exp.value = f.expiresAt ? f.expiresAt.slice(0, 10) : '';
+    const amount = h('input', { id: 'f-amount', type: 'number', min: '0', step: '1000', inputmode: 'numeric', placeholder: '0' });
+    const msg = h('input', { id: 'f-message', placeholder: 'حساب هذه الشركة موقوف. تواصل مع Grdlabs لإعادة تفعيله.' }); msg.value = f.message || '';
+    const msgWrap = field('الرسالة اللي تطلع للزبون', msg);
+    const bOpen = h('button', { type: 'button' }, 'مفتوح'), bShut = h('button', { type: 'button', class: 'stop' }, 'مغلق');
+    const setStatus = (s) => { f.status = s; bOpen.setAttribute('aria-pressed', String(s === 'active')); bShut.setAttribute('aria-pressed', String(s === 'suspended')); msgWrap.hidden = s !== 'suspended'; };
+    bOpen.onclick = () => setStatus('active'); bShut.onclick = () => setStatus('suspended');
+    const switches = h('div', {}, featureSwitches(f.off));
+    const applyPlan = () => {
+      const p = S.plans.find(x => x.id === plan.value); if (!p) return;
+      f.off.splice(0, f.off.length, ...(p.off || [])); switches.replaceChildren(featureSwitches(f.off));
+      exp.value = p.months ? addMonths(f.expiresAt, p.months) : '';
+      if (p.price) amount.value = p.price;
+    };
+    plan.addEventListener('change', applyPlan);
+    const quick = h('div', { class: 'quick' }, [[1, '+ شهر'], [3, '+ 3 أشهر'], [6, '+ 6 أشهر'], [12, '+ سنة'], [0, 'بلا انتهاء']].map(([n, t]) =>
+      h('button', { type: 'button', class: 'sm', onclick: () => { exp.value = n ? addMonths(exp.value ? exp.value + 'T12:00:00' : null, n) : ''; } }, t)));
+    const out = h('textarea', { class: 'mono-box', readonly: true, id: 'outCode' });
+    const outCard = card('الكود الجديد', out,
+      h('div', { class: 'row' }, h('button', { type: 'button', class: 'primary', onclick: () => copy(out.value, 'نُسخ الكود', out) }, 'نسخ الكود'),
+        h('button', { type: 'button', onclick: () => copy(customerMessage(f, out.value), 'نُسخت الرسالة', out) }, 'نسخ رسالة للزبون')),
+      h('p', { class: 'note' }, 'يتطبّق عند الزبون لما يلصقه في الإعدادات ← الاشتراك. إذا ما وصله كود جديد، يتوقف الحساب تلقائياً بتاريخ الانتهاء.'));
+    outCard.hidden = true;
+    const r = c && reportFor(c.code);
+    const hist = (f.issued || []).length ? card('الأكواد السابقة', h('div', { class: 'list' }, [...f.issued].reverse().map(x => h('div', { class: 'li' },
+      h('div', { class: 'grow sub num' }, whenStr(x.at)), x.status === 'suspended' ? pill('suspended', 'إغلاق') : h('span', { class: 'sub' }, (x.plan || '') + ' · حتى ' + dayStr(x.expiresAt)),
+      x.license ? h('button', { class: 'ghost sm', type: 'button', onclick: () => { out.value = x.license; outCard.hidden = false; outCard.scrollIntoView({ block: 'nearest' }); } }, 'عرض') : null)))) : null;
+    const conf = h('div', { class: 'confirm', hidden: true }, h('span', {}, 'تحذف الشركة من سجلك فقط. تطبيق الزبون يبقى على آخر كود عنده لحد تاريخ انتهائه.'),
+      h('div', { class: 'row' }, h('button', { type: 'button', class: 'danger', onclick: async () => { if (await write(() => S.db.doc('companies/' + f.code).delete(), 'انحذفت من اللوحة')) closeSheet(); } }, 'نعم، احذف'), h('button', { type: 'button', onclick: () => conf.hidden = true }, 'تراجع')));
+    const issueBtn = h('button', { type: 'button', class: 'primary' }, 'حفظ وإصدار الكود');
+    const saveBtn = h('button', { type: 'button' }, 'حفظ بدون كود');
+    async function save(issue) {
+      const cc = normCode(code.value);
+      if (!CODE_RE.test(cc)) return toast('رمز الشركة لازم يكون مثل A1B2-C3D4-E5F6.');
+      if (!c && S.companies.some(x => x.code === cc)) return toast('هذي الشركة موجودة. افتحها من القائمة.');
+      const p = S.plans.find(x => x.id === plan.value);
+      Object.assign(f, { code: cc, name: name.value.trim().slice(0, 160), contact: contact.value.trim().slice(0, 80), note: note.value.trim().slice(0, 500),
+        planId: p ? p.id : '', plan: p ? p.name : (f.status === 'suspended' ? f.plan : (exp.value ? 'مخصص' : 'مدى الحياة')), message: msg.value.trim().slice(0, 300),
+        // End of the chosen day, Baghdad time, so a code "until the 5th" works all day on the 5th.
+        expiresAt: exp.value ? new Date(exp.value + 'T23:59:59+03:00').toISOString() : null });
+      const now = new Date().toISOString();
+      let license = null;
+      if (issue) { try { license = sign(f, now); } catch (e) { return toast(e.message); } }
+      const paid = Math.max(0, Math.round(Number(amount.value) || 0));
+      const doc = { code: f.code, name: f.name, contact: f.contact, note: f.note, plan: f.plan, planId: f.planId, status: f.status, message: f.message, expiresAt: f.expiresAt, off: [...f.off],
+        createdAt: f.createdAt || now, updatedAt: now,
+        issued: issue ? [...(f.issued || []), { at: now, plan: f.plan, status: f.status, expiresAt: f.expiresAt, off: [...f.off], license, amount: paid || undefined }].slice(-15) : (f.issued || []) };
+      issueBtn.disabled = saveBtn.disabled = true;
+      const ok = await write(async () => {
+        await S.db.doc('companies/' + f.code).set(doc);
+        if (issue && paid) { const id = uid(); await S.db.doc('payments/' + id).set({ id, code: f.code, name: f.name, amount: paid, plan: f.plan, at: now, note: '' }); }
+      }, issue ? (paid ? 'انحفظت وطلع الكود وانسجّلت الدفعة' : 'انحفظت وطلع الكود') : 'انحفظت التغييرات');
+      issueBtn.disabled = saveBtn.disabled = false;
+      if (!ok) return;
+      Object.assign(f, doc); c = doc; code.readOnly = true; amount.value = ''; $('sheetTitle').textContent = doc.name || doc.code;
+      if (license) { out.value = license; outCard.hidden = false; outCard.scrollIntoView({ block: 'nearest' }); }
+    }
+    issueBtn.onclick = () => save(true); saveBtn.onclick = () => save(false);
+    sheet(c ? (c.name || c.code) : 'شركة جديدة',
+      card(null, field('رمز الشركة (من تطبيق الزبون)', code), h('div', { class: 'grid2' }, field('اسم الشركة', name), field('رقم أو جهة التواصل', contact)), field('ملاحظة لك', note),
+        r ? h('p', { class: 'note' }, 'آخر تقرير: إصدار ' + r.app + ' · ' + (OS_AR[r.os] || r.os) + ' · ' + ((r.faults || []).length ? r.faults.length + ' عطل' : 'بدون أعطال')) : null),
+      card('الحساب', h('div', { class: 'seg', role: 'group', 'aria-label': 'حالة الحساب' }, bOpen, bShut), msgWrap,
+        h('div', { class: 'grid2' }, field('الباقة', plan), field('ينتهي بتاريخ', exp)), quick, field('المبلغ المستلم (د.ع)، يتسجّل كدفعة مع الكود', amount)),
+      card('الميزات', switches, h('p', { class: 'note' }, 'الزبائن والفواتير والدفعات والإعدادات دائماً مفتوحة. إطفاء ميزة ما يحذف بياناتها؛ ترجع لما تشغّلها.')),
+      h('div', { class: 'row' }, issueBtn, saveBtn), outCard, hist,
+      c ? h('div', {}, h('button', { type: 'button', class: 'danger', onclick: () => conf.hidden = false }, 'حذف من اللوحة'), conf) : null);
+    setStatus(f.status || 'active');
+    if (opts.renew) {
+      const p = S.plans.find(x => x.id === f.planId);
+      exp.value = addMonths(f.expiresAt, p?.months || 1); if (p?.price) amount.value = p.price; setStatus('active');
+    }
+  }
+  function customerMessage(f, code) {
+    return (f.status === 'suspended'
+      ? ['هلا، هذا كود Grdlabs لشركة ' + (f.name || '') + ':', code, 'الصقه في الإعدادات ← الاشتراك.']
+      : ['هلا، هذا كود اشتراك Grdlabs لشركة ' + (f.name || '') + ' (' + (f.plan || '') + '، ينتهي ' + dayStr(f.expiresAt) + '):', code, 'افتح التطبيق ← الإعدادات ← الاشتراك، الصق الكود واضغط «تفعيل الكود».']).join('\n');
+  }
+
+  // Plan
+  function openPlan(p) {
+    const f = p ? { ...p, off: [...(p.off || [])] } : { id: uid(), name: '', months: 1, price: 0, off: [] };
+    const name = h('input', { id: 'pl-name', placeholder: 'مثل: سنوي' }); name.value = f.name;
+    const months = h('select', { id: 'pl-months' }, [[1, 'شهر'], [3, '3 أشهر'], [6, '6 أشهر'], [12, 'سنة'], [24, 'سنتين'], [0, 'مدى الحياة']].map(([v, t]) => h('option', { value: v }, t))); months.value = String(f.months ?? 1);
+    const price = h('input', { id: 'pl-price', type: 'number', min: '0', step: '1000', inputmode: 'numeric' }); price.value = f.price || '';
+    const conf = h('div', { class: 'confirm', hidden: true }, h('span', {}, 'تنحذف الباقة من القائمة فقط. الشركات اللي عليها تبقى كما هي.'),
+      h('div', { class: 'row' }, h('button', { type: 'button', class: 'danger', onclick: async () => { if (await write(() => S.db.doc('plans/' + f.id).delete(), 'انحذفت الباقة')) closeSheet(); } }, 'نعم، احذف'), h('button', { type: 'button', onclick: () => conf.hidden = true }, 'تراجع')));
+    sheet(p ? p.name : 'باقة جديدة',
+      card(null, field('اسم الباقة', name), h('div', { class: 'grid2' }, field('المدة', months), field('السعر (د.ع)', price))),
+      card('الميزات المفتوحة بهذي الباقة', featureSwitches(f.off)),
+      h('div', { class: 'row' }, h('button', { type: 'button', class: 'primary', onclick: async () => {
+        const n = name.value.trim().slice(0, 60); if (!n) return toast('اكتب اسم الباقة');
+        if (await write(() => S.db.doc('plans/' + f.id).set({ id: f.id, name: n, months: Number(months.value), price: Math.max(0, Math.round(Number(price.value) || 0)), off: [...f.off] }), 'انحفظت الباقة')) closeSheet();
+      } }, 'حفظ الباقة'), p ? h('button', { type: 'button', class: 'danger', onclick: () => conf.hidden = false }, 'حذف') : null), conf);
+  }
+
+  // Payment
+  function openPayment(p) {
+    const f = p ? { ...p } : { id: uid(), code: '', amount: 0, plan: '', at: new Date().toISOString(), note: '' };
+    const co = h('select', { id: 'py-co' }, h('option', { value: '' }, 'اختر الشركة'), [...S.companies].sort((a, b) => String(a.name).localeCompare(String(b.name), 'ar')).map(c => h('option', { value: c.code }, (c.name || c.code))));
+    co.value = f.code;
+    const amount = h('input', { id: 'py-amount', type: 'number', min: '0', step: '1000', inputmode: 'numeric' }); amount.value = f.amount || '';
+    const date = h('input', { id: 'py-date', type: 'date' }); date.value = f.at.slice(0, 10);
+    const note = h('input', { id: 'py-note' }); note.value = f.note || '';
+    const conf = h('div', { class: 'confirm', hidden: true }, h('span', {}, 'تنحذف الدفعة من السجل والإيراد.'),
+      h('div', { class: 'row' }, h('button', { type: 'button', class: 'danger', onclick: async () => { if (await write(() => S.db.doc('payments/' + f.id).delete(), 'انحذفت الدفعة')) closeSheet(); } }, 'نعم، احذف'), h('button', { type: 'button', onclick: () => conf.hidden = true }, 'تراجع')));
+    sheet(p ? 'تعديل دفعة' : 'تسجيل دفعة',
+      card(null, field('الشركة', co), h('div', { class: 'grid2' }, field('المبلغ (د.ع)', amount), field('التاريخ', date)), field('ملاحظة', note)),
+      h('div', { class: 'row' }, h('button', { type: 'button', class: 'primary', onclick: async () => {
+        const c = S.companies.find(x => x.code === co.value); const a = Math.round(Number(amount.value) || 0);
+        if (!c) return toast('اختر الشركة'); if (a <= 0) return toast('اكتب المبلغ');
+        if (await write(() => S.db.doc('payments/' + f.id).set({ id: f.id, code: c.code, name: c.name, amount: a, plan: f.plan || c.plan || '', at: new Date(date.value + 'T12:00:00+03:00').toISOString(), note: note.value.trim().slice(0, 200) }), 'انحفظت الدفعة')) closeSheet();
+      } }, 'حفظ'), p ? h('button', { type: 'button', class: 'danger', onclick: () => conf.hidden = false }, 'حذف') : null), conf);
+  }
+
+  // ---------- signing ----------
+  const b64url = (u8) => b64(u8).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const APP_PUBLIC = 'l6gLJqKJS78DnMBN4fjECCXM+GMQC9ttHc5ArRS1vkQ=';
+  const b64 = (u8) => { let s = ''; for (const x of u8) s += String.fromCharCode(x); return btoa(s); };
+  const fromB64 = (s) => Uint8Array.from(atob(s), ch => ch.charCodeAt(0));
+  function sign(c, issuedAt) {
+    if (!S.key || !window.nacl) throw new Error('مفتاح التوقيع غير متاح، ما أكدر أطلّع كود.');
+    const payload = { v: 1, c: c.code, n: c.name || undefined, p: c.plan, s: c.status, e: c.expiresAt, off: c.off.length ? c.off : undefined, m: c.status === 'suspended' && c.message ? c.message : undefined, i: issuedAt };
+    const body = new TextEncoder().encode(JSON.stringify(payload));
+    return 'GRDL.' + b64url(body) + '.' + b64url(nacl.sign.detached(body, nacl.sign.keyPair.fromSeed(fromB64(S.key.seed)).secretKey));
+  }
+
+  // ---------- standalone store ----------
+  // Same shape as the claude.ai store calls this page makes, kept in localStorage.
+  function localDb() {
+    const KEY = 'grdlabs-control-v1';
+    let data = {};
+    const load = () => { try { data = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch { data = {}; } };
+    load();
+    const subs = new Set();
+    const notify = () => subs.forEach(f => f());
+    window.addEventListener('storage', (e) => { if (e.key === KEY) { load(); notify(); } });
+    const coll = (c) => (data[c] ??= {});
+    const persist = () => { localStorage.setItem(KEY, JSON.stringify(data)); notify(); };
+    return {
+      doc(path) {
+        const [c, id] = path.split('/');
+        return {
+          set: async (v) => { const before = coll(c)[id]; coll(c)[id] = JSON.parse(JSON.stringify(v)); try { persist(); } catch (e) { if (before) coll(c)[id] = before; else delete coll(c)[id]; throw { code: 'quota_exceeded' }; } },
+          delete: async () => { delete coll(c)[id]; persist(); },
+          onSnapshot(cb) { const f = () => { const v = coll(c)[id]; cb({ exists: !!v, data: () => v }); }; subs.add(f); setTimeout(f); return () => subs.delete(f); },
+        };
+      },
+      collection(c) {
+        return { onSnapshot(cb) { const f = () => cb({ docs: Object.values(coll(c)).map(v => ({ data: () => v })) }); subs.add(f); setTimeout(f); return () => subs.delete(f); } };
+      },
+    };
+  }
+
+  // ---------- boot ----------
+  go(location.hash.slice(1));
+  (async () => {
+    // Inside claude.ai the page uses its private store; opened as a file it keeps everything in this browser.
+    // The website build loads web.js, which signs the owner in and keeps the records in their own database.
+    S.db = window.grdlabsWeb ? (S.web = true, await window.grdlabsWeb.db()) : window.claude?.use ? await window.claude.use('db') : (S.local = true, localDb());
+    if (!S.db) { $('unavailable').hidden = false; $('keytext').textContent = 'السجل غير متاح'; $('keydot').classList.add('bad'); return; }
+    S.downloads = S.local ? null : await window.claude?.use?.('downloads');
+    S.db.doc('meta/main').onSnapshot(s => { S.meta = s.exists ? s.data() : null; render(); });
+    const fail = () => toast('انقطع الاتصال بالسجل. حدّث الصفحة.');
+    S.db.doc('secret/key').onSnapshot(s => {
+      S.key = s.exists ? s.data() : null;
+      $('keydot').classList.toggle('bad', !S.key);
+      $('keytext').textContent = S.key ? 'مفتاح التوقيع جاهز' : 'مفتاح التوقيع غير موجود';
+      render();
+    }, () => { $('keytext').textContent = 'تعذّر قراءة المفتاح'; $('keydot').classList.add('bad'); });
+    S.db.collection('companies').onSnapshot(s => { S.companies = s.docs.map(d => d.data()); render(); }, fail);
+    S.db.collection('plans').onSnapshot(s => { S.plans = s.docs.map(d => d.data()); render(); }, fail);
+    S.db.collection('payments').onSnapshot(s => { S.payments = s.docs.map(d => d.data()); render(); }, fail);
+    S.db.collection('reports').onSnapshot(s => { S.reports = s.docs.map(d => d.data()); render(); }, fail);
+    setInterval(render, 60000);
+  })();
+})();
+</script>
+</body></html>

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Grdlabs mark as matte frosted glass: soft diffuse light, no specular gloss. -->
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f3f7f4"/>
+      <stop offset="1" stop-color="#d9e6dc"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".55" r=".5">
+      <stop offset="0" stop-color="#5cc160" stop-opacity=".30"/>
+      <stop offset="1" stop-color="#44b649" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#62c867" stop-opacity=".94"/>
+      <stop offset="1" stop-color="#36a447" stop-opacity=".94"/>
+    </linearGradient>
+    <linearGradient id="frost" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity=".04"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="22"/>
+      <feOffset dy="26"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".22"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="lift" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2.2"/>
+      <feOffset dy="2"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".16"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="40"/></filter>
+    <clipPath id="tile"><rect x="100" y="100" width="824" height="824" rx="186"/></clipPath>
+    <path id="mark" d="M1100.023,276.533h17.982l-.299,31.164 26.671-15.884 8.987,15.884-26.969,15.287 26.969,15.28-8.987,15.884-26.671-15.884.299,30.866h-17.982l.299-31.164-26.671,15.884-9.286-15.586 26.969-15.28-26.969-15.287 9.286-16.183 26.671,16.183z"/>
+  </defs>
+  <g filter="url(#shadow)">
+    <rect x="100" y="100" width="824" height="824" rx="186" fill="url(#base)"/>
+  </g>
+  <g clip-path="url(#tile)">
+    <circle cx="512" cy="540" r="330" fill="url(#glow)" filter="url(#soft)"/>
+    <rect x="100" y="100" width="824" height="824" rx="186" fill="none" stroke="#ffffff" stroke-opacity=".7" stroke-width="6"/>
+  </g>
+  <g transform="translate(512 512) scale(5.4) translate(-1109.2 -323.5)" filter="url(#lift)">
+    <use href="#mark" fill="url(#glass)"/>
+    <use href="#mark" fill="url(#frost)"/>
+    <use href="#mark" fill="none" stroke="#ffffff" stroke-opacity=".5" stroke-width=".8" stroke-linejoin="round"/>
+  </g>
+</svg>
