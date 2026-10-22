@@ -124,11 +124,47 @@
   .mark3d .ground { position: absolute; left: 26%; right: 26%; bottom: -10px; height: 30px; border-radius: 50%;
     background: radial-gradient(closest-side, rgba(28,72,40,.28), rgba(28,72,40,0));
     filter: blur(6px); transform: translateX(calc(var(--ry) * -0.9)); }
+  /* Floating app section icons in the page sky, behind the content. Positions are driven by script. */
+  .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  main, footer { position: relative; z-index: 1; }
+  .fly { position: absolute; left: 0; top: 0; width: var(--s); height: var(--s); will-change: transform; }
+  .fly .chip { width: 100%; height: 100%; border-radius: 30%; display: grid; place-items: center; color: var(--c);
+    background: linear-gradient(160deg, rgba(255,255,255,.96), var(--t));
+    border: 1px solid rgba(255,255,255,.9);
+    box-shadow: 0 3px 0 rgba(15,26,43,.06), 0 14px 28px -14px rgba(15,26,43,.32), inset 0 -8px 14px rgba(15,26,43,.04), inset 0 1px 0 #fff; }
+  .fly svg { width: 48%; height: 48%; }
+  .band { background: rgba(255,255,255,.8); }
+
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .flow .step { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 18px; text-align: center; }
+  .flow .step b { display: grid; place-items: center; width: 34px; height: 34px; margin: 0 auto 12px; border-radius: 50%; background: var(--blue-soft); color: var(--blue); font-size: 15px; }
+  .flow .step h3 { margin: 0 0 6px; font-size: 17px; }
+  .flow .step p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+  .flow .step:not(:last-child)::after { content: ""; position: absolute; top: 50%; left: -7px; width: 8px; height: 8px; border: solid var(--blue); border-width: 0 0 2px 2px; transform: translate(-50%, -50%) rotate(45deg); z-index: 1; }
+  .note { max-width: 760px; margin: 28px auto 0; text-align: center; color: var(--muted); }
+
+  .modules { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .modules .card { display: grid; grid-template-columns: 44px 1fr; gap: 4px 16px; align-items: start; }
+  .modules .card .ic { margin: 0; grid-row: span 3; }
+  .modules .card h3 { margin-top: 8px; }
+  .modules .card ul { margin: 10px 0 0; padding: 0 18px 0 0; color: var(--muted); font-size: 15px; display: grid; gap: 4px; }
+  .ic.c2 { background: var(--green-soft); color: var(--green); }
+  .ic.c3 { background: #f0ecff; color: #6d4fe0; }
+  .ic.c4 { background: #fff3e0; color: #c86b00; }
+
+  .who { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .who .card { text-align: center; }
+  .who .card .ic { margin: 0 auto 14px; }
+
   @media (max-width: 900px) {
     .grid, .plans { grid-template-columns: 1fr 1fr; }
     .split, .split.flip { grid-template-columns: 1fr; gap: 28px; }
     .split.flip > :first-child { order: 0; }
     .stats { grid-template-columns: 1fr 1fr; gap: 28px; }
+    .flow { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+    .flow .step:not(:last-child)::after { top: auto; bottom: -8px; left: 50%; transform: translate(-50%, 50%) rotate(-45deg); }
+    .modules { grid-template-columns: 1fr; }
+    .who { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 640px) {
     .wrap { padding: 0 16px; }
@@ -137,7 +173,9 @@
     .hero { padding-top: 44px; }
     .mark3d { width: 220px; height: 220px; margin-bottom: 20px; }
     .mark3d .glyph { width: 184px; height: 184px; margin: -92px 0 0 -92px; }
-    .grid, .plans, .dl { grid-template-columns: 1fr; }
+    .grid, .plans, .dl, .who { grid-template-columns: 1fr; }
+    .modules .card { grid-template-columns: 1fr; }
+    .modules .card .ic { grid-row: auto; }
     section { padding: 64px 0; }
     .cta .btn { width: 100%; }
   }
@@ -145,6 +183,7 @@
 </style>
 </head>
 <body>
+<div class="sky" id="sky" aria-hidden="true"></div>
 <header id="top">
   <div class="wrap bar">
     <a class="brand" href="#" aria-label="Grdlabs">
@@ -153,6 +192,8 @@
     </a>
     <nav class="links" aria-label="أقسام الصفحة">
       <a href="#features">الميزات</a>
+      <a href="#how">كيف يشتغل</a>
+      <a href="#modules">الأقسام</a>
       <a href="#plans">الاشتراك</a>
       <a href="#faq">الأسئلة</a>
     </nav>
@@ -214,6 +255,24 @@
     </div>
   </section>
 
+  <section id="how">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">كيف يشتغل</span>
+        <h2>تسجّل العملية مرة وحدة، والباقي يصير لوحده</h2>
+        <p>Grdlabs يربط الأقسام ببعض. كل خطوة تسويها تمشي للخطوة اللي بعدها بدون ما تعيد الكتابة.</p>
+      </div>
+      <div class="flow">
+        <div class="step"><b>1</b><h3>عرض السعر</h3><p>تكتب الأصناف والأسعار وتطبعه أو ترسله للزبون.</p></div>
+        <div class="step"><b>2</b><h3>الفاتورة</h3><p>لما يوافق الزبون يتحوّل العرض لفاتورة بضغطة وحدة.</p></div>
+        <div class="step"><b>3</b><h3>الدفعة</h3><p>تسجّل المبلغ كامل أو على دفعات، ويطلع وصل قبض.</p></div>
+        <div class="step"><b>4</b><h3>القيد المحاسبي</h3><p>البرنامج يسجّل القيد بالحسابات الصحيحة تلقائياً.</p></div>
+        <div class="step"><b>5</b><h3>التقرير</h3><p>الأرباح والميزانية وكشف حساب الزبون تتحدّث بنفس اللحظة.</p></div>
+      </div>
+      <p class="note">ونفس الشي للمصروفات والرواتب: تسجّل المصروف أو تصرف رواتب الشهر، والقيد ينزل بدفتر اليومية والمبلغ ينخصم من الصندوق بدون أي خطوة إضافية.</p>
+    </div>
+  </section>
+
   <section class="band">
     <div class="wrap stats">
       <div><b>بالعربي</b><span>واجهة من اليمين لليسار بالكامل</span></div>
@@ -254,6 +313,42 @@
     </div>
   </section>
 
+  <section id="modules">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">الأقسام بالتفصيل</span>
+        <h2>شنو تكدر تسوي بكل قسم</h2>
+        <p>كل قسم تكدر تفتحه أو تسدّه حسب اشتراكك، والأقسام الأساسية دائماً مفتوحة.</p>
+      </div>
+      <div class="modules">
+        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></div><h3>المبيعات والفواتير</h3><p>قلب البرنامج. تسوي فاتورة لزبونك وتتابع شكد دفع وشكد باقي عليه.</p><ul><li>دفعات جزئية ووصولات قبض مطبوعة</li><li>تعديل الفاتورة بعد إصدارها مع بقاء الحسابات صحيحة</li><li>قائمة بالفواتير المتأخرة حتى تطالب بيها بوقتها</li></ul></div>
+        <div class="card"><div class="ic c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14.5h2"/></svg></div><h3>المصروفات والصندوق</h3><p>كل دينار يطلع من الشركة تسجّله بتصنيفه، فتعرف وين راحت فلوسك.</p><ul><li>تصنيفات للمصروفات حسب شغلك</li><li>رصيد الصندوق يتحدّث مع كل قبض وصرف</li><li>ربط المصروف بمشروع معيّن</li></ul></div>
+        <div class="card"><div class="ic c3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 7M21 20c0-2.6-1.7-4.9-4-5.7"/></svg></div><h3>الموارد البشرية والرواتب</h3><p>ملف لكل موظف براتبه الأساسي، وبآخر الشهر مسير رواتب جاهز.</p><ul><li>مكافآت وخصومات وسلف تنحسب تلقائياً</li><li>قسيمة راتب مطبوعة لكل موظف</li><li>قيد الرواتب ينسجّل بالحسابات لوحده</li></ul></div>
+        <div class="card"><div class="ic c4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 4l9 6M5 10v9m4-9v9m6-9v9m4-9v9M3 21h18"/></svg></div><h3>المحاسبة ودفتر اليومية</h3><p>للي يريد الحسابات بالتفصيل: دليل حسابات كامل وقيود مزدوجة.</p><ul><li>دليل حسابات جاهز تضيف عليه وتعدّل</li><li>قيود يدوية للتسويات والحالات الخاصة</li><li>ميزان مراجعة يتوازن دائماً</li></ul></div>
+        <div class="card"><div class="ic c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/></svg></div><h3>التقارير</h3><p>تختار الفترة وتشوف وضع الشركة بالأرقام، وتطبع أو تصدّر.</p><ul><li>الأرباح والخسائر والميزانية العمومية</li><li>كشف حساب لكل زبون ومورد</li><li>ملخص المبيعات والمقبوضات والمصروفات</li></ul></div>
+        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg></div><h3>المشاريع والعقود</h3><p>للمقاولين وشركات الخدمات: ربح كل مشروع لوحده، والعقود الشهرية مرتبة.</p><ul><li>إيرادات ومصروفات كل مشروع بمكان واحد</li><li>العقود الشهرية مع مواعيد الاستحقاق</li><li>تعرف المشروع الرابح من الخسران</li></ul></div>
+        <div class="card"><div class="ic c3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M2.5 20c0-3 2.5-5.5 5.5-5.5s5.5 2.5 5.5 5.5M14.5 20c0-2.2 1.2-4 3-4.6"/></svg></div><h3>الفريق والصلاحيات</h3><p>موظفينك يشتغلون وياك، وكل واحد يشوف بس اللي يخصه.</p><ul><li>دعوة بكود، مؤقت أو دائم</li><li>ثلاث أدوار: مدير، محاسب، ومبيعات</li><li>توقف حساب أي موظف بأي وقت</li></ul></div>
+        <div class="card"><div class="ic c4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>شركاتك ونسخك الاحتياطية</h3><p>أكثر من شركة على نفس الحاسبة، وكل وحدة بملفها المستقل.</p><ul><li>تنتقل بين الشركات من القائمة</li><li>نسخة احتياطية تاخذها وترجعها على أي جهاز</li><li>تحديثات البرنامج توصلك من داخله</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="who">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">لمن البرنامج</span>
+        <h2>مصمم للشركات الصغيرة والمتوسطة</h2>
+        <p>ما تحتاج تكون محاسب حتى تستخدمه، وإذا عندك محاسب راح يلكه كل التفاصيل اللي يحتاجها.</p>
+      </div>
+      <div class="who">
+        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18l-1.5-5h-15zM4 9v11h16V9M9 20v-6h6v6"/></svg></div><h3>المحلات والتجارة</h3><p>فواتير يومية، دفعات الزبائن والديون، ومصروفات المحل.</p></div>
+        <div class="card"><div class="ic c4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg></div><h3>المقاولات والمشاريع</h3><p>ربح كل مشروع، عروض الأسعار، والعقود الشهرية.</p></div>
+        <div class="card"><div class="ic c3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 7M21 20c0-2.6-1.7-4.9-4-5.7"/></svg></div><h3>المكاتب والخدمات</h3><p>رواتب الموظفين، المصروفات الثابتة، وفواتير العملاء.</p></div>
+        <div class="card"><div class="ic c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M8 7h4M8 11h4M8 15h4M2 21h20"/></svg></div><h3>أصحاب أكثر من شركة</h3><p>كل شركة بحساباتها المستقلة، وكلها على نفس الحاسبة.</p></div>
+      </div>
+    </div>
+  </section>
+
   <section id="plans">
     <div class="wrap">
       <div class="head">
@@ -277,6 +372,9 @@
         <details><summary>شنو يصير بعد انتهاء التجربة؟</summary><p>البرنامج يوقف لحد ما تدخل كود الاشتراك، بس بياناتك تبقى محفوظة كاملة وترجع تشتغل عليها أول ما تفعّل.</p></details>
         <details><summary>أكدر أخلّي موظفيني يستخدمونه؟</summary><p>نعم. تدعوهم من صفحة الفريق بكود دعوة، وكل واحد يدخل بحسابه الخاص ويشوف بس الأقسام اللي تسمحله بيها.</p></details>
         <details><summary>هل يحتاج إنترنت؟</summary><p>لا. يحتاج إنترنت بس إذا تريد يجيك تحديث جديد.</p></details>
+        <details><summary>أكدر أطبع الفواتير والقسائم؟</summary><p>نعم. الفواتير، عروض الأسعار، وصولات القبض، قسائم الرواتب والتقارير كلها جاهزة للطباعة.</p></details>
+        <details><summary>إذا بدّلت حاسبتي شلون أنقل بياناتي؟</summary><p>تاخذ نسخة احتياطية من الإعدادات، وتنصب البرنامج على الحاسبة الجديدة وترجع النسخة. كل شي يرجع مثل ما كان.</p></details>
+        <details><summary>شلون توصلني التحديثات؟</summary><p>البرنامج يبلغك لما يطلع إصدار جديد، وتحدّثه من داخله بضغطة بدون ما تفقد أي بيانات.</p></details>
         <details><summary>كيف أحصل على كود الاشتراك؟</summary><p>افتح الإعدادات ← الاشتراك، انسخ رمز شركتك وأرسله إلنا، ونرجعلك الكود.</p></details>
       </div>
     </div>
@@ -321,6 +419,65 @@
       requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
+  })();
+  (() => {
+    const sky = document.getElementById('sky');
+    if (!sky) return;
+    const I = {
+      hr: '<circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 7M21 20c0-2.6-1.7-4.9-4-5.7"/>',
+      invoice: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+      quote: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>',
+      bank: '<path d="M3 10 12 4l9 6M5 10v9m4-9v9m6-9v9m4-9v9M3 21h18"/>',
+      reports: '<path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/>',
+      projects: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+      team: '<circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M2.5 20c0-3 2.5-5.5 5.5-5.5s5.5 2.5 5.5 5.5M14.5 20c0-2.2 1.2-4 3-4.6"/>',
+      company: '<path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M8 7h4M8 11h4M8 15h4M2 21h20"/>',
+      shield: '<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+      wallet: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14.5h2"/>',
+      receipt: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+      calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+      pie: '<path d="M11 4a8 8 0 1 0 9 9h-9z"/><path d="M14 3v7h7a7 7 0 0 0-7-7z"/>'
+    };
+    // [icon, color, tint, x%, y%, depth 0..1]
+    const L = [
+      ['hr', '#6d4fe0', '#ece6ff', 6, 14, 1], ['invoice', '#1570ef', '#e3eefe', 92, 10, .9],
+      ['reports', '#2f9e44', '#e2f4e6', 90, 46, 1], ['bank', '#c86b00', '#fff0db', 4, 52, .8],
+      ['quote', '#0e9f9a', '#ddf5f3', 13, 82, .6], ['projects', '#e8590c', '#ffe9dc', 84, 80, .7],
+      ['team', '#d6336c', '#ffe3ec', 20, 32, .45], ['wallet', '#c86b00', '#fff0db', 79, 24, .5],
+      ['receipt', '#1570ef', '#e3eefe', 97, 68, .4], ['calendar', '#0e9f9a', '#ddf5f3', 1, 72, .45],
+      ['company', '#475569', '#e9edf2', 72, 60, .35], ['shield', '#2f9e44', '#e2f4e6', 27, 64, .35],
+      ['pie', '#6d4fe0', '#ece6ff', 66, 6, .35]
+    ];
+    const phone = matchMedia('(max-width: 640px)').matches;
+    const list = (phone ? L.filter(l => l[5] >= .6) : L).map((l, i) => {
+      const [k, c, t, x, y, d] = l;
+      const el = document.createElement('div');
+      el.className = 'fly';
+      const s = Math.round((phone ? 34 : 44) + d * (phone ? 14 : 30));
+      el.style.cssText = `--s:${s}px;--c:${c};--t:${t};opacity:${(.45 + d * .55).toFixed(2)}`;
+      el.innerHTML = `<div class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${I[k]}</svg></div>`;
+      sky.appendChild(el);
+      return { el, x: x / 100, y: y / 100, d, s, ph: i * 1.7, sp: .6 + (i % 4) * .15 };
+    });
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let mx = 0, my = 0, sx = 0, sy = 0;
+    addEventListener('pointermove', e => { if (e.pointerType !== 'touch') { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; } }, { passive: true });
+    const draw = t => {
+      const w = innerWidth, h = innerHeight, span = h + 160, sc = scrollY;
+      sx += (mx - sx) * .05; sy += (my - sy) * .05;
+      for (const f of list) {
+        const k = t / 1000 * f.sp + f.ph;
+        const bob = still ? 0 : Math.sin(k) * 14 * f.d;
+        let y = f.y * h - sc * (.12 + f.d * .28) + bob - sy * 30 * f.d;
+        y = ((y + 80) % span + span) % span - 80;
+        const x = f.x * w - f.s / 2 + (still ? 0 : Math.cos(k * .8) * 10 * f.d) - sx * 40 * f.d;
+        const rz = still ? 0 : Math.sin(k * .7) * 10, rx = still ? 0 : Math.cos(k) * 14 + sy * 20, ry = still ? 0 : Math.sin(k * .9) * 16 + sx * 24;
+        f.el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) perspective(400px) rotateX(${rx.toFixed(1)}deg) rotateY(${ry.toFixed(1)}deg) rotate(${rz.toFixed(1)}deg)`;
+      }
+      if (!still) requestAnimationFrame(draw);
+    };
+    if (still) { draw(0); addEventListener('scroll', () => draw(0), { passive: true }); addEventListener('resize', () => draw(0)); }
+    else requestAnimationFrame(draw);
   })();
   document.getElementById('y').textContent = new Date().getFullYear();
   const hd = document.querySelector('header');
