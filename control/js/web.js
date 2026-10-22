@@ -147,9 +147,10 @@
       await be.signOut(); location.reload(); return null;
     }
 
-    const out = document.createElement('button'); out.className = 'gw-out'; out.type = 'button'; out.textContent = 'تسجيل خروج';
+    const out = document.createElement('button'); out.type = 'button'; out.textContent = 'تسجيل خروج';
     out.onclick = async () => { await be.signOut(); location.reload(); };
-    document.body.append(out);
+    const foot = document.querySelector('.railfoot');
+    if (foot) { out.className = 'ghost sm'; out.style.paddingInline = '0'; foot.append(out); } else { out.className = 'gw-out'; document.body.append(out); }
 
     const rows = new Map(); // path -> data
     const subs = new Set();

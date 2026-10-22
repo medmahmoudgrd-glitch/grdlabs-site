@@ -391,7 +391,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
       h('div', { class: 'health' }, h('div', { class: 'ring ' + (newFaults ? 'bad' : 'ok') }, newFaults ? '!' : '✓'), h('div', {},
         h('b', {}, newFaults ? newFaults + ' عطل جديد من الزبائن' : 'ما في أعطال جديدة من الزبائن'),
         h('p', { class: 'note' }, S.reports.length ? 'من ' + S.reports.length + ' تقرير مستلم.' : 'تظهر هنا لما تلصق تقرير زبون بصفحة الأعطال.'))),
-      old.length ? h('div', { class: 'health' }, h('div', { class: 'ring bad' }, old.length), h('div', {}, h('b', {}, 'شركات على إصدار قديم'), h('p', { class: 'note' }, old.map(c => c.name || c.code).join('، ')))) : null
+      ...(old.length ? [h('div', { class: 'health' }, h('div', { class: 'ring bad' }, old.length), h('div', {}, h('b', {}, 'شركات على إصدار قديم'), h('p', { class: 'note' }, old.map(c => c.name || c.code).join('، '))))] : [])
     );
     // attention
     const att = $('attention'); att.replaceChildren();
@@ -617,7 +617,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
 
   // ---------- sheet ----------
   function sheet(title, ...body) {
-    const s = $('sheet'); s.replaceChildren(h('div', { class: 'sheet-h' }, h('h2', { id: 'sheetTitle' }, title), h('button', { type: 'button', onclick: closeSheet }, 'إغلاق')), ...body);
+    const s = $('sheet'); s.replaceChildren(h('div', { class: 'sheet-h' }, h('h2', { id: 'sheetTitle' }, title), h('button', { type: 'button', onclick: closeSheet }, 'إغلاق')), ...body.filter(x => x != null && x !== false));
     $('scrim').hidden = false; s.hidden = false;
     setTimeout(() => s.querySelector('input:not([readonly]),select')?.focus(), 30);
   }
