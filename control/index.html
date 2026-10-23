@@ -180,7 +180,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
         <button class="card kpi t-ok" type="button" data-go="companies:active"><small>مفتوحة</small><strong id="k-active">0</strong><em>تعمل الآن</em></button>
         <button class="card kpi t-warn" type="button" data-go="companies:soon"><small>تنتهي خلال 7 أيام</small><strong id="k-soon">0</strong><em>تحتاج تجديد</em></button>
         <button class="card kpi t-bad" type="button" data-go="companies:expired"><small>منتهية</small><strong id="k-expired">0</strong><em>متوقفة عند الزبون</em></button>
-        <button class="card kpi" type="button" data-go="payments"><small>إيراد هذا الشهر</small><strong id="k-rev">0</strong><em id="k-rev-sub">د.ع</em></button>
+        <button class="card kpi" type="button" data-go="payments"><small>إيراد هذا الشهر</small><strong id="k-rev">0</strong><em id="k-rev-sub">دولار</em></button>
         <button class="card kpi" type="button" data-go="faults"><small>أعطال جديدة</small><strong id="k-faults">0</strong><em id="k-faults-sub">من تقارير الزبائن</em></button>
       </div>
       <div class="two">
@@ -218,16 +218,17 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
 
     <!-- Plans -->
     <section class="page" id="p-plans" data-title="الباقات" hidden>
-      <div class="head"><div><h1>الباقات</h1><p>الباقة تحدد المدة والسعر والميزات الافتراضية. تختارها للشركة وتعدّل عليها إذا تحتاج.</p></div><button class="primary" type="button" id="newPlan">باقة جديدة</button></div>
+      <div class="head"><div><h1>الباقات</h1><p>الباقة تحدد المدة والسعر والميزات الافتراضية. تختارها للشركة وتعدّل عليها إذا تحتاج.</p></div><div class="row"><button type="button" id="seedPlans">إضافة الباقات المقترحة</button><button class="primary" type="button" id="newPlan">باقة جديدة</button></div></div>
       <div class="three" id="plansGrid"></div>
+      <div class="card"><div class="card-h"><h2>أسعار الإضافات (بالشهر)</h2></div><div class="card-b sub" id="addonPrices"></div></div>
     </section>
 
     <!-- Payments -->
     <section class="page" id="p-payments" data-title="المدفوعات" hidden>
       <div class="head"><div><h1>المدفوعات</h1><p>كل مبلغ تسجّله عند إصدار كود، أو تضيفه يدوياً.</p></div><button class="primary" type="button" id="newPay">تسجيل دفعة</button></div>
       <div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-        <div class="card kpi" style="cursor:default"><small>هذا الشهر</small><strong id="pay-month">0</strong><em>د.ع</em></div>
-        <div class="card kpi" style="cursor:default"><small>هذه السنة</small><strong id="pay-year">0</strong><em>د.ع</em></div>
+        <div class="card kpi" style="cursor:default"><small>هذا الشهر</small><strong id="pay-month">0</strong><em>دولار</em></div>
+        <div class="card kpi" style="cursor:default"><small>هذه السنة</small><strong id="pay-year">0</strong><em>دولار</em></div>
         <div class="card kpi" style="cursor:default"><small>عدد الدفعات</small><strong id="pay-count">0</strong><em>كل الفترات</em></div>
       </div>
       <div class="card">
@@ -295,6 +296,21 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
   const LATEST = '1.8.0';
   const FEATURES = [['quotes','عروض الأسعار'],['expenses','المصروفات'],['projects','المشاريع'],['contracts','العقود الشهرية'],['hr','الموارد البشرية'],['journal','دليل الحسابات والقيود'],['reports','التقارير'],['team','الفريق والدعوات']];
   const FEAT_AR = Object.fromEntries(FEATURES);
+  // Monthly add-on prices in dollars. An annual code pays 10 months for 12, the same as the plans.
+  const ADDONS = { hr: 20, hrEmployees: 10, employee: 2.5, user: 5, company: 10 };
+  const SUGGESTED_PLANS = [
+    { id: 'basic-1', name: 'أساسي شهري', months: 1, price: 37, off: ['quotes', 'expenses', 'projects', 'contracts', 'hr', 'team'], users: 1, employees: null },
+    { id: 'standard-1', name: 'ستاندر شهري', months: 1, price: 55, off: ['expenses', 'hr'], users: 3, employees: null },
+    { id: 'advanced-1', name: 'متقدم شهري', months: 1, price: 99, off: [], users: 5, employees: 10 },
+    { id: 'basic-12', name: 'أساسي سنوي', months: 12, price: 370, off: ['quotes', 'expenses', 'projects', 'contracts', 'hr', 'team'], users: 1, employees: null },
+    { id: 'standard-12', name: 'ستاندر سنوي', months: 12, price: 550, off: ['expenses', 'hr'], users: 3, employees: null },
+    { id: 'advanced-12', name: 'متقدم سنوي', months: 12, price: 990, off: [], users: 5, employees: 10 },
+  ];
+  const billedMonths = (months) => months === 12 ? 10 : months === 24 ? 20 : (months || 1);
+  // Empty means no limit; the app only enforces whole numbers from 1 up.
+  const limitVal = (inp) => { const n = Math.floor(Number(inp.value)); return inp.value.trim() && n >= 1 ? Math.min(n, 100000) : null; };
+  const limitInput = (id, v) => { const i = h('input', { id, type: 'number', min: '1', step: '1', inputmode: 'numeric', placeholder: 'بلا حد' }); i.value = v ?? ''; return i; };
+  const limitsStr = (x) => [x.users ? x.users + ' مستخدم' : '', x.employees ? x.employees + ' موظف' : ''].filter(Boolean).join(' · ');
   const CODE_RE = /^[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}$/;
   const PAGES = ['overview','companies','plans','payments','faults','keys'];
   const STATE_AR = { active: 'مفتوح', soon: 'قريب الانتهاء', expired: 'منتهي', suspended: 'مغلق' };
@@ -312,7 +328,8 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
     return el;
   }
   const toast = (t) => { const el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, 2600); };
-  const money = (n) => new Intl.NumberFormat('en-US').format(Math.round(n || 0));
+  const money = (n) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(Math.round((n || 0) * 100) / 100);
+  const usd = (n) => '$' + money(n);
   const dayStr = (iso) => iso ? new Date(iso).toLocaleDateString('ar-IQ', { year: 'numeric', month: 'short', day: 'numeric' }) : 'بلا انتهاء';
   const whenStr = (iso) => new Date(iso).toLocaleString('ar-IQ', { dateStyle: 'medium', timeStyle: 'short' });
   const monthKey = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
@@ -381,7 +398,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
     for (let i = 5; i >= 0; i--) { const m = new Date(d.getFullYear(), d.getMonth() - i, 1); months.push({ k: monthKey(m), label: m.toLocaleDateString('ar-IQ', { month: 'short' }), v: 0 }); }
     for (const p of S.payments) { const m = months.find(x => x.k === monthKey(new Date(p.at))); if (m) m.v += p.amount || 0; }
     const total = months.reduce((a, m) => a + m.v, 0);
-    $('rev-total').textContent = total ? money(total) + ' د.ع' : '';
+    $('rev-total').textContent = total ? usd(total) : '';
     $('rev-chart').replaceChildren(revenueChart(months));
     // health
     const box = $('health'); box.replaceChildren();
@@ -461,19 +478,31 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
   document.querySelectorAll('#chips .chip').forEach(b => b.addEventListener('click', () => { S.filter = b.dataset.f; render(); }));
 
   function renderPlans() {
+    $('addonPrices').replaceChildren(
+      h('div', {}, 'الموارد البشرية والرواتب والحضور: ' + usd(ADDONS.hr) + '، وتشمل ' + ADDONS.hrEmployees + ' موظفين'),
+      h('div', {}, 'كل موظف فوق الحد: ' + usd(ADDONS.employee)),
+      h('div', {}, 'كل مستخدم فوق حد الباقة: ' + usd(ADDONS.user)),
+      h('div', {}, 'شركة أو فرع إضافي لنفس الزبون: ' + usd(ADDONS.company) + ' بدل سعر الباقة'),
+      h('div', {}, 'بالسنوي يدفع 10 أشهر عن 12، للباقة وللإضافات.'));
     const g = $('plansGrid'); g.replaceChildren();
     if (!S.plans.length) g.append(h('div', { class: 'card empty', style: 'padding:20px' }, h('b', {}, 'ما في باقات.'), 'أضف باقة مثل «شهري» أو «سنوي» حتى تختارها بسرعة عند إصدار الأكواد.'));
     const used = (p) => S.companies.filter(c => c.planId === p.id && state(c) !== 'expired' && state(c) !== 'suspended').length;
     for (const p of [...S.plans].sort((a, b) => (a.months || 999) - (b.months || 999))) {
       g.append(h('button', { class: 'card plan', type: 'button', onclick: () => openPlan(p) },
         h('h3', {}, p.name),
-        h('div', { class: 'price' }, p.price ? money(p.price) + ' د.ع' : h('span', { class: 'sub' }, 'بدون سعر')),
+        h('div', { class: 'price' }, p.price ? usd(p.price) : h('span', { class: 'sub' }, 'بدون سعر')),
         h('div', { class: 'sub' }, p.months ? 'المدة ' + p.months + (p.months === 1 ? ' شهر' : p.months <= 10 ? ' أشهر' : ' شهر') : 'مدى الحياة'),
         h('div', { class: 'sub' }, (p.off || []).length ? 'مطفأ: ' + p.off.map(f => FEAT_AR[f]).join('، ') : 'كل الميزات'),
+        limitsStr(p) ? h('div', { class: 'sub' }, 'الحد: ' + limitsStr(p)) : null,
         h('div', { class: 'sub' }, used(p) + ' شركة مفتوحة عليها')));
     }
   }
   $('newPlan').addEventListener('click', () => openPlan(null));
+  $('seedPlans').addEventListener('click', async () => {
+    const missing = SUGGESTED_PLANS.filter(p => !S.plans.some(x => x.id === p.id));
+    if (!missing.length) return toast('الباقات المقترحة موجودة');
+    await write(async () => { for (const p of missing) await S.db.doc('plans/' + p.id).set(p); }, 'انضافت ' + missing.length + ' باقات');
+  });
 
   function renderPayments() {
     const now = new Date(), m = monthKey(now), y = String(now.getFullYear());
@@ -488,7 +517,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
         h('td', {}, h('span', { class: 'num' }, dayStr(p.at))),
         h('td', {}, h('div', { class: 'name' }, c?.name || p.name || p.code), h('div', { class: 'sub code' }, p.code)),
         h('td', {}, p.plan || '—'),
-        h('td', {}, h('b', { class: 'num' }, money(p.amount) + ' د.ع')),
+        h('td', {}, h('b', { class: 'num' }, usd(p.amount))),
         h('td', {}, h('span', { class: 'sub' }, p.note || '')),
         h('td', {}, h('button', { class: 'ghost sm', type: 'button', onclick: () => openPayment(p) }, 'تعديل'))));
     }
@@ -639,29 +668,57 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
   // Company
   document.querySelectorAll('[data-new-company]').forEach(b => b.addEventListener('click', () => { if (!S.db) return toast('السجل غير متاح هنا'); openCompany(null); }));
   function openCompany(c, opts = {}) {
-    const f = c ? { ...c, off: [...(c.off || [])] } : { code: '', name: '', contact: '', note: '', plan: '', planId: '', status: 'active', message: '', expiresAt: null, off: [], issued: [] };
+    const f = c ? { ...c, off: [...(c.off || [])] } : { code: '', name: '', contact: '', note: '', plan: '', planId: '', status: 'active', message: '', expiresAt: null, off: [], issued: [], users: null, employees: null, extra: false };
+    const users = limitInput('f-users', f.users), employees = limitInput('f-employees', f.employees);
+    const extra = h('input', { type: 'checkbox', id: 'f-extra' }); extra.checked = !!f.extra;
+    const priceNote = h('p', { class: 'note', id: 'f-price-note' });
     const plans = [...S.plans].sort((a, b) => (a.months || 999) - (b.months || 999));
     const code = h('input', { id: 'f-code', class: 'code', placeholder: 'A1B2-C3D4-E5F6', autocomplete: 'off', spellcheck: 'false' }); code.value = f.code; code.readOnly = !!c;
     const name = h('input', { id: 'f-name', autocomplete: 'off' }); name.value = f.name || '';
     const contact = h('input', { id: 'f-contact', dir: 'auto', autocomplete: 'off' }); contact.value = f.contact || '';
     const note = h('textarea', { id: 'f-note', rows: '2' }); note.value = f.note || '';
-    const plan = h('select', { id: 'f-plan' }, h('option', { value: '' }, 'بدون باقة (مخصص)'), plans.map(p => h('option', { value: p.id }, p.name + (p.price ? ' · ' + money(p.price) + ' د.ع' : ''))));
+    const plan = h('select', { id: 'f-plan' }, h('option', { value: '' }, 'بدون باقة (مخصص)'), plans.map(p => h('option', { value: p.id }, p.name + (p.price ? ' · ' + usd(p.price) : ''))));
     plan.value = plans.some(p => p.id === f.planId) ? f.planId : '';
     const exp = h('input', { id: 'f-exp', type: 'date' }); exp.value = f.expiresAt ? f.expiresAt.slice(0, 10) : '';
-    const amount = h('input', { id: 'f-amount', type: 'number', min: '0', step: '1000', inputmode: 'numeric', placeholder: '0' });
+    const amount = h('input', { id: 'f-amount', type: 'number', min: '0', step: '0.5', inputmode: 'decimal', placeholder: '0' });
     const msg = h('input', { id: 'f-message', placeholder: 'حساب هذه الشركة موقوف. تواصل مع Grdlabs لإعادة تفعيله.' }); msg.value = f.message || '';
     const msgWrap = field('الرسالة اللي تطلع للزبون', msg);
     const bOpen = h('button', { type: 'button' }, 'مفتوح'), bShut = h('button', { type: 'button', class: 'stop' }, 'مغلق');
     const setStatus = (s) => { f.status = s; bOpen.setAttribute('aria-pressed', String(s === 'active')); bShut.setAttribute('aria-pressed', String(s === 'suspended')); msgWrap.hidden = s !== 'suspended'; };
     bOpen.onclick = () => setStatus('active'); bShut.onclick = () => setStatus('suspended');
     const switches = h('div', {}, featureSwitches(f.off));
+    // Suggested amount: the plan (or the extra-company price) plus add-ons beyond what the plan includes.
+    const quote = () => {
+      const p = S.plans.find(x => x.id === plan.value);
+      if (!p) { priceNote.textContent = ''; return null; }
+      const m = billedMonths(p.months), parts = [];
+      let total = extra.checked ? ADDONS.company * m : (p.price || 0);
+      parts.push(extra.checked ? 'شركة إضافية ' + usd(ADDONS.company * m) : p.name + ' ' + usd(p.price || 0));
+      const hrOn = !f.off.includes('hr');
+      if (hrOn && (p.off || []).includes('hr')) { total += ADDONS.hr * m; parts.push('الموارد البشرية ' + usd(ADDONS.hr * m)); }
+      const inc = (p.off || []).includes('hr') ? ADDONS.hrEmployees : (p.employees || ADDONS.hrEmployees), w = limitVal(employees);
+      if (hrOn && w && w > inc) { const x = (w - inc) * ADDONS.employee * m; total += x; parts.push((w - inc) + ' موظف إضافي ' + usd(x)); }
+      const u = limitVal(users);
+      if (p.users && u && u > p.users) { const x = (u - p.users) * ADDONS.user * m; total += x; parts.push((u - p.users) + ' مستخدم إضافي ' + usd(x)); }
+      priceNote.textContent = 'المبلغ المقترح ' + usd(total) + ' = ' + parts.join(' + ') + (p.months > 1 ? ' (عن ' + p.months + ' شهر)' : '');
+      return total;
+    };
+    const requote = () => { const t = quote(); if (t !== null) amount.value = t; };
     const applyPlan = () => {
-      const p = S.plans.find(x => x.id === plan.value); if (!p) return;
+      const p = S.plans.find(x => x.id === plan.value); if (!p) { quote(); return; }
       f.off.splice(0, f.off.length, ...(p.off || [])); switches.replaceChildren(featureSwitches(f.off));
       exp.value = p.months ? addMonths(f.expiresAt, p.months) : '';
-      if (p.price) amount.value = p.price;
+      users.value = p.users ?? ''; employees.value = p.employees ?? '';
+      requote();
     };
     plan.addEventListener('change', applyPlan);
+    switches.addEventListener('change', () => {
+      // Switching HR on over a plan without it starts at the add-on's included employees.
+      const p = S.plans.find(x => x.id === plan.value);
+      if (p && !f.off.includes('hr') && (p.off || []).includes('hr') && !employees.value) employees.value = ADDONS.hrEmployees;
+      requote();
+    });
+    for (const el of [users, employees, extra]) el.addEventListener(el === extra ? 'change' : 'input', requote);
     const quick = h('div', { class: 'quick' }, [[1, '+ شهر'], [3, '+ 3 أشهر'], [6, '+ 6 أشهر'], [12, '+ سنة'], [0, 'بلا انتهاء']].map(([n, t]) =>
       h('button', { type: 'button', class: 'sm', onclick: () => { exp.value = n ? addMonths(exp.value ? exp.value + 'T12:00:00' : null, n) : ''; } }, t)));
     const out = h('textarea', { class: 'mono-box', readonly: true, id: 'outCode' });
@@ -683,17 +740,17 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
       if (!CODE_RE.test(cc)) return toast('رمز الشركة لازم يكون مثل A1B2-C3D4-E5F6.');
       if (!c && S.companies.some(x => x.code === cc)) return toast('هذي الشركة موجودة. افتحها من القائمة.');
       const p = S.plans.find(x => x.id === plan.value);
-      Object.assign(f, { code: cc, name: name.value.trim().slice(0, 160), contact: contact.value.trim().slice(0, 80), note: note.value.trim().slice(0, 500),
+      Object.assign(f, { users: limitVal(users), employees: limitVal(employees), extra: extra.checked, code: cc, name: name.value.trim().slice(0, 160), contact: contact.value.trim().slice(0, 80), note: note.value.trim().slice(0, 500),
         planId: p ? p.id : '', plan: p ? p.name : (f.status === 'suspended' ? f.plan : (exp.value ? 'مخصص' : 'مدى الحياة')), message: msg.value.trim().slice(0, 300),
         // End of the chosen day, Baghdad time, so a code "until the 5th" works all day on the 5th.
         expiresAt: exp.value ? new Date(exp.value + 'T23:59:59+03:00').toISOString() : null });
       const now = new Date().toISOString();
       let license = null;
       if (issue) { try { license = sign(f, now); } catch (e) { return toast(e.message); } }
-      const paid = Math.max(0, Math.round(Number(amount.value) || 0));
-      const doc = { code: f.code, name: f.name, contact: f.contact, note: f.note, plan: f.plan, planId: f.planId, status: f.status, message: f.message, expiresAt: f.expiresAt, off: [...f.off],
+      const paid = Math.max(0, Math.round((Number(amount.value) || 0) * 100) / 100);
+      const doc = { code: f.code, name: f.name, contact: f.contact, note: f.note, plan: f.plan, planId: f.planId, status: f.status, message: f.message, expiresAt: f.expiresAt, off: [...f.off], users: f.users, employees: f.employees, extra: f.extra,
         createdAt: f.createdAt || now, updatedAt: now,
-        issued: issue ? [...(f.issued || []), { at: now, plan: f.plan, status: f.status, expiresAt: f.expiresAt, off: [...f.off], license, amount: paid || undefined }].slice(-15) : (f.issued || []) };
+        issued: issue ? [...(f.issued || []), { at: now, plan: f.plan, status: f.status, expiresAt: f.expiresAt, off: [...f.off], users: f.users, employees: f.employees, license, amount: paid || undefined }].slice(-15) : (f.issued || []) };
       issueBtn.disabled = saveBtn.disabled = true;
       const ok = await write(async () => {
         await S.db.doc('companies/' + f.code).set(doc);
@@ -709,14 +766,19 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
       card(null, field('رمز الشركة (من تطبيق الزبون)', code), h('div', { class: 'grid2' }, field('اسم الشركة', name), field('رقم أو جهة التواصل', contact)), field('ملاحظة لك', note),
         r ? h('p', { class: 'note' }, 'آخر تقرير: إصدار ' + r.app + ' · ' + (OS_AR[r.os] || r.os) + ' · ' + ((r.faults || []).length ? r.faults.length + ' عطل' : 'بدون أعطال')) : null),
       card('الحساب', h('div', { class: 'seg', role: 'group', 'aria-label': 'حالة الحساب' }, bOpen, bShut), msgWrap,
-        h('div', { class: 'grid2' }, field('الباقة', plan), field('ينتهي بتاريخ', exp)), quick, field('المبلغ المستلم (د.ع)، يتسجّل كدفعة مع الكود', amount)),
+        h('div', { class: 'grid2' }, field('الباقة', plan), field('ينتهي بتاريخ', exp)), quick, field('المبلغ المستلم بالدولار، يتسجّل كدفعة مع الكود', amount), priceNote),
       card('الميزات', switches, h('p', { class: 'note' }, 'الزبائن والفواتير والدفعات والإعدادات دائماً مفتوحة. إطفاء ميزة ما يحذف بياناتها؛ ترجع لما تشغّلها.')),
+      card('الحدود', h('div', { class: 'grid2' }, field('أقصى عدد مستخدمين', users), field('أقصى عدد موظفين', employees)),
+        h('label', { class: 'feat' }, h('span', {}, 'شركة أو فرع إضافي لنفس الزبون (' + usd(ADDONS.company) + ' بالشهر بدل سعر الباقة)'), h('span', { class: 'switch' }, extra, h('span', {}))),
+        h('p', { class: 'note' }, 'فارغ يعني بلا حد. إذا وصل الزبون الحد ما يگدر يضيف جديد، بس يعدّل الموجودين. يحتاج نسخة 1.9.1 أو أحدث عند الزبون.')),
       h('div', { class: 'row' }, issueBtn, saveBtn), outCard, hist,
       c ? h('div', {}, h('button', { type: 'button', class: 'danger', onclick: () => conf.hidden = false }, 'حذف من اللوحة'), conf) : null);
     setStatus(f.status || 'active');
+    quote();
     if (opts.renew) {
       const p = S.plans.find(x => x.id === f.planId);
-      exp.value = addMonths(f.expiresAt, p?.months || 1); if (p?.price) amount.value = p.price; setStatus('active');
+      exp.value = addMonths(f.expiresAt, p?.months || 1); setStatus('active');
+      const t = quote(); if (t !== null) amount.value = t; else if (p?.price) amount.value = p.price;
     }
   }
   function customerMessage(f, code) {
@@ -727,18 +789,20 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
 
   // Plan
   function openPlan(p) {
-    const f = p ? { ...p, off: [...(p.off || [])] } : { id: uid(), name: '', months: 1, price: 0, off: [] };
+    const f = p ? { ...p, off: [...(p.off || [])] } : { id: uid(), name: '', months: 1, price: 0, off: [], users: null, employees: null };
+    const users = limitInput('pl-users', f.users), employees = limitInput('pl-employees', f.employees);
     const name = h('input', { id: 'pl-name', placeholder: 'مثل: سنوي' }); name.value = f.name;
     const months = h('select', { id: 'pl-months' }, [[1, 'شهر'], [3, '3 أشهر'], [6, '6 أشهر'], [12, 'سنة'], [24, 'سنتين'], [0, 'مدى الحياة']].map(([v, t]) => h('option', { value: v }, t))); months.value = String(f.months ?? 1);
-    const price = h('input', { id: 'pl-price', type: 'number', min: '0', step: '1000', inputmode: 'numeric' }); price.value = f.price || '';
+    const price = h('input', { id: 'pl-price', type: 'number', min: '0', step: '0.5', inputmode: 'decimal' }); price.value = f.price || '';
     const conf = h('div', { class: 'confirm', hidden: true }, h('span', {}, 'تنحذف الباقة من القائمة فقط. الشركات اللي عليها تبقى كما هي.'),
       h('div', { class: 'row' }, h('button', { type: 'button', class: 'danger', onclick: async () => { if (await write(() => S.db.doc('plans/' + f.id).delete(), 'انحذفت الباقة')) closeSheet(); } }, 'نعم، احذف'), h('button', { type: 'button', onclick: () => conf.hidden = true }, 'تراجع')));
     sheet(p ? p.name : 'باقة جديدة',
-      card(null, field('اسم الباقة', name), h('div', { class: 'grid2' }, field('المدة', months), field('السعر (د.ع)', price))),
+      card(null, field('اسم الباقة', name), h('div', { class: 'grid2' }, field('المدة', months), field('السعر بالدولار', price))),
       card('الميزات المفتوحة بهذي الباقة', featureSwitches(f.off)),
+      card('الحدود', h('div', { class: 'grid2' }, field('أقصى عدد مستخدمين', users), field('أقصى عدد موظفين', employees)), h('p', { class: 'note' }, 'فارغ يعني بلا حد. المستخدمون هم حسابات الدخول للبرنامج مع المدير، والموظفون هم موظفين الرواتب والحضور.')),
       h('div', { class: 'row' }, h('button', { type: 'button', class: 'primary', onclick: async () => {
         const n = name.value.trim().slice(0, 60); if (!n) return toast('اكتب اسم الباقة');
-        if (await write(() => S.db.doc('plans/' + f.id).set({ id: f.id, name: n, months: Number(months.value), price: Math.max(0, Math.round(Number(price.value) || 0)), off: [...f.off] }), 'انحفظت الباقة')) closeSheet();
+        if (await write(() => S.db.doc('plans/' + f.id).set({ id: f.id, name: n, months: Number(months.value), price: Math.max(0, Math.round((Number(price.value) || 0) * 100) / 100), off: [...f.off], users: limitVal(users), employees: limitVal(employees) }), 'انحفظت الباقة')) closeSheet();
       } }, 'حفظ الباقة'), p ? h('button', { type: 'button', class: 'danger', onclick: () => conf.hidden = false }, 'حذف') : null), conf);
   }
 
@@ -747,15 +811,15 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
     const f = p ? { ...p } : { id: uid(), code: '', amount: 0, plan: '', at: new Date().toISOString(), note: '' };
     const co = h('select', { id: 'py-co' }, h('option', { value: '' }, 'اختر الشركة'), [...S.companies].sort((a, b) => String(a.name).localeCompare(String(b.name), 'ar')).map(c => h('option', { value: c.code }, (c.name || c.code))));
     co.value = f.code;
-    const amount = h('input', { id: 'py-amount', type: 'number', min: '0', step: '1000', inputmode: 'numeric' }); amount.value = f.amount || '';
+    const amount = h('input', { id: 'py-amount', type: 'number', min: '0', step: '0.5', inputmode: 'decimal' }); amount.value = f.amount || '';
     const date = h('input', { id: 'py-date', type: 'date' }); date.value = f.at.slice(0, 10);
     const note = h('input', { id: 'py-note' }); note.value = f.note || '';
     const conf = h('div', { class: 'confirm', hidden: true }, h('span', {}, 'تنحذف الدفعة من السجل والإيراد.'),
       h('div', { class: 'row' }, h('button', { type: 'button', class: 'danger', onclick: async () => { if (await write(() => S.db.doc('payments/' + f.id).delete(), 'انحذفت الدفعة')) closeSheet(); } }, 'نعم، احذف'), h('button', { type: 'button', onclick: () => conf.hidden = true }, 'تراجع')));
     sheet(p ? 'تعديل دفعة' : 'تسجيل دفعة',
-      card(null, field('الشركة', co), h('div', { class: 'grid2' }, field('المبلغ (د.ع)', amount), field('التاريخ', date)), field('ملاحظة', note)),
+      card(null, field('الشركة', co), h('div', { class: 'grid2' }, field('المبلغ بالدولار', amount), field('التاريخ', date)), field('ملاحظة', note)),
       h('div', { class: 'row' }, h('button', { type: 'button', class: 'primary', onclick: async () => {
-        const c = S.companies.find(x => x.code === co.value); const a = Math.round(Number(amount.value) || 0);
+        const c = S.companies.find(x => x.code === co.value); const a = Math.round((Number(amount.value) || 0) * 100) / 100;
         if (!c) return toast('اختر الشركة'); if (a <= 0) return toast('اكتب المبلغ');
         if (await write(() => S.db.doc('payments/' + f.id).set({ id: f.id, code: c.code, name: c.name, amount: a, plan: f.plan || c.plan || '', at: new Date(date.value + 'T12:00:00+03:00').toISOString(), note: note.value.trim().slice(0, 200) }), 'انحفظت الدفعة')) closeSheet();
       } }, 'حفظ'), p ? h('button', { type: 'button', class: 'danger', onclick: () => conf.hidden = false }, 'حذف') : null), conf);
@@ -768,7 +832,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
   const fromB64 = (s) => Uint8Array.from(atob(s), ch => ch.charCodeAt(0));
   function sign(c, issuedAt) {
     if (!S.key || !window.nacl) throw new Error('مفتاح التوقيع غير متاح، ما أكدر أطلّع كود.');
-    const payload = { v: 1, c: c.code, n: c.name || undefined, p: c.plan, s: c.status, e: c.expiresAt, off: c.off.length ? c.off : undefined, m: c.status === 'suspended' && c.message ? c.message : undefined, i: issuedAt };
+    const payload = { v: 1, c: c.code, n: c.name || undefined, p: c.plan, s: c.status, e: c.expiresAt, off: c.off.length ? c.off : undefined, m: c.status === 'suspended' && c.message ? c.message : undefined, i: issuedAt, u: c.users || undefined, w: c.employees || undefined };
     const body = new TextEncoder().encode(JSON.stringify(payload));
     return 'GRDL.' + b64url(body) + '.' + b64url(nacl.sign.detached(body, nacl.sign.keyPair.fromSeed(fromB64(S.key.seed)).secretKey));
   }
