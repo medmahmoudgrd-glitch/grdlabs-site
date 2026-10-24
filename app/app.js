@@ -119,6 +119,15 @@
       if (p.length < 6) { err.textContent = 'كلمة السر لازم تكون 6 أحرف أو أكثر.'; pass.focus(); return null; }
       err.textContent = ''; return { email: e, pass: p };
     };
+    // Enter on the email moves to the password; Enter on the password presses this card's main button.
+    email.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); pass.focus(); } });
+    pass.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || e.isComposing) return;
+      e.preventDefault();
+      if (!email.value.trim()) return email.focus();
+      const b = pass.closest('.card') && pass.closest('.card').querySelector('.btn.primary:not([disabled])');
+      if (b) b.click();
+    });
     const node = h('div', { class: 'fields' },
       h('label', {}, h('span', {}, 'الإيميل'), email),
       h('label', {}, h('span', {}, mode === 'login' ? 'كلمة السر' : 'اختار كلمة سر (6 أحرف أو أكثر)'), pass), err);

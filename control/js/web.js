@@ -41,7 +41,9 @@
       form.onsubmit = async (e) => {
         e.preventDefault(); err.textContent = '';
         const values = inputs.map(i => i.value);
-        if (values.some(v => !v.trim())) { err.textContent = 'عبّي كل الحقول.'; return; }
+        // Enter on a field with others still empty moves to the next empty one instead of complaining.
+        const empty = inputs.find(i => !i.value.trim());
+        if (empty) { empty.focus(); return; }
         go.disabled = true;
         try { const r = await (fields.check ? fields.check(values) : null); if (r) { err.textContent = r; go.disabled = false; return; } }
         catch (x) { err.textContent = String(x?.message || x); go.disabled = false; return; }
