@@ -164,6 +164,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
       <a href="#plans" data-page="plans"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg>الباقات</a>
       <a href="#payments" data-page="payments"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg>المدفوعات</a>
       <a href="#faults" data-page="faults"><svg viewBox="0 0 24 24"><path d="M12 3l9.5 17h-19L12 3z"/><path d="M12 10v4M12 17.5v.01"/></svg>الأعطال<span class="badge" id="faultBadge" hidden></span></a>
+      <a href="#otp" data-page="otp"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>أكواد التحقق</a>
       <a href="#keys" data-page="keys"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/></svg>المفتاح والأكواد</a>
     </nav>
     <div class="railfoot"><div><span class="dot" id="keydot"></span><span id="keytext">جارٍ فتح السجل…</span></div><div id="railver"></div></div>
@@ -252,6 +253,20 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
       <div class="card"><div class="card-h"><h2>التقارير</h2></div><div class="card-b"><div class="list" id="reports"></div></div></div>
     </section>
 
+    <!-- Email codes -->
+    <section class="page" id="p-otp" data-title="أكواد التحقق" hidden>
+      <div class="head"><div><h1>أكواد التحقق</h1><p>كل كود ينرسل للإيميل قبل إنشاء حساب: شركة جديدة ببرنامج الحاسبة، أو موظف بتطبيق الموظف.</p></div><button class="ghost" type="button" id="otpRefresh">تحديث</button></div>
+      <div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="card kpi" style="cursor:default"><small>انرسل اليوم</small><strong id="otp-today">—</strong><em id="otp-cap">من الحد اليومي</em></div>
+        <div class="card kpi" style="cursor:default"><small>تأكدت</small><strong id="otp-used">—</strong><em>من آخر 300 كود</em></div>
+        <div class="card kpi" style="cursor:default"><small>يندز من</small><strong id="otp-sender" style="font-size:15px;direction:ltr;text-align:right">—</strong><em id="otp-quota">&nbsp;</em></div>
+      </div>
+      <div class="card">
+        <div class="empty" id="otp-empty" style="padding:22px 20px"><b id="otp-empty-t">جارٍ التحميل…</b><span id="otp-empty-s"></span></div>
+        <div class="tbl" id="otp-table" hidden><table style="min-width:680px"><thead><tr><th>الوقت</th><th>الإيميل</th><th>السبب</th><th>الحالة</th><th>محاولات غلط</th><th></th></tr></thead><tbody id="otp-rows"></tbody></table></div>
+      </div>
+    </section>
+
     <!-- Keys -->
     <section class="page" id="p-keys" data-title="المفتاح والأكواد" hidden>
       <div class="head"><div><h1>المفتاح والأكواد</h1><p>كيف يشتغل الاشتراك، ونسخة احتياطية من مفتاح التوقيع.</p></div></div>
@@ -293,7 +308,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
 <script src="js/web.js"></script>
 <script>
 (() => {
-  const LATEST = '1.8.0';
+  const LATEST = '1.9.2';
   const FEATURES = [['quotes','عروض الأسعار'],['expenses','المصروفات'],['projects','المشاريع'],['contracts','العقود الشهرية'],['hr','الموارد البشرية'],['journal','دليل الحسابات والقيود'],['reports','التقارير'],['team','الفريق والدعوات']];
   const FEAT_AR = Object.fromEntries(FEATURES);
   // Monthly add-on prices in dollars. An annual code pays 10 months for 12, the same as the plans.
@@ -312,7 +327,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
   const limitInput = (id, v) => { const i = h('input', { id, type: 'number', min: '1', step: '1', inputmode: 'numeric', placeholder: 'بلا حد' }); i.value = v ?? ''; return i; };
   const limitsStr = (x) => [x.users ? x.users + ' مستخدم' : '', x.employees ? x.employees + ' موظف' : ''].filter(Boolean).join(' · ');
   const CODE_RE = /^[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}$/;
-  const PAGES = ['overview','companies','plans','payments','faults','keys'];
+  const PAGES = ['overview','companies','plans','payments','faults','otp','keys'];
   const STATE_AR = { active: 'مفتوح', soon: 'قريب الانتهاء', expired: 'منتهي', suspended: 'مغلق' };
   const $ = (id) => document.getElementById(id);
   const S = { db: null, downloads: null, key: null, companies: [], plans: [], payments: [], reports: [], page: 'overview', filter: 'all' };
@@ -357,6 +372,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
   function go(page) {
     if (!PAGES.includes(page)) page = 'overview';
     S.page = page;
+    if (page === 'otp') otpAt = 0;
     for (const p of PAGES) $('p-' + p).hidden = p !== page;
     document.querySelectorAll('#nav a').forEach(a => a.setAttribute('aria-current', a.dataset.page === page ? 'page' : 'false'));
     try { if (location.hash.slice(1) !== page) history.replaceState(null, '', '#' + page); } catch {}
@@ -383,6 +399,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
     if (S.page === 'payments') renderPayments();
     if (S.page === 'faults') renderFaults();
     if (S.page === 'keys') renderKeys();
+    if (S.page === 'otp') renderOtp();
   }
 
   function renderOverview(counts, monthRev, newFaults) {
@@ -585,6 +602,52 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
       msg.textContent = (doc.faults.length ? 'انحفظ التقرير: ' + doc.faults.length + ' عطل' : 'انحفظ التقرير: ما في أعطال') + ' · إصدار ' + doc.app + (known ? '' : ' · الشركة مو مسجّلة عندك بعد');
     }
   });
+
+  // ---------- email codes (served by the Apps Script in email-otp/, address in /otp.json) ----------
+  const OTP_STATUS = { sent: ['soon', 'انرسل'], used: ['active', 'تأكد'], expired: ['expired', 'انتهى'], blocked: ['suspended', 'انقفل'], replaced: ['done', 'انبدل بكود جديد'] };
+  const OTP_PURPOSE = { signup: 'إنشاء حساب', link: 'حفظ حساب موظف' };
+  let otpBusy = false, otpAt = 0;
+  async function otpCall(body) {
+    const cfg = await fetch('../otp.json', { cache: 'no-store' }).then(r => r.json()).catch(() => ({}));
+    if (!cfg.url) return { ok: false, error: 'off' };
+    const idToken = window.grdlabsWeb ? await window.grdlabsWeb.idToken() : null;
+    if (!idToken) return { ok: false, error: 'web' };
+    return fetch(cfg.url, { method: 'POST', body: JSON.stringify({ ...body, idToken }) }).then(r => r.json());
+  }
+  async function renderOtp(force) {
+    // Fetch when the page opens or on تحديث, not on every store change.
+    if (otpBusy || (!force && Date.now() - otpAt < 60_000)) return; otpBusy = true; otpAt = Date.now();
+    const empty = (t, sub) => { $('otp-empty').hidden = false; $('otp-table').hidden = true; $('otp-empty-t').textContent = t; $('otp-empty-s').textContent = sub || ''; };
+    try {
+      const r = await otpCall({ action: 'list' });
+      if (!r.ok) return empty(r.error === 'off' ? 'خدمة الأكواد مو مربوطة بعد.' : r.error === 'web' ? 'هذي الصفحة تشتغل بلوحة grdlabs.site/control بس.' : 'ما گدرنا نجيب السجل.',
+        r.error === 'off' ? 'من تنربط بإيميل الإرسال، تطلع الأكواد هنا.' : '');
+      $('otp-today').textContent = r.today; $('otp-cap').textContent = 'من ' + r.cap + ' باليوم';
+      $('otp-used').textContent = r.items.filter(i => i.status === 'used').length;
+      $('otp-sender').textContent = r.sender; $('otp-quota').textContent = 'باقي ' + r.quota + ' رسالة اليوم من Gmail';
+      if (!r.items.length) return empty('ما انرسل أي كود بعد.', 'أول ما أحد ينشئ حساب، يطلع هنا.');
+      $('otp-empty').hidden = true; $('otp-table').hidden = false;
+      const body = $('otp-rows'); body.replaceChildren();
+      for (const i of r.items) {
+        const [tone, label] = OTP_STATUS[i.status] || ['done', i.status];
+        const resend = h('button', { class: 'ghost sm', type: 'button', onclick: async () => {
+          resend.disabled = true; resend.textContent = 'جارٍ الإرسال…';
+          const x = await otpCall({ action: 'resend', email: i.email }).catch(() => ({ ok: false }));
+          resend.textContent = x.ok ? 'انرسل ✓' : 'ما انرسل';
+          if (x.ok) setTimeout(() => renderOtp(true), 800);
+        } }, 'إعادة إرسال');
+        body.append(h('tr', {},
+          h('td', {}, h('span', { class: 'num' }, whenStr(i.createdAt))),
+          h('td', {}, h('span', { dir: 'ltr' }, i.email), i.by === 'owner' ? h('div', { class: 'sub' }, 'انرسل من اللوحة') : null),
+          h('td', {}, OTP_PURPOSE[i.purpose] || i.purpose),
+          h('td', {}, pill(tone, label)),
+          h('td', {}, h('span', { class: 'num' }, String(i.attempts))),
+          h('td', {}, i.status === 'sent' || i.status === 'expired' || i.status === 'blocked' ? resend : null)));
+      }
+    } catch { empty('ما گدرنا نجيب السجل.', 'تأكد من الإنترنت واضغط تحديث.'); }
+    finally { otpBusy = false; }
+  }
+  $('otpRefresh').addEventListener('click', () => renderOtp(true));
 
   function renderKeys() {
     $('keyRing').className = 'ring ' + (S.key ? 'ok' : 'bad'); $('keyRing').textContent = S.key ? '✓' : '!';

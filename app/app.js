@@ -134,6 +134,68 @@
     return { node, read, err, email };
   }
 
+  // ---------- Email check: a 6-digit code sent from the company's Gmail (see email-otp/) ----------
+  // Off while the address is empty. A verified email is remembered for this page only.
+  // The service address lives in /otp.json (shared with the desktop app), so it can change without touching this page.
+  let OTP_URL = (window.GRDLABS_CONFIG || {}).otp || '';
+  fetch('/otp.json', { cache: 'no-store' }).then((r) => r.json()).then((j) => { if (!OTP_URL && typeof j.url === 'string' && /^https:\/\//.test(j.url)) OTP_URL = j.url; }).catch(() => {});
+  const verified = new Set();
+  async function otpCall(body) {
+    const idToken = await auth.currentUser.getIdToken();
+    const r = await fetch(OTP_URL, { method: 'POST', body: JSON.stringify(Object.assign({ idToken }, body)) });
+    return r.json();
+  }
+  const OTP_ERR = {
+    bad_email: 'اكتب الإيميل بشكل صحيح.', quota: 'وصلنا الحد اليومي للرسائل. جرب باچر.',
+    wrong: 'الكود غلط.', expired: 'الكود انتهى. اضغط «دز كود جديد».', blocked: 'محاولات غلط كثيرة. اضغط «دز كود جديد».',
+    not_found: 'اضغط «دز كود جديد».', used: 'هذا الكود مستخدم. اضغط «دز كود جديد».'
+  };
+  // Shows a sheet over the page. `onOk` runs from the user's own tap, so Face ID can start right after.
+  function askCode(email, purpose, okLabel, onOk) {
+    const close = () => { sheet.remove(); clearInterval(timer); };
+    const inp = h('input', { class: 'inp code', type: 'text', inputmode: 'numeric', autocomplete: 'one-time-code', maxlength: '6', dir: 'ltr', placeholder: '••••••', 'data-testid': 'input-otp' });
+    const err = h('p', { class: 'err', role: 'alert' }), info = h('p', {}, 'جاري إرسال الكود إلى ', h('b', { dir: 'ltr' }, email), '…');
+    let wait = 0, timer = null, busy = false;
+    const again = h('button', { class: 'link', type: 'button', disabled: true, on: { click: () => send() } }, 'دز كود جديد');
+    const tickAgain = () => { again.disabled = wait > 0; again.textContent = wait > 0 ? 'دز كود جديد بعد ' + wait + ' ثانية' : 'دز كود جديد'; };
+    const countdown = (sec) => { wait = sec; tickAgain(); clearInterval(timer); timer = setInterval(() => { wait = Math.max(0, wait - 1); tickAgain(); if (!wait) clearInterval(timer); }, 1000); };
+    async function send() {
+      err.textContent = ''; again.disabled = true;
+      try {
+        const r = await otpCall({ action: 'send', email, purpose });
+        if (r.ok) { info.replaceChildren('دزينا كود من 6 أرقام إلى ', h('b', { dir: 'ltr' }, email), '. إذا ما لگيته، شوف مجلد السبام.'); countdown(r.resendIn || 60); inp.focus(); return; }
+        if (r.error === 'rate_limited') { countdown(Math.min(r.retryIn || 60, 3600)); info.replaceChildren('دزينا كود قبل شوية إلى ', h('b', { dir: 'ltr' }, email), '.'); return; }
+        err.textContent = OTP_ERR[r.error] || 'ما گدرنا ندز الكود. جرب مرة ثانية.'; again.disabled = false;
+      } catch { err.textContent = 'تأكد من الإنترنت وجرب مرة ثانية.'; again.disabled = false; }
+    }
+    async function check() {
+      const code = inp.value.replace(/\D/g, '');
+      if (code.length !== 6 || busy) { if (code.length !== 6) err.textContent = 'الكود 6 أرقام.'; return; }
+      busy = true; ok.disabled = true; err.textContent = '';
+      try {
+        const r = await otpCall({ action: 'verify', email, code });
+        if (r.ok) {
+          verified.add(email); clearInterval(timer);
+          const next = h('button', { class: 'btn primary', 'data-testid': 'button-otp-continue', on: { click: () => { close(); onOk(); } } }, okLabel);
+          body.replaceChildren(h('div', { class: 'ic ok' }, '✓'), h('h2', {}, 'تم تأكيد الإيميل'), next);
+          next.focus(); return;
+        }
+        err.textContent = (OTP_ERR[r.error] || 'صار خطأ. جرب مرة ثانية.') + (r.error === 'wrong' && r.left ? ' باقي ' + r.left + ' محاولات.' : '');
+        if (r.error !== 'wrong') inp.value = '';
+      } catch { err.textContent = 'تأكد من الإنترنت وجرب مرة ثانية.'; }
+      busy = false; ok.disabled = false; inp.select();
+    }
+    const ok = h('button', { class: 'btn primary', 'data-testid': 'button-otp-verify', on: { click: check } }, 'تأكيد');
+    inp.addEventListener('input', () => { inp.value = inp.value.replace(/\D/g, '').slice(0, 6); if (inp.value.length === 6) check(); });
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); check(); } });
+    const body = h('div', { class: 'card sheet-card' }, h('h2', {}, 'تأكيد الإيميل'), info, inp, err, ok, again,
+      h('button', { class: 'link', type: 'button', on: { click: close } }, 'غيّر الإيميل'));
+    const sheet = h('div', { class: 'sheet', role: 'dialog', 'aria-modal': 'true' }, body);
+    document.body.append(sheet);
+    inp.focus();
+    send();
+  }
+
   // ---------- First visit, or a phone that lost its data: sign in ----------
   function welcome(after) {
     header();
@@ -186,6 +248,7 @@
       const keep = saved();
       const v = keep ? {} : (mode === 'new' ? f : fl).read();
       if (!v) return;
+      if (!keep && mode === 'new' && OTP_URL && !verified.has(v.email)) return askCode(v.email, 'signup', 'كمّل التسجيل', () => go.click());
       go.disabled = true; err.textContent = '';
       let cred;
       try { cred = await enroll(p.name); }
@@ -411,6 +474,7 @@
     const f = accountFields('new');
     const go = h('button', { class: 'btn primary', 'data-testid': 'button-link-account', on: { click: async () => {
       const v = f.read(); if (!v) return;
+      if (OTP_URL && !verified.has(v.email)) return askCode(v.email, 'link', 'احفظ حسابي', () => go.click());
       go.disabled = true;
       try {
         await auth.currentUser.linkWithCredential(firebase.auth.EmailAuthProvider.credential(v.email, v.pass));

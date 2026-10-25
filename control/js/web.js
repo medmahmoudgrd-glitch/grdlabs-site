@@ -86,6 +86,7 @@
       async signIn(email, pass) { try { await auth.signInWithEmailAndPassword(email, pass); } catch (e) { return authMsg(e); } },
       async signUp(email, pass) { try { await auth.createUserWithEmailAndPassword(email, pass); } catch (e) { return authMsg(e); } },
       signOut: () => auth.signOut(),
+      idToken: () => auth.currentUser ? auth.currentUser.getIdToken() : Promise.resolve(null),
       async isOwner() {
         const uid = auth.currentUser.uid, ref = fs.doc('control/owner');
         try { const d = await ref.get(); if (d.exists && d.data().uid === uid) return true; } catch { /* missing, or someone else's */ }
@@ -125,8 +126,10 @@
   }
 
   // ---------- store ----------
+  let backend = null;
   async function db() {
     const be = CFG.firebase?.apiKey && window.firebase ? firebaseBackend() : CFG.url && CFG.anonKey && window.supabase ? supabaseBackend() : null;
+    backend = be;
     if (!be) {
       await modal({ title: 'الموقع مو مربوط بعد', text: 'إعدادات قاعدة البيانات ناقصة في config.js.', fields: [], submit: 'حسناً' });
       return null;
@@ -219,5 +222,6 @@
     };
   }
 
-  window.grdlabsWeb = { db };
+  // idToken lets pages call Grdlabs services (the email code log) as the signed-in owner.
+  window.grdlabsWeb = { db, idToken: () => backend && backend.idToken ? backend.idToken() : Promise.resolve(null) };
 })();
