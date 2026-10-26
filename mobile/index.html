@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F7F7F5">
+<title>Grdlabs Mobile</title>
+<link rel="icon" href="../img/grdlabs-app-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+  /* Grdlabs Mobile UI prototype: login, employee account and company (owner) account, built from the "Grdlabs Mobile" design. */
+  :root {
+    color-scheme: light;
+    --bg: #F7F7F5; --card: #FFFFFF; --tx: #1D1D1F; --sec: #6E6E73; --sep: #E6E6E3; --acc: #2F64C4; --onacc: #FFFFFF;
+    --tint: #EEF3FB; --fill: #EEEEEC; --a: #9A5B13; --ab: #FBF3E6; --g: #2E7D4F; --gb: #E8F4EC; --r: #B3261E; --rb: #FBEAE8;
+    --bar: rgba(247,247,245,.94); --desk: #E9E9E6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #121214; --card: #1C1C1E; --tx: #F2F2F2; --sec: #A1A1A6; --sep: #2C2C2E; --acc: #7FA8F0; --onacc: #0E1A2E;
+      --tint: #1E2A3D; --fill: #232326; --a: #F0B66A; --ab: #2E2416; --g: #7DD3A0; --gb: #16291E; --r: #F2948C; --rb: #34191A;
+      --bar: rgba(18,18,20,.94); --desk: #08080A;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #121214; --card: #1C1C1E; --tx: #F2F2F2; --sec: #A1A1A6; --sep: #2C2C2E; --acc: #7FA8F0; --onacc: #0E1A2E;
+    --tint: #1E2A3D; --fill: #232326; --a: #F0B66A; --ab: #2E2416; --g: #7DD3A0; --gb: #16291E; --r: #F2948C; --rb: #34191A;
+    --bar: rgba(18,18,20,.94); --desk: #08080A;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--bg); color: var(--tx); font-family: -apple-system, 'SF Pro Text', 'SF Arabic', 'Noto Sans Arabic', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  a { color: var(--acc); text-decoration: none; cursor: pointer; }
+
+  #phone { position: relative; width: 100%; height: 100dvh; background: var(--bg); overflow: hidden; }
+  @media (min-width: 600px) and (min-height: 760px) {
+    body { background: var(--desk); display: grid; place-items: center; }
+    #phone { width: 390px; height: min(844px, calc(100dvh - 40px)); border-radius: 44px; box-shadow: 0 0 0 10px #1D1D1F, 0 30px 80px -20px rgba(0,0,0,.45); }
+  }
+  #scr { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; padding: calc(56px + env(safe-area-inset-top)) 20px 110px; display: flex; flex-direction: column; gap: 18px; }
+  #scr.notabs { padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
+  #scr.anim { animation: in .22s ease-out; }
+  @keyframes in { from { opacity: 0; transform: translateY(6px); } }
+
+  h1 { margin: 0; font-size: 28px; font-weight: 700; line-height: 1.35; }
+  h2 { margin: 0; font-size: 17px; font-weight: 600; }
+  p { margin: 0; }
+  .card { background: var(--card); border-radius: 20px; overflow: hidden; }
+  .num { font-variant-numeric: tabular-nums; }
+  .lbl { font-size: 13px; color: var(--sec); }
+  .hd { font-size: 13px; color: var(--sec); margin: 0; padding: 0 20px 8px; }
+  .sec { display: flex; flex-direction: column; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .dot { width: 6px; height: 6px; border-radius: 3px; background: var(--g); display: inline-block; flex: none; }
+  .pill { font-size: 12px; font-weight: 600; border-radius: 8px; padding: 4px 10px; white-space: nowrap; }
+  .warn { color: var(--a); background: var(--ab); } .ok { color: var(--g); background: var(--gb); } .bad { color: var(--r); background: var(--rb); }
+  .btn { height: 52px; border: 0; border-radius: 16px; background: var(--acc); color: var(--onacc); font-size: 17px; font-weight: 600; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; flex: none; }
+  .btn2 { height: 52px; border: 0; border-radius: 16px; background: var(--tint); color: var(--acc); font-size: 16px; font-weight: 600; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; flex: none; }
+  .ghost { height: 48px; border: 0; background: none; font-size: 16px; color: var(--acc); width: 100%; }
+  .btn:active, .btn2:active, .act:active, .row.tap:active { opacity: .7; }
+  .ib { width: 40px; height: 40px; border-radius: 20px; border: 0; background: var(--card); color: var(--tx); display: flex; align-items: center; justify-content: center; position: relative; padding: 0; flex: none; }
+  .ib.acc { background: var(--acc); color: var(--onacc); }
+  .ib .badge { position: absolute; top: 9px; left: 10px; width: 7px; height: 7px; border-radius: 4px; background: var(--acc); }
+
+  .fld { display: flex; flex-direction: column; gap: 6px; }
+  .fld label { font-size: 13px; color: var(--sec); padding: 0 4px; }
+  .fld input, .fld select { height: 52px; border: 0; outline: 0; border-radius: 14px; background: var(--fill); padding: 0 16px; font-size: 16px; width: 100%; }
+  .fld input:focus { box-shadow: 0 0 0 2px var(--acc) inset; }
+
+  .row { display: flex; align-items: center; gap: 12px; min-height: 54px; padding: 10px 20px; position: relative; width: 100%; border: 0; background: none; text-align: start; }
+  .row + .row::before { content: ""; position: absolute; top: 0; left: 0; right: 20px; height: 1px; background: var(--sep); }
+  .row .t { flex: 1; font-size: 16px; display: flex; flex-direction: column; min-width: 0; }
+  .row .sub { font-size: 13px; color: var(--sec); margin-top: 2px; }
+  .row .v { font-size: 16px; color: var(--sec); font-variant-numeric: tabular-nums; }
+  .row .end { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .row .end .v { color: var(--tx); font-weight: 600; }
+  .row input, .row select { border: 0; outline: 0; background: none; font-size: 16px; text-align: left; color: var(--sec); min-width: 0; flex: 1; }
+  .row select { appearance: none; text-align: left; direction: rtl; flex: none; }
+  .av { width: 40px; height: 40px; border-radius: 20px; background: var(--tint); color: var(--acc); display: flex; align-items: center; justify-content: center; font-weight: 600; flex: none; }
+  .chev { color: var(--sec); flex: none; }
+
+  .seg { display: flex; background: var(--fill); border-radius: 12px; padding: 3px; gap: 2px; }
+  .seg button { flex: 1; height: 36px; border: 0; border-radius: 9px; background: none; font-size: 14px; font-weight: 500; color: var(--tx); }
+  .seg button.on { background: var(--card); box-shadow: 0 1px 3px rgba(0,0,0,.12); font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { height: 36px; padding: 0 16px; border-radius: 18px; border: 0; background: var(--card); font-size: 14px; font-weight: 500; }
+  .chip.on { background: var(--acc); color: var(--onacc); }
+  .sw { width: 51px; height: 31px; border-radius: 16px; border: 0; background: var(--fill); position: relative; flex: none; transition: background .2s; padding: 0; }
+  .sw::after { content: ""; position: absolute; top: 2px; right: 2px; width: 27px; height: 27px; border-radius: 14px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.2); transition: right .2s; }
+  .sw.on { background: var(--g); } .sw.on::after { right: 22px; }
+
+  .tip { background: var(--tint); border-radius: 20px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; }
+  .tip .k { font-size: 12px; font-weight: 600; color: var(--acc); }
+  .tip .m { font-size: 15px; font-weight: 500; margin-top: 3px; }
+  .x { border: 0; background: none; color: var(--sec); padding: 4px; display: flex; }
+
+  .mini { flex: 1; background: var(--card); border-radius: 20px; padding: 16px 18px; }
+  .mini b { display: block; font-size: 20px; font-weight: 600; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .act { flex: 1; border: 0; background: var(--card); border-radius: 18px; height: 76px; font-size: 13px; font-weight: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; }
+  .act svg { color: var(--acc); }
+
+  .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); row-gap: 4px; text-align: center; padding: 16px 12px; }
+  .wd { font-size: 11px; color: var(--sec); padding-bottom: 6px; }
+  .d { height: 38px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-variant-numeric: tabular-nums; position: relative; }
+  .d::after { content: ""; position: absolute; bottom: 3px; width: 5px; height: 5px; border-radius: 3px; }
+  .d.p::after { background: var(--g); } .d.l::after { background: var(--a); } .d.x::after { background: var(--r); }
+  .d.o, .d.f { color: var(--sec); } .d.f { opacity: .55; }
+  .d.t span { width: 34px; height: 34px; border-radius: 17px; background: var(--acc); color: var(--onacc); display: flex; align-items: center; justify-content: center; font-weight: 600; }
+  .stats { display: flex; padding: 16px 0; }
+  .stats div { flex: 1; text-align: center; display: flex; flex-direction: column; gap: 2px; }
+  .stats div + div { border-right: 1px solid var(--sep); }
+  .stats b { font-size: 22px; font-weight: 600; }
+  .legend { display: flex; gap: 14px; justify-content: center; font-size: 12px; color: var(--sec); padding: 0 0 14px; }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+
+  .mbar { display: flex; align-items: center; justify-content: space-between; background: var(--card); border-radius: 14px; padding: 6px; }
+  .mbtn { width: 36px; height: 36px; border: 0; border-radius: 10px; background: none; color: var(--acc); display: flex; align-items: center; justify-content: center; }
+  .mbtn:disabled { color: var(--sep); }
+  .search { display: flex; align-items: center; gap: 8px; height: 40px; border-radius: 12px; background: var(--fill); padding: 0 12px; color: var(--sec); }
+  .search input { flex: 1; border: 0; outline: 0; background: none; font-size: 16px; color: var(--tx); }
+  .bar { height: 6px; border-radius: 3px; background: var(--fill); overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--g); border-radius: 3px; }
+  .req { background: var(--ab); border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+  .req .acts { display: flex; gap: 10px; }
+  .req .acts button { flex: 1; height: 40px; border: 0; border-radius: 12px; font-size: 15px; font-weight: 600; }
+  .empty { text-align: center; color: var(--sec); font-size: 14px; padding: 28px 20px; }
+  .total { display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px; }
+  .total .num { font-size: 26px; font-weight: 700; }
+  .amt { border: 0; outline: 0; background: none; width: 100%; text-align: center; font-size: 48px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .feat { display: flex; gap: 16px; align-items: flex-start; }
+  .feat i { width: 44px; height: 44px; border-radius: 22px; background: var(--tint); color: var(--acc); display: flex; align-items: center; justify-content: center; flex: none; }
+  .feat b { display: block; font-size: 17px; font-weight: 600; }
+  .feat span { display: block; font-size: 15px; color: var(--sec); margin-top: 2px; }
+  .face { width: 120px; height: 120px; border-radius: 32px; background: var(--tint); color: var(--acc); display: flex; align-items: center; justify-content: center; align-self: center; }
+  .face.scan { animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 50% { transform: scale(.94); opacity: .7; } }
+  .nav { border: 0; background: none; font-size: 17px; color: var(--acc); padding: 6px 0; display: flex; align-items: center; gap: 4px; }
+  .nav.b { font-weight: 600; }
+  .demo { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .demo button { border: 1px solid var(--sep); background: var(--card); border-radius: 10px; padding: 6px 12px; font-size: 13px; }
+
+  .tabs { position: absolute; left: 0; right: 0; bottom: 0; background: var(--bar); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--sep); display: flex; padding: 6px 12px env(safe-area-inset-bottom); min-height: 84px; z-index: 5; }
+  .tabs[hidden] { display: none; }
+  .tab { flex: 1; border: 0; background: none; font-size: 10px; font-weight: 500; color: var(--sec); display: flex; flex-direction: column; align-items: center; gap: 4px; height: 48px; justify-content: center; }
+  .tab.on { color: var(--acc); }
+
+  #sheet { position: absolute; inset: 0; z-index: 20; display: none; }
+  #sheet.show { display: block; }
+  #sheet .scrim { position: absolute; inset: 0; background: rgba(0,0,0,.35); animation: fade .2s; }
+  #sheet .box { position: absolute; left: 0; right: 0; bottom: 0; background: var(--bg); border-radius: 24px 24px 0 0; padding: 10px 20px calc(24px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 16px; animation: up .25s ease-out; max-height: 90%; overflow-y: auto; }
+  #sheet .grab { width: 36px; height: 5px; border-radius: 3px; background: var(--sep); align-self: center; }
+  @keyframes fade { from { opacity: 0; } } @keyframes up { from { transform: translateY(100%); } }
+  #toast { position: absolute; top: calc(14px + env(safe-area-inset-top)); left: 50%; transform: translate(-50%, -120%); background: var(--tx); color: var(--bg); padding: 10px 18px; border-radius: 14px; font-size: 14px; font-weight: 500; z-index: 30; transition: transform .25s; max-width: calc(100% - 32px); text-align: center; }
+  #toast.show { transform: translate(-50%, 0); }
+</style>
+</head>
+<body>
+<div id="phone">
+  <main id="scr"></main>
+  <nav id="tabs" class="tabs" aria-label="التبويبات" hidden></nav>
+  <div id="sheet"><div class="scrim" data-act="close"></div><div class="box" role="dialog" aria-modal="true"></div></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+</div>
+<script>
+// Grdlabs Mobile UI: clickable prototype of the phone app with demo data. Sign in as an employee or as the company owner.
+// Everything runs in this page; state is kept in localStorage so a refresh keeps where you were.
+(() => {
+  'use strict';
+  const KEY = 'grdlabs-mobile-ui-v1';
+  const $ = (s) => document.querySelector(s);
+  const scr = $('#scr'), tabs = $('#tabs'), sheet = $('#sheet'), box = sheet.querySelector('.box'), toastEl = $('#toast');
+  const nf = new Intl.NumberFormat('en-US');
+  const money = (n) => nf.format(Math.round(n || 0));
+  const ar = (n) => Number(n).toLocaleString('ar-IQ', { useGrouping: false });
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const MONTHS = ['كانون الثاني', 'شباط', 'آذار', 'نيسان', 'أيار', 'حزيران', 'تموز', 'آب', 'أيلول', 'تشرين الأول', 'تشرين الثاني', 'كانون الأول'];
+  const DAYS = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+  const now = () => new Date();
+  const clock = (d) => { const h = d.getHours(), m = String(d.getMinutes()).padStart(2, '0'); return ar(h % 12 || 12) + ':' + m.replace(/\d/g, (x) => ar(x)) + (h < 12 ? ' ص' : ' م'); };
+  const todayKey = () => now().toDateString();
+
+  // ---------- icons (from the design) ----------
+  const I = {
+    logo: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="3" width="15" height="18" rx="3"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/></svg>',
+    face: (s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 8V6A2.5 2.5 0 0 1 6 3.5h2M16 3.5h2A2.5 2.5 0 0 1 20.5 6v2M20.5 16v2a2.5 2.5 0 0 1-2.5 2.5h-2M8 20.5H6A2.5 2.5 0 0 1 3.5 18v-2"/><path d="M8.5 9v1.5M15.5 9v1.5M12 9v4h-1M9 15.5c1.7 1.4 4.3 1.4 6 0"/></svg>`,
+    bell: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg>',
+    chev: '<svg class="chev" width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 1 1 7l6 6"/></svg>',
+    back: '<svg width="10" height="17" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M1 1l6 6-6 6"/></svg>',
+    next: '<svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 1 1 7l6 6"/></svg>',
+    close: '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M1 1l10 10M11 1 1 11"/></svg>',
+    plus: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+    search: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+    cam: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+    down: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>',
+    user: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+    home: '<svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3.2 3 10.4V20a1 1 0 0 0 1 1h5v-6h6v6h5a1 1 0 0 0 1-1v-9.6z"/></svg>',
+    time: '<svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    cash: '<svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>',
+    me: '<svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+    doc: '<svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h6M9 16h4"/></svg>',
+    team: '<svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg>',
+    newInv: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h6M12 9v6"/></svg>',
+    newExp: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M12 9v6M9 12h6"/></svg>',
+    moon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>',
+  };
+
+  // ---------- demo data ----------
+  const fresh = () => ({
+    user: null, seenFace: false, seenNews: false, faceOn: false, notif: true, theme: 'auto',
+    clockIn: null, clockOut: null, day: todayKey(), hidden: {}, salMonth: 0, invFilter: 'all',
+    advance: { name: 'أحمد', amount: 200000, status: 'pending' },
+    staff: [
+      { n: 'أحمد علي', r: 'محاسب', s: 'p', at: '7:55' }, { n: 'علي حسن', r: 'مبيعات', s: 'p', at: '7:58' },
+      { n: 'سارة كريم', r: 'مبيعات', s: 'l', at: '8:24' }, { n: 'مصطفى جاسم', r: 'مخزن', s: 'x' },
+      { n: 'زينب عباس', r: 'كاشير', s: 'p', at: '7:50' }, { n: 'حسين محمد', r: 'سائق', s: 'p', at: '7:45' },
+      { n: 'نور الهدى', r: 'كاشير', s: 'p', at: '7:59' }, { n: 'كرار سلمان', r: 'مخزن', s: 'p', at: '7:52' },
+      { n: 'مريم فاضل', r: 'استقبال', s: 'l', at: '8:15' }, { n: 'يوسف قاسم', r: 'صيانة', s: 'x' },
+    ],
+    invoices: [
+      { no: 1048, c: 'مكتب الرافدين', t: '١٠:٤٢ ص', today: true, total: 450000, st: 'paid' },
+      { no: 1047, c: 'أسواق الكرادة', t: '٩:٣٠ ص', today: true, total: 1200000, st: 'credit' },
+      { no: 1046, c: 'زبون نقدي', t: '٩:٠٥ ص', today: true, total: 75000, st: 'paid' },
+      { no: 1033, c: 'صيدلية الشفاء', t: '١٨ تشرين', today: false, total: 640000, st: 'paid' },
+      { no: 1021, c: 'شركة دجلة', t: '١١ تشرين', today: false, total: 2700000, st: 'late' },
+    ],
+    expenses: [
+      { cat: 'نقل', amt: 250000, from: 'الصندوق', note: 'توصيل بضاعة', t: '٨:١٥ ص', today: true },
+      { cat: 'صيانة', amt: 60000, from: 'الصندوق', note: 'تصليح المكيف', t: '١١:٠٠ ص', today: true },
+      { cat: 'إيجار', amt: 1500000, from: 'البنك', note: 'إيجار تشرين', t: '١ تشرين', today: false },
+    ],
+  });
+  let S;
+  try { S = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch { S = fresh(); }
+  if (S.day !== todayKey()) { S.clockIn = S.clockOut = null; S.day = todayKey(); }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+
+  // Hidden part of today's sales so the home card matches the design (12 invoices, 2,450,000).
+  const BASE_SALES = 725000, BASE_COUNT = 9;
+  const ST = { paid: ['مدفوعة', 'ok'], credit: ['آجل', 'warn'], late: ['متأخرة', 'bad'] };
+  const CATS = ['إيجار', 'كهرباء', 'رواتب', 'نقل', 'صيانة', 'أخرى'];
+  const CUSTOMERS = ['مكتب الرافدين', 'أسواق الكرادة', 'شركة دجلة', 'صيدلية الشفاء', 'زبون نقدي'];
+  const PRODUCTS = [['ورق A4', 25000], ['حبر طابعة', 85000], ['ملفات بلاستك', 2000], ['أقلام جاف (علبة)', 6000], ['دباسة', 7500]];
+
+  let route = 'login', draft = null, exp = null, busy = false;
+
+  // ---------- helpers ----------
+  let tt;
+  const toast = (m) => { toastEl.textContent = m; toastEl.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('show'), 2200); };
+  const applyTheme = () => {
+    if (S.theme === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', S.theme);
+    const m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.content = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+  };
+  const openSheet = (html) => { box.innerHTML = '<div class="grab"></div>' + html; sheet.classList.add('show'); const f = box.querySelector('input'); if (f) setTimeout(() => f.focus(), 250); };
+  const closeSheet = () => sheet.classList.remove('show');
+  const tip = (id, k, m, link, act) => S.hidden[id] ? '' : `<div class="tip"><div style="flex:1"><div class="k">${k}</div><div class="m">${m}</div></div><a data-act="${act}">${link}</a><button type="button" class="x" aria-label="إخفاء" data-act="hide" data-id="${id}">${I.close}</button></div>`;
+  const header = (title, right = '') => `<div class="top"><h1>${title}</h1>${right}</div>`;
+  const backBar = (title, extra = '') => `<div class="top" style="margin-top:-12px"><button type="button" class="nav" data-act="back">${I.back} رجوع</button><h2>${title}</h2><span class="lbl num" style="min-width:60px;text-align:left">${extra}</span></div>`;
+  const dateLine = () => { const d = now(); return `${DAYS[d.getDay()]} ${ar(d.getDate())} ${MONTHS[d.getMonth()]}`; };
+  const greet = () => now().getHours() < 12 ? 'صباح الخير' : 'مساء الخير';
+  const first = () => (S.user?.name || '').split(' ')[0];
+  const isOwner = () => S.user?.role === 'owner';
+
+  // ---------- screens ----------
+  const V = {};
+
+  V.login = () => `
+    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;margin-top:40px">
+      <div style="width:64px;height:64px;border-radius:16px;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center">${I.logo}</div>
+      <h1 style="margin-top:14px">أهلاً بيك</h1>
+      <p style="font-size:16px;color:var(--sec)">ادخل لحسابك بـ Grdlabs</p>
+    </div>
+    <form id="loginForm" style="display:flex;flex-direction:column;gap:16px;margin-top:26px" novalidate>
+      <div class="fld"><label for="em">الإيميل</label><input id="em" type="email" autocomplete="username" placeholder="name@example.com" dir="ltr" style="text-align:right"></div>
+      <div class="fld"><label for="pw">كلمة المرور</label><input id="pw" type="password" autocomplete="current-password" placeholder="••••••••"></div>
+      <a data-act="forgot" style="font-size:14px;align-self:flex-start;padding:0 4px">نسيت كلمة المرور؟</a>
+      <button type="submit" class="btn" style="margin-top:8px">دخول</button>
+      <button type="button" class="btn2" data-act="faceLogin">${I.face()} الدخول بـ Face ID</button>
+    </form>
+    <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:14px;font-size:14px;color:var(--sec);padding-top:24px">
+      <span>ما عندك حساب؟ <a data-act="register">سجّل برمز الشركة</a></span>
+      <div class="demo"><span style="align-self:center">تجربة:</span><button type="button" data-act="demo" data-role="employee">موظف</button><button type="button" data-act="demo" data-role="owner">صاحب الشركة</button></div>
+    </div>`;
+
+  V.face = () => `
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;text-align:center">
+      <div class="face">${I.face(64)}</div>
+      <h1 style="font-size:26px;margin-top:12px">ادخل بنظرة وحدة</h1>
+      <p style="font-size:16px;color:var(--sec);line-height:1.6">فعّل Face ID حتى تدخل ${isOwner() ? '' : 'وتسجل حضورك '}بدون كلمة مرور</p>
+      <p class="lbl">صورة وجهك تبقى بموبايلك وما تنرسل لأحد</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <button type="button" class="btn" data-act="faceOn">فعّل Face ID</button>
+      <button type="button" class="ghost" data-act="faceSkip">مو هسه</button>
+    </div>`;
+
+  V.news = () => `
+    <div style="margin-top:20px"><span class="lbl" style="color:var(--acc);font-weight:600">الإصدار 2.0</span><h1 style="font-size:32px">شنو الجديد</h1></div>
+    <div style="display:flex;flex-direction:column;gap:26px;margin-top:12px">
+      <div class="feat"><i>${I.newInv}</i><div><b>فواتير من موبايلك</b><span>سوّيها وشاركها، وتوصل للحاسبة لحالها</span></div></div>
+      <div class="feat"><i>${I.cam}</i><div><b>صوّر الوصل</b><span>سجّل المصروف مع صورته بخطوة وحدة</span></div></div>
+      <div class="feat"><i>${I.face(22)}</i><div><b>Face ID</b><span>دخول وتسجيل حضور بدون كلمة مرور</span></div></div>
+      <div class="feat"><i>${I.moon}</i><div><b>الوضع الداكن</b><span>أريح للعين بالليل، من حسابي ← المظهر</span></div></div>
+    </div>
+    <button type="button" class="btn" data-act="newsDone" style="margin-top:auto">كمّل</button>`;
+
+  // ----- employee -----
+  V['e-home'] = () => {
+    let pill = '<span class="pill warn">ما سجلت بعد</span>', btn = `<button type="button" class="btn" data-act="clock">${I.face()} سجّل حضور</button>`;
+    if (S.clockIn && !S.clockOut) { pill = `<span class="pill ok">حاضر · ${esc(S.clockIn)}</span>`; btn = `<button type="button" class="btn2" data-act="clock">${I.face()} سجّل انصراف</button>`; }
+    if (S.clockOut) { pill = '<span class="pill ok">خلصت دوامك</span>'; btn = `<div class="lbl" style="text-align:center">دخلت ${esc(S.clockIn)} · طلعت ${esc(S.clockOut)}</div>`; }
+    const adv = S.advance.name === 'أحمد' && S.advance.mine ? `<div class="card"><div class="row"><span class="t">طلب سلفة ${money(S.advance.amount)}<span class="sub">${S.advance.status === 'pending' ? 'ينتظر موافقة الشركة' : S.advance.status === 'ok' ? 'وافقت الشركة، تنخصم من الراتب الجاي' : 'رفضت الشركة الطلب'}</span></span><span class="pill ${S.advance.status === 'pending' ? 'warn' : S.advance.status === 'ok' ? 'ok' : 'bad'}">${S.advance.status === 'pending' ? 'قيد المراجعة' : S.advance.status === 'ok' ? 'موافق' : 'مرفوض'}</span></div></div>` : '';
+    return `
+    <div class="top"><div><p class="lbl">${dateLine()}</p><h1 style="margin-top:4px">${greet()}، ${esc(first())}</h1></div>
+      <button type="button" class="ib" aria-label="الإشعارات" data-act="bell">${I.bell}${S.notif ? '<span class="badge"></span>' : ''}</button></div>
+    <div class="card" style="padding:22px 20px;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div class="lbl">دوام اليوم</div><div class="num" style="font-size:24px;font-weight:600;margin-top:4px">٨:٠٠ – ٤:٠٠</div></div>${pill}</div>
+      ${btn}
+      ${S.clockOut ? '' : '<div class="lbl" style="text-align:center;display:flex;align-items:center;justify-content:center;gap:6px"><span class="dot"></span>أنت بموقع الشركة</div>'}
+    </div>
+    <a class="card" data-act="go" data-to="e-sal" style="padding:20px;display:flex;align-items:center;gap:14px;color:var(--tx)">
+      <div style="flex:1"><div class="lbl">راتب هذا الشهر</div><div class="num" style="font-size:26px;font-weight:600;margin-top:4px">1,075,000 <span style="font-size:15px;color:var(--sec);font-weight:500">د.ع</span></div><div class="lbl" style="margin-top:6px">يُصرف بعد ${ar(Math.max(0, new Date(now().getFullYear(), now().getMonth() + 1, 0).getDate() - now().getDate()))} أيام</div></div>${I.chev}
+    </a>
+    ${adv}
+    ${S.advance.mine ? '' : tip('adv', 'جديد', 'اطلب سلفتك من التطبيق', 'جرّب', 'askAdv')}`;
+  };
+
+  const calendar = () => {
+    const d = now(), y = d.getFullYear(), m = d.getMonth(), today = d.getDate(), days = new Date(y, m + 1, 0).getDate();
+    const lead = (new Date(y, m, 1).getDay() + 1) % 7; // week starts Saturday
+    const cells = []; const c = { p: 0, l: 0, x: 0 }; const log = [];
+    for (let i = 1; i <= days; i++) {
+      const wd = new Date(y, m, i).getDay();
+      let k;
+      if (i === today) k = 't'; else if (i > today) k = 'f'; else if (wd === 5) k = 'o';
+      else k = (i * 7) % 23 === 3 ? 'x' : (i * 5) % 9 === 0 ? 'l' : 'p';
+      if (c[k] !== undefined) c[k]++;
+      if (i < today && k !== 'o' && log.length < 6) log.unshift([i, wd, k]);
+      cells.push(`<span class="d ${k}">${k === 't' ? `<span>${i}</span>` : i}</span>`);
+    }
+    if (S.clockIn) c.p++;
+    return { y, m, c, html: ['س', 'ح', 'ن', 'ث', 'ر', 'خ', 'ج'].map((w) => `<span class="wd">${w}</span>`).join('') + '<span></span>'.repeat(lead) + cells.join(''), log: log.slice(0, 5) };
+  };
+  V['e-att'] = () => {
+    const cal = calendar();
+    const rows = (S.clockIn ? `<div class="row"><span class="t">اليوم<span class="sub">${esc(S.clockIn)} ← ${S.clockOut ? esc(S.clockOut) : 'هسه'}</span></span><span class="pill ok">حاضر</span></div>` : '') +
+      cal.log.map(([i, wd, k]) => `<div class="row"><span class="t">${DAYS[wd]} ${ar(i)}<span class="sub">${k === 'x' ? 'ما مسجّل' : k === 'l' ? '٨:٢٠ ص ← ٤:٠٠ م' : '٧:٥٨ ص ← ٤:٠٢ م'}</span></span>${k === 'x' ? '<span class="pill bad">غياب</span>' : k === 'l' ? '<span class="pill warn">تأخير</span>' : '<span class="num lbl">٨ ساعات</span>'}</div>`).join('');
+    return `
+    <div class="top"><h1>الحضور</h1><span class="lbl">${MONTHS[cal.m]}</span></div>
+    <div class="card"><div class="cal">${cal.html}</div>
+      <div class="legend"><span><i class="dot"></i>حاضر</span><span><i class="dot" style="background:var(--a)"></i>تأخير</span><span><i class="dot" style="background:var(--r)"></i>غياب</span></div></div>
+    <div class="card stats"><div><b>${cal.c.p}</b><span class="lbl">يوم حضور</span></div><div><b>${cal.c.l}</b><span class="lbl">تأخير</span></div><div><b>${cal.c.x}</b><span class="lbl">غياب</span></div></div>
+    <div class="sec"><p class="hd">آخر الأيام</p><div class="card">${rows}</div></div>`;
+  };
+
+  const salaries = () => {
+    const m = now().getMonth(), y = now().getFullYear();
+    return [
+      { m, y, paid: false, items: [['الراتب الأساسي', '', 1200000], ['مكافأة', 'إغلاق حسابات الربع', 50000], ['سلفة', '١٠ ' + MONTHS[m].split(' ')[0], -150000], ['خصم غياب', '٢٢ ' + MONTHS[m].split(' ')[0], -25000]] },
+      { m: (m + 11) % 12, y: m ? y : y - 1, paid: true, items: [['الراتب الأساسي', '', 1200000], ['مكافأة', 'مبيعات الشهر', 75000]] },
+      { m: (m + 10) % 12, y: m > 1 ? y : y - 1, paid: true, items: [['الراتب الأساسي', '', 1200000], ['سلفة', '٥ ' + MONTHS[(m + 10) % 12].split(' ')[0], -100000]] },
+    ];
+  };
+  V['e-sal'] = () => {
+    const list = salaries(), s = list[S.salMonth] || list[0], net = s.items.reduce((a, r) => a + r[2], 0);
+    return `
+    <h1>الراتب</h1>
+    <div class="mbar"><button type="button" class="mbtn" aria-label="الشهر السابق" data-act="sal" data-d="1" ${S.salMonth >= list.length - 1 ? 'disabled' : ''}>${I.back}</button>
+      <span style="font-weight:600">${MONTHS[s.m]} ${s.y}</span>
+      <button type="button" class="mbtn" aria-label="الشهر الجاي" data-act="sal" data-d="-1" ${S.salMonth <= 0 ? 'disabled' : ''}>${I.next}</button></div>
+    <div class="card" style="padding:22px 20px;text-align:center"><div class="lbl">الصافي</div><div class="num" style="font-size:38px;font-weight:700;margin:4px 0">${money(net)}</div><div class="lbl">دينار · ${s.paid ? 'انصرف' : 'يُصرف آخر الشهر'}</div></div>
+    <div class="card">${s.items.map(([t, sub, v]) => `<div class="row"><span class="t">${t}${sub ? `<span class="sub">${sub}</span>` : ''}</span><span class="v" style="color:${v < 0 ? 'var(--r)' : v && t !== 'الراتب الأساسي' ? 'var(--g)' : 'var(--tx)'}">${v < 0 ? '− ' : t !== 'الراتب الأساسي' ? '+ ' : ''}${money(Math.abs(v))}</span></div>`).join('')}</div>
+    <a data-act="slip" style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:500;padding:6px">${I.down} نزّل كشف الراتب</a>`;
+  };
+
+  V.profile = () => {
+    const owner = isOwner();
+    return `
+    ${owner ? backBar('حسابي') : ''}
+    <div style="display:flex;align-items:center;gap:14px;${owner ? '' : 'margin-top:8px'}"><span class="av" style="width:60px;height:60px;border-radius:30px;font-size:24px">${esc((S.user.name || '?')[0])}</span>
+      <div><div style="font-size:20px;font-weight:600">${esc(S.user.name)}</div><div class="lbl">${owner ? 'صاحب الشركة' : 'محاسب'} · شركة النور</div></div></div>
+    <div class="sec"><p class="hd">المظهر</p><div class="card" style="padding:6px"><div class="seg" role="group" aria-label="المظهر">
+      ${[['light', 'فاتح'], ['dark', 'داكن'], ['auto', 'تلقائي']].map(([k, t]) => `<button type="button" data-act="theme" data-v="${k}" class="${S.theme === k ? 'on' : ''}" aria-pressed="${S.theme === k}">${t}</button>`).join('')}</div></div></div>
+    <div class="sec"><p class="hd">الأمان</p><div class="card">
+      <div class="row"><span class="t">الدخول بـ Face ID</span><button type="button" class="sw ${S.faceOn ? 'on' : ''}" role="switch" aria-checked="${S.faceOn}" aria-label="الدخول بـ Face ID" data-act="sw" data-k="faceOn"></button></div>
+      <div class="row"><span class="t">الإشعارات</span><button type="button" class="sw ${S.notif ? 'on' : ''}" role="switch" aria-checked="${S.notif}" aria-label="الإشعارات" data-act="sw" data-k="notif"></button></div>
+      <button type="button" class="row tap" data-act="pass"><span class="t">كلمة المرور</span>${I.chev}</button></div></div>
+    <div class="sec"><p class="hd">الحساب</p><div class="card">
+      <div class="row"><span class="t">الإيميل</span><span class="v" dir="ltr">${esc(S.user.email)}</span></div>
+      <div class="row"><span class="t">الشركة</span><span class="v">شركة النور</span></div>
+      ${owner ? '<button type="button" class="row tap" data-act="code"><span class="t">رمز ربط الموظفين</span><span class="v">عرض</span></button>' : ''}</div></div>
+    <button type="button" class="card" data-act="logout" style="height:52px;border:0;color:var(--r);font-size:16px;font-weight:500;flex:none">تسجيل الخروج</button>
+    <p class="lbl" style="text-align:center">Grdlabs 2.0 · نسخة تجريبية للواجهة</p>`;
+  };
+
+  // ----- company (owner) -----
+  const todayInv = () => S.invoices.filter((i) => i.today);
+  V['c-home'] = () => {
+    const ti = todayInv(), sales = BASE_SALES + ti.reduce((a, i) => a + i.total, 0), count = BASE_COUNT + ti.length;
+    const spent = S.expenses.filter((e) => e.today).reduce((a, e) => a + e.amt, 0);
+    const debt = S.invoices.filter((i) => i.st !== 'paid').reduce((a, i) => a + i.total, 0);
+    const pct = Math.round((sales / 2187500 - 1) * 100);
+    return `
+    <div class="top"><div><h1>شركة النور</h1><p class="lbl" style="margin-top:4px;display:flex;align-items:center;gap:6px"><span class="dot"></span>متزامن مع الحاسبة</p></div>
+      <div style="display:flex;gap:8px"><button type="button" class="ib" aria-label="الإشعارات" data-act="bell">${I.bell}${S.notif && S.advance.status === 'pending' ? '<span class="badge"></span>' : ''}</button><button type="button" class="ib" aria-label="حسابي" data-act="go" data-to="profile">${I.user}</button></div></div>
+    <div class="card" style="padding:22px 20px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><span class="lbl">مبيعات اليوم</span><span style="font-size:13px;color:${pct >= 0 ? 'var(--g)' : 'var(--r)'}">${pct >= 0 ? '↑' : '↓'} ${Math.abs(pct)}% عن أمس</span></div>
+      <div class="num" style="font-size:34px;font-weight:700;margin-top:6px;letter-spacing:-.4px">${money(sales)}</div>
+      <div class="lbl" style="margin-top:4px">${ar(count)} فاتورة · دينار</div></div>
+    <div style="display:flex;gap:12px">
+      <a class="mini" data-act="go" data-to="c-exp" style="color:var(--tx)"><span class="lbl">مصاريف اليوم</span><b>${money(spent)}</b></a>
+      <a class="mini" data-act="debts" style="color:var(--tx)"><span class="lbl">ديون عالزباين</span><b style="color:var(--a)">${money(debt)}</b></a></div>
+    <div style="display:flex;gap:12px">
+      <button type="button" class="act" data-act="newInv">${I.newInv}فاتورة</button>
+      <button type="button" class="act" data-act="newExp">${I.newExp}مصروف</button>
+      <button type="button" class="act" data-act="debts">${I.down}قبض</button></div>
+    ${S.advance.status === 'pending' ? `<a class="card" data-act="go" data-to="c-staff" style="padding:16px 20px;display:flex;align-items:center;gap:12px;color:var(--tx)"><span class="av">${esc(S.advance.name[0])}</span><div style="flex:1"><div style="font-weight:500">${esc(S.advance.name)} يطلب سلفة</div><div class="lbl">${money(S.advance.amount)} دينار</div></div>${I.chev}</a>` : ''}
+    ${tip('wa', 'جديد', 'شارك الفاتورة PDF بالواتساب', 'شوف', 'shareTip')}`;
+  };
+
+  V['c-inv'] = () => {
+    const q = (S.invQ || '').trim(), f = S.invFilter;
+    const list = S.invoices.filter((i) => (f === 'all' || (f === 'paid' ? i.st === 'paid' : i.st !== 'paid')) && (!q || i.c.includes(q) || String(i.no).includes(q)));
+    const row = (i) => `<button type="button" class="row tap" data-act="inv" data-no="${i.no}"><span class="t">${esc(i.c)}<span class="sub">#${i.no} · ${esc(i.t)}</span></span><span class="end"><span class="v">${money(i.total)}</span><span class="pill ${ST[i.st][1]}">${ST[i.st][0]}</span></span></button>`;
+    const t = list.filter((i) => i.today), o = list.filter((i) => !i.today);
+    return `
+    ${header('الفواتير', `<button type="button" class="ib acc" aria-label="فاتورة جديدة" data-act="newInv">${I.plus}</button>`)}
+    <label class="search">${I.search}<input id="invQ" placeholder="بحث" aria-label="بحث" value="${esc(S.invQ || '')}"></label>
+    <div class="seg" role="group" aria-label="الحالة">${[['all', 'الكل'], ['unpaid', 'غير مدفوعة'], ['paid', 'مدفوعة']].map(([k, n]) => `<button type="button" data-act="invF" data-v="${k}" class="${f === k ? 'on' : ''}">${n}</button>`).join('')}</div>
+    <div id="invList" style="display:flex;flex-direction:column;gap:18px">
+      ${t.length ? `<div class="sec"><p class="hd">اليوم</p><div class="card">${t.map(row).join('')}</div></div>` : ''}
+      ${o.length ? `<div class="sec"><p class="hd">هذا الشهر</p><div class="card">${o.map(row).join('')}</div></div>` : ''}
+      ${list.length ? '' : '<div class="card empty">ماكو فواتير بهذا البحث</div>'}
+    </div>`;
+  };
+
+  V['c-new'] = () => {
+    const total = draft.items.reduce((a, it) => a + it.q * it.p, 0);
+    return `
+    ${backBar('فاتورة جديدة', '#' + draft.no)}
+    <div class="card"><label class="row"><span class="t">الزبون</span><select id="cust" aria-label="الزبون">${CUSTOMERS.map((c) => `<option ${c === draft.c ? 'selected' : ''}>${c}</option>`).join('')}</select>${I.chev}</label></div>
+    <div class="sec"><p class="hd">المواد</p><div class="card">
+      ${draft.items.map((it, k) => `<div class="row"><span class="t">${esc(it.n)}<span class="sub num">${nf.format(it.q)} × ${money(it.p)}</span></span><span class="v" style="color:var(--tx)">${money(it.q * it.p)}</span><button type="button" class="x" aria-label="حذف ${esc(it.n)}" data-act="rmItem" data-k="${k}">${I.close}</button></div>`).join('')}
+      <div class="row"><button type="button" class="nav" data-act="addItem" style="font-size:16px">+ أضف مادة</button></div></div></div>
+    <div class="seg" role="group" aria-label="طريقة الدفع">${['نقد', 'آجل', 'تحويل'].map((p) => `<button type="button" data-act="pay" data-v="${p}" class="${draft.pay === p ? 'on' : ''}">${p}</button>`).join('')}</div>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:14px">
+      <div class="total"><span style="font-size:17px;font-weight:600">الإجمالي</span><span class="num">${money(total)} <span style="font-size:15px;color:var(--sec);font-weight:500">د.ع</span></span></div>
+      <button type="button" class="btn" data-act="saveInv" ${draft.items.length ? '' : 'disabled style="opacity:.5"'}>احفظ الفاتورة</button></div>`;
+  };
+
+  V['c-exp'] = () => {
+    const t = S.expenses.filter((e) => e.today), o = S.expenses.filter((e) => !e.today);
+    const row = (e) => `<div class="row"><span class="av" style="font-size:13px">${esc(e.cat.slice(0, 2))}</span><span class="t">${esc(e.cat)}<span class="sub">${esc(e.note || e.from)} · ${esc(e.t)}${e.photo ? ' · 📎' : ''}</span></span><span class="v" style="color:var(--tx);font-weight:600">${money(e.amt)}</span></div>`;
+    return `
+    ${header('المصاريف', `<button type="button" class="ib acc" aria-label="مصروف جديد" data-act="newExp">${I.plus}</button>`)}
+    <div class="card" style="padding:20px"><span class="lbl">مصاريف اليوم</span><div class="num" style="font-size:30px;font-weight:700;margin-top:4px">${money(t.reduce((a, e) => a + e.amt, 0))} <span style="font-size:15px;color:var(--sec);font-weight:500">د.ع</span></div></div>
+    ${t.length ? `<div class="sec"><p class="hd">اليوم</p><div class="card">${t.map(row).join('')}</div></div>` : ''}
+    ${o.length ? `<div class="sec"><p class="hd">هذا الشهر</p><div class="card">${o.map(row).join('')}</div></div>` : ''}`;
+  };
+
+  V['c-newexp'] = () => `
+    <div class="top" style="margin-top:-12px"><button type="button" class="nav" data-act="back">إلغاء</button><h2>مصروف جديد</h2><button type="button" class="nav b" data-act="saveExp">حفظ</button></div>
+    <div style="text-align:center;padding:20px 0 4px"><label for="amt" class="lbl">المبلغ بالدينار</label><input id="amt" class="amt" value="${exp.amt ? money(exp.amt) : ''}" placeholder="0" inputmode="numeric" dir="ltr"></div>
+    <div class="chips" role="group" aria-label="الفئة">${CATS.map((c) => `<button type="button" class="chip ${exp.cat === c ? 'on' : ''}" data-act="cat" data-v="${c}" aria-pressed="${exp.cat === c}">${c}</button>`).join('')}</div>
+    <div class="card">
+      <label class="row"><span class="t">الدفع من</span><select id="from" aria-label="الدفع من">${['الصندوق', 'البنك', 'زين كاش'].map((f) => `<option ${f === exp.from ? 'selected' : ''}>${f}</option>`).join('')}</select>${I.chev}</label>
+      <div class="row"><span class="t">التاريخ</span><span class="v">اليوم</span></div>
+      <div class="row"><label for="note" class="t" style="flex:none">ملاحظة</label><input id="note" placeholder="اختياري" value="${esc(exp.note)}"></div></div>
+    <label class="btn2" style="cursor:pointer">${I.cam} ${exp.photo ? 'تم إرفاق صورة الوصل ✓' : 'صوّر الوصل'}<input id="photo" type="file" accept="image/*" capture="environment" hidden></label>`;
+
+  V['c-staff'] = () => {
+    const here = S.staff.filter((s) => s.s !== 'x').length, n = S.staff.length;
+    const st = { p: ['حاضر', 'ok'], l: ['متأخر', 'warn'], x: ['غائب', 'bad'] };
+    const at = (t) => t ? t.replace(/\d/g, (x) => ar(x)) + ' ص' : '';
+    return `
+    ${header('الموظفين', `<button type="button" class="ib acc" aria-label="إضافة موظف" data-act="addStaff">${I.plus}</button>`)}
+    <div class="card" style="padding:18px 20px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="lbl">حضور اليوم</span><span class="num" style="font-size:22px;font-weight:600">${here} <span class="lbl">من ${n}</span></span></div>
+      <div class="bar"><i style="width:${n ? Math.round(here / n * 100) : 0}%"></i></div></div>
+    ${S.advance.status === 'pending' ? `<div class="req"><div><div style="font-weight:600">${esc(S.advance.name)} يطلب سلفة ${money(S.advance.amount)}</div><div class="lbl" style="margin-top:2px">تنخصم من الراتب الجاي</div></div>
+      <div class="acts"><button type="button" data-act="adv" data-v="ok" style="background:var(--acc);color:var(--onacc)">وافق</button><button type="button" data-act="adv" data-v="no" style="background:var(--card);color:var(--r)">لا</button></div></div>` : ''}
+    <div class="card">${S.staff.map((s, k) => `<button type="button" class="row tap" data-act="emp" data-k="${k}"><span class="av">${esc(s.n[0])}</span><span class="t">${esc(s.n)}<span class="sub">${s.s === 'x' ? 'ما سجّل بعد' : 'دخل ' + at(s.at)} · ${esc(s.r)}</span></span><span class="pill ${st[s.s][1]}">${st[s.s][0]}</span></button>`).join('')}</div>`;
+  };
+
+  // ---------- render ----------
+  const TABS = {
+    employee: [['e-home', 'الرئيسية', I.home], ['e-att', 'الحضور', I.time], ['e-sal', 'الراتب', I.cash], ['profile', 'حسابي', I.me]],
+    owner: [['c-home', 'الرئيسية', I.home], ['c-inv', 'الفواتير', I.doc], ['c-exp', 'المصاريف', I.cash], ['c-staff', 'الموظفين', I.team]],
+  };
+  const NOTABS = ['login', 'face', 'news', 'c-new', 'c-newexp'];
+  const homeOf = () => isOwner() ? 'c-home' : 'e-home';
+  let prev = [];
+  function go(r, push = true) {
+    if (push && r !== route) prev.push(route);
+    route = r; render(true);
+  }
+  function render(anim) {
+    if (!S.user && !['login'].includes(route)) route = 'login';
+    const st = scr.scrollTop;
+    scr.innerHTML = V[route]();
+    scr.classList.toggle('notabs', NOTABS.includes(route) || (route === 'profile' && isOwner()));
+    if (anim) { scr.classList.remove('anim'); void scr.offsetWidth; scr.classList.add('anim'); scr.scrollTop = 0; } else scr.scrollTop = st;
+    const set = S.user && !NOTABS.includes(route) && !(route === 'profile' && isOwner()) ? TABS[S.user.role] : null;
+    tabs.hidden = !set;
+    if (set) tabs.innerHTML = set.map(([k, n, ic]) => `<button type="button" class="tab ${route === k ? 'on' : ''}" data-act="tab" data-to="${k}" ${route === k ? 'aria-current="page"' : ''}>${ic}${n}</button>`).join('');
+  }
+
+  function signIn(email, role) {
+    const name = role === 'owner' ? 'محمد الكرادي' : 'أحمد علي';
+    S.user = { email, role, name }; save();
+    prev = [];
+    go(!S.seenFace ? 'face' : !S.seenNews ? 'news' : homeOf(), false);
+  }
+
+  // ---------- actions ----------
+  const A = {
+    close: closeSheet,
+    tab: (el) => { prev = []; S.invQ = ''; go(el.dataset.to, false); },
+    go: (el) => go(el.dataset.to),
+    back: () => { go(prev.pop() || homeOf(), false); },
+    demo: (el) => { const owner = el.dataset.role === 'owner'; $('#em').value = owner ? 'owner@alnoor.iq' : 'ahmed@alnoor.iq'; $('#pw').value = 'demo1234'; },
+    forgot: () => openSheet(`<h2>نسيت كلمة المرور؟</h2><p class="lbl">اكتب إيميلك ونرسلك رمز حتى تغيّرها.</p><div class="fld"><input id="fEm" type="email" dir="ltr" placeholder="name@example.com" style="text-align:right" value="${esc($('#em')?.value || '')}"></div><button type="button" class="btn" data-act="forgotSend">أرسل الرمز</button>`),
+    forgotSend: () => { const v = $('#fEm').value.trim(); if (!/^\S+@\S+\.\S+$/.test(v)) return toast('اكتب إيميل صحيح'); closeSheet(); toast('دزّينا الرمز على ' + v); },
+    register: () => openSheet(`<h2>سجّل برمز الشركة</h2><p class="lbl">اطلب الرمز من صاحب الشركة، يتكوّن من ٦ أرقام.</p><div class="fld"><input id="rCode" inputmode="numeric" maxlength="6" placeholder="000000" dir="ltr" style="text-align:center;font-size:24px;letter-spacing:8px"></div><button type="button" class="btn" data-act="regGo">كمّل</button>`),
+    regGo: () => { const v = $('#rCode').value.trim(); if (!/^\d{6}$/.test(v)) return toast('الرمز لازم ٦ أرقام'); closeSheet(); toast('تم ربطك بشركة النور، اختار إيميل وكلمة مرور'); },
+    faceLogin: () => {
+      if (!S.faceOn || !S.lastEmail) return toast('فعّل Face ID بعد ما تدخل أول مرة');
+      openSheet(`<div class="face scan" style="margin:10px auto">${I.face(64)}</div><p style="text-align:center;font-weight:600">جاري التحقق…</p>`);
+      setTimeout(() => { closeSheet(); signIn(S.lastEmail, S.lastRole); toast('أهلاً بيك من جديد'); }, 1100);
+    },
+    faceOn: () => { S.seenFace = true; S.faceOn = true; save(); toast('تفعّل Face ID'); go(!S.seenNews ? 'news' : homeOf(), false); },
+    faceSkip: () => { S.seenFace = true; save(); go(!S.seenNews ? 'news' : homeOf(), false); },
+    newsDone: () => { S.seenNews = true; save(); go(homeOf(), false); },
+    hide: (el) => { S.hidden[el.dataset.id] = 1; save(); render(); },
+    bell: () => {
+      const items = isOwner()
+        ? [S.advance.status === 'pending' ? [S.advance.name + ' يطلب سلفة ' + money(S.advance.amount), 'هسه'] : null, ['فاتورة شركة دجلة #1021 متأخرة', 'من يومين'], ['تمت مزامنة الحاسبة', 'قبل ٥ دقائق']].filter(Boolean)
+        : [['راتب الشهر يُصرف آخر الشهر', 'اليوم'], ['تم تحديث جدول الدوام', 'أمس']];
+      S.notif = false; save(); render();
+      openSheet(`<h2>الإشعارات</h2><div class="card">${items.map(([t, w]) => `<div class="row"><span class="t">${esc(t)}<span class="sub">${w}</span></span></div>`).join('')}</div>`);
+    },
+    clock: () => {
+      if (busy) return; busy = true;
+      openSheet(`<div class="face scan" style="margin:10px auto">${I.face(64)}</div><p style="text-align:center;font-weight:600">${S.clockIn ? 'جاري تسجيل الانصراف…' : 'جاري تسجيل الحضور…'}</p>`);
+      setTimeout(() => {
+        busy = false; closeSheet();
+        if (!S.clockIn) { S.clockIn = clock(now()); toast('سجّلت حضورك ' + S.clockIn); } else { S.clockOut = clock(now()); toast('سجّلت انصرافك، يعطيك العافية'); }
+        save(); render();
+      }, 900);
+    },
+    askAdv: () => openSheet(`<h2>اطلب سلفة</h2><p class="lbl">تنخصم من راتبك الجاي بعد موافقة الشركة.</p><div class="chips">${[100000, 200000, 300000].map((v) => `<button type="button" class="chip" data-act="advAmt" data-v="${v}">${money(v)}</button>`).join('')}</div><div class="fld"><input id="advIn" inputmode="numeric" dir="ltr" placeholder="المبلغ" style="text-align:center"></div><button type="button" class="btn" data-act="advSend">أرسل الطلب</button>`),
+    advAmt: (el) => { $('#advIn').value = money(el.dataset.v); },
+    advSend: () => {
+      const v = Number(($('#advIn').value || '').replace(/\D/g, ''));
+      if (!v) return toast('اكتب المبلغ'); if (v > 600000) return toast('أعلى سلفة نص الراتب');
+      S.advance = { name: 'أحمد', amount: v, status: 'pending', mine: true }; S.hidden.adv = 1; save(); closeSheet(); render(); toast('وصل طلبك للشركة');
+    },
+    sal: (el) => { S.salMonth = Math.max(0, Math.min(2, S.salMonth + Number(el.dataset.d))); save(); render(); },
+    slip: () => toast('تنزّل كشف الراتب PDF'),
+    theme: (el) => { S.theme = el.dataset.v; save(); applyTheme(); render(); },
+    sw: (el) => { const k = el.dataset.k; S[k] = !S[k]; save(); render(); },
+    pass: () => openSheet(`<h2>كلمة المرور</h2><div class="fld"><label for="p1">الحالية</label><input id="p1" type="password"></div><div class="fld"><label for="p2">الجديدة</label><input id="p2" type="password"></div><button type="button" class="btn" data-act="passSave">احفظ</button>`),
+    passSave: () => { if (($('#p2').value || '').length < 8) return toast('الكلمة الجديدة ٨ أحرف على الأقل'); closeSheet(); toast('تغيّرت كلمة المرور'); },
+    code: () => openSheet(`<h2>رمز ربط الموظفين</h2><p class="lbl">الموظف الجديد يكتب هذا الرمز بأول دخول.</p><div class="card" style="padding:22px;text-align:center;font-size:34px;font-weight:700;letter-spacing:8px" dir="ltr">482 913</div><button type="button" class="btn2" data-act="close">تمام</button>`),
+    logout: () => { S.lastEmail = S.user.email; S.lastRole = S.user.role; S.user = null; save(); prev = []; go('login', false); },
+
+    newInv: () => { draft = { no: Math.max(...S.invoices.map((i) => i.no)) + 1, c: CUSTOMERS[0], pay: 'نقد', items: [{ n: 'ورق A4', q: 4, p: 25000 }, { n: 'حبر طابعة', q: 2, p: 85000 }, { n: 'ملفات بلاستك', q: 90, p: 2000 }] }; go('c-new'); },
+    rmItem: (el) => { draft.items.splice(Number(el.dataset.k), 1); render(); },
+    addItem: () => openSheet(`<h2>أضف مادة</h2><div class="fld"><label for="itN">المادة</label><select id="itN">${PRODUCTS.map(([n, p]) => `<option value="${p}">${n}</option>`).join('')}</select></div>
+      <div style="display:flex;gap:12px"><div class="fld" style="flex:1"><label for="itQ">الكمية</label><input id="itQ" inputmode="numeric" value="1" dir="ltr"></div><div class="fld" style="flex:1"><label for="itP">السعر</label><input id="itP" inputmode="numeric" value="${money(PRODUCTS[0][1])}" dir="ltr"></div></div>
+      <button type="button" class="btn" data-act="itemSave">أضف</button>`),
+    itemSave: () => {
+      const s = $('#itN'), q = Number($('#itQ').value.replace(/\D/g, '')), p = Number($('#itP').value.replace(/\D/g, ''));
+      if (!q || !p) return toast('اكتب الكمية والسعر');
+      draft.items.push({ n: s.options[s.selectedIndex].text, q, p }); closeSheet(); render();
+    },
+    pay: (el) => { draft.pay = el.dataset.v; render(); },
+    saveInv: () => {
+      if (!draft.items.length) return;
+      const total = draft.items.reduce((a, it) => a + it.q * it.p, 0);
+      S.invoices.unshift({ no: draft.no, c: draft.c, t: clock(now()), today: true, total, st: draft.pay === 'آجل' ? 'credit' : 'paid' });
+      save(); const no = draft.no; draft = null; prev = []; go('c-inv', false);
+      openSheet(`<h2>انحفظت الفاتورة #${no}</h2><p class="lbl">${money(total)} دينار، ووصلت للحاسبة.</p><button type="button" class="btn" data-act="share">شارك PDF بالواتساب</button><button type="button" class="ghost" data-act="close">بعدين</button>`);
+    },
+    share: () => { closeSheet(); toast('انفتح الواتساب مع ملف الفاتورة'); },
+    shareTip: () => toast('افتح أي فاتورة واضغط "شارك PDF"'),
+    invF: (el) => { S.invFilter = el.dataset.v; save(); render(); },
+    inv: (el) => {
+      const i = S.invoices.find((x) => x.no === Number(el.dataset.no)); if (!i) return;
+      openSheet(`<div class="top"><h2>فاتورة #${i.no}</h2><span class="pill ${ST[i.st][1]}">${ST[i.st][0]}</span></div>
+        <div class="card"><div class="row"><span class="t">الزبون</span><span class="v">${esc(i.c)}</span></div><div class="row"><span class="t">الوقت</span><span class="v">${esc(i.t)}</span></div><div class="row"><span class="t">المبلغ</span><span class="v" style="color:var(--tx);font-weight:600">${money(i.total)} د.ع</span></div></div>
+        ${i.st !== 'paid' ? `<button type="button" class="btn" data-act="collect" data-no="${i.no}">استلمت المبلغ</button>` : ''}<button type="button" class="btn2" data-act="share">شارك PDF بالواتساب</button>`);
+    },
+    debts: () => {
+      const d = S.invoices.filter((i) => i.st !== 'paid');
+      openSheet(`<h2>قبض من الزباين</h2>${d.length ? `<div class="card">${d.map((i) => `<div class="row"><span class="t">${esc(i.c)}<span class="sub">#${i.no} · ${ST[i.st][0]}</span></span><span class="v" style="color:var(--tx)">${money(i.total)}</span><button type="button" class="pill ok" style="border:0" data-act="collect" data-no="${i.no}">استلم</button></div>`).join('')}</div>` : '<div class="card empty">ماكو ديون، كل الفواتير مدفوعة</div>'}`);
+    },
+    collect: (el) => { const i = S.invoices.find((x) => x.no === Number(el.dataset.no)); if (!i) return; i.st = 'paid'; save(); closeSheet(); render(); toast('استلمت ' + money(i.total) + ' من ' + i.c); },
+
+    newExp: () => { exp = { amt: 120000, cat: 'كهرباء', from: 'الصندوق', note: '', photo: false }; go('c-newexp'); },
+    cat: (el) => { readExp(); exp.cat = el.dataset.v; render(); },
+    saveExp: () => {
+      readExp(); if (!exp.amt) return toast('اكتب المبلغ');
+      S.expenses.unshift({ cat: exp.cat, amt: exp.amt, from: exp.from, note: exp.note, t: clock(now()), today: true, photo: exp.photo });
+      save(); exp = null; prev = []; go('c-exp', false); toast('انحفظ المصروف');
+    },
+
+    adv: (el) => { const ok = el.dataset.v === 'ok'; S.advance.status = ok ? 'ok' : 'no'; save(); render(); toast(ok ? 'وافقت على سلفة ' + S.advance.name : 'رفضت الطلب'); },
+    emp: (el) => {
+      const s = S.staff[Number(el.dataset.k)]; if (!s) return;
+      openSheet(`<div style="display:flex;align-items:center;gap:14px"><span class="av" style="width:52px;height:52px;border-radius:26px;font-size:20px">${esc(s.n[0])}</span><div><h2>${esc(s.n)}</h2><span class="lbl">${esc(s.r)}</span></div></div>
+        <div class="card"><div class="row"><span class="t">الراتب الأساسي</span><span class="v">1,200,000</span></div><div class="row"><span class="t">حضور هذا الشهر</span><span class="v">١٨ يوم</span></div><div class="row"><span class="t">السلف</span><span class="v">150,000</span></div></div>
+        <div style="display:flex;gap:10px"><button type="button" class="btn2" data-act="bonus" data-k="${el.dataset.k}" data-v="b">مكافأة</button><button type="button" class="btn2" data-act="bonus" data-k="${el.dataset.k}" data-v="d" style="color:var(--r)">خصم</button></div>`);
+    },
+    bonus: (el) => { const s = S.staff[Number(el.dataset.k)]; closeSheet(); toast((el.dataset.v === 'b' ? 'انضافت مكافأة لـ ' : 'انضاف خصم على ') + s.n); },
+    addStaff: () => openSheet(`<h2>موظف جديد</h2><div class="fld"><label for="sN">الاسم</label><input id="sN" placeholder="الاسم الكامل"></div><div class="fld"><label for="sR">الوظيفة</label><input id="sR" placeholder="مثلاً: كاشير"></div><button type="button" class="btn" data-act="staffSave">أضف وأعطيه رمز الربط</button>`),
+    staffSave: () => {
+      const n = $('#sN').value.trim(), r = $('#sR').value.trim() || 'موظف';
+      if (!n) return toast('اكتب الاسم');
+      S.staff.push({ n, r, s: 'x' }); save(); render();
+      openSheet(`<h2>انضاف ${esc(n)}</h2><p class="lbl">خلّيه ينزّل التطبيق ويكتب هذا الرمز:</p><div class="card" style="padding:22px;text-align:center;font-size:34px;font-weight:700;letter-spacing:8px" dir="ltr">482 913</div><button type="button" class="btn2" data-act="close">تمام</button>`);
+    },
+  };
+  const readExp = () => {
+    if (!exp) return;
+    const a = $('#amt'), f = $('#from'), n = $('#note');
+    if (a) exp.amt = Number(a.value.replace(/\D/g, '')); if (f) exp.from = f.value; if (n) exp.note = n.value.trim();
+  };
+
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest('[data-act]');
+    if (!el || el.disabled) return;
+    const fn = A[el.dataset.act];
+    if (fn) { e.preventDefault(); fn(el); }
+  });
+  document.addEventListener('submit', (e) => {
+    if (e.target.id !== 'loginForm') return;
+    e.preventDefault();
+    const em = $('#em').value.trim().toLowerCase(), pw = $('#pw').value;
+    if (!/^\S+@\S+\.\S+$/.test(em)) return toast('اكتب إيميل صحيح');
+    if (pw.length < 4) return toast('اكتب كلمة المرور');
+    signIn(em, /^(owner|admin|boss)/.test(em) ? 'owner' : 'employee');
+  });
+  document.addEventListener('input', (e) => {
+    const t = e.target;
+    if (t.id === 'invQ') { S.invQ = t.value; const pos = t.selectionStart; render(); const n = $('#invQ'); n.focus(); n.setSelectionRange(pos, pos); }
+    if (t.id === 'amt' || t.id === 'advIn' || t.id === 'itP' || t.id === 'itQ') { const d = t.value.replace(/\D/g, ''); t.value = d ? nf.format(Number(d)) : ''; }
+  });
+  document.addEventListener('change', (e) => {
+    const t = e.target;
+    if (t.id === 'cust' && draft) draft.c = t.value;
+    if (t.id === 'itN') $('#itP').value = money(t.value);
+    if (t.id === 'photo' && exp && t.files.length) { readExp(); exp.photo = true; render(); toast('تم إرفاق صورة الوصل'); }
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', applyTheme);
+
+  applyTheme();
+  route = S.user ? homeOf() : 'login';
+  render(true);
+})();
+</script>
+</body>
+</html>
