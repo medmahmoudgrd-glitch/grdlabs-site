@@ -1,0 +1,42 @@
+# Builds the Grdlabs phone app from native/ (Capacitor wrapping mobile/index.html).
+# Android: a debug APK you can install directly, attached to the run as "grdlabs-android".
+# iPhone: compiles the Xcode project for the simulator to prove it builds; installing on a
+# real iPhone needs signing with an Apple developer account (see native/README.md).
+name: Mobile apps
+
+on:
+  push:
+    paths: ['native/**', 'mobile/**', 'img/grdlabs-app-icon.svg', '.github/workflows/mobile-apps.yml']
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: native } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: native/package-lock.json }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - run: npm ci
+      - run: npm run web && npx cap sync android
+      - name: Build debug APK
+        working-directory: native/android
+        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - run: cp android/app/build/outputs/apk/debug/app-debug.apk grdlabs.apk
+      - uses: actions/upload-artifact@v4
+        with: { name: grdlabs-android, path: native/grdlabs.apk, if-no-files-found: error }
+
+  ios:
+    runs-on: macos-latest
+    defaults: { run: { working-directory: native } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: native/package-lock.json }
+      - run: npm ci
+      - run: npm run web && npx cap sync ios
+      - name: Build for the iOS simulator (no signing)
+        working-directory: native/ios/App
+        run: xcodebuild -project App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build | tail -n 40
