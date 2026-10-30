@@ -36,7 +36,8 @@
 <ul>
   <li>نجمع فقط ما يحتاجه التطبيق حتى يشتغل.</li>
   <li>ما نبيع بياناتك، وما بالتطبيق إعلانات أو أدوات تحليل، وما نتتبعك بين التطبيقات والمواقع.</li>
-  <li>دفاتر الشركة على حاسبتها، وفواتير حسابات الفري لانسر وأصحاب الشركات المسوّاة بالتلفون تبقى على التلفون.</li>
+  <li>دفاتر الشركة على حاسبتها. إذا ربطت تلفون مدير، تنرفع نسخة منها للسيرفر حتى يشوفها التلفون، وتنشال أول ما تفك الربط.</li>
+  <li>حسابات الفري لانسر تنحفظ على السيرفر، حتى ترجع بياناتك من أي تلفون.</li>
   <li>تگدر تحذف حسابك نهائياً من داخل التطبيق: الإعدادات أو حسابي ← حذف الحساب نهائياً.</li>
 </ul>
 </section>
@@ -48,6 +49,9 @@
   <li><b>سجل الحضور:</b> وقت الحضور والانصراف ورمز ستيكر NFC مال الشركة، حتى تشوفه شركتك وتحسب دوامك.</li>
   <li><b>معلومات الراتب والعمل:</b> اسمك ومسمّاك الوظيفي وراتبك وسلفك وخصوماتك ومكافآتك. هذي ترسلها شركتك من برنامجها، حتى تشوفها أنت فقط.</li>
   <li><b>معلومات الشركة:</b> اسم الشركة وموقعها والمسافة المسموحة ورموز ربط الموظفين، يرسلها برنامج الشركة حتى يشتغل الحضور.</li>
+  <li><b>بيانات أعمال الشركة:</b> إذا ربطت الشركة تلفون مدير، ترسل الحاسبة نسخة من الزباين وهواتفهم والفواتير والمدفوعات والمصاريف والموظفين وطلبات السلف، حتى يشوفها المدير. وكل شي يسويه المدير من التلفون يمر عن طريق السيرفر لحد ما تستلمه الحاسبة.</li>
+  <li><b>بيانات الفري لانسر:</b> الفواتير والعملاء والمصاريف والمشاريع والمهام وأهدافك، تنحفظ على السيرفر تحت حسابك، حتى ترجعها من أي تلفون.</li>
+  <li><b>طلبات السلف:</b> المبلغ والسبب، حتى توصل لشركتك.</li>
   <li><b>معلومات الجهاز:</b> نوع الجهاز (iPhone أو Android) يظهر للشركة بقائمة الأجهزة المربوطة. وعنوان IP يُستخدم مؤقتاً لمنع محاولات الدخول الكثيرة، وما نربطه بحسابك.</li>
 </ul>
 
@@ -56,8 +60,8 @@
   <li><b>Face ID والبصمة:</b> يتعامل وياها نظام جهازك فقط. ما توصلنا صورة وجهك ولا بصمتك.</li>
   <li><b>الكاميرا:</b> تُستخدم فقط لمسح رمز الربط، وما نحفظ أو نرسل أي صورة.</li>
   <li><b>NFC:</b> يقرأ ملصق الشركة فقط وقت تسجيل الحضور.</li>
-  <li><b>الفواتير والزباين والمصاريف والمهام والمشاريع:</b> بحسابات الفري لانسر وأصحاب الشركات المسوّاة بالتلفون تنحفظ على التلفون نفسه. وإذا شاركت فاتورة، تنحفظ وتنرسل بالطريقة اللي تختارها أنت.</li>
-  <li><b>دفاتر الشركة:</b> المبيعات والفواتير والحسابات والرواتب تنحفظ على حاسبة الشركة.</li>
+  <li><b>الفواتير اللي تشاركها:</b> تنرسل بالطريقة اللي تختارها أنت.</li>
+  <li><b>دفاتر الشركة الكاملة:</b> الحسابات والقيود والرواتب تنحفظ على حاسبة الشركة. للسيرفر تروح فقط النسخة المذكورة فوق.</li>
   <li><b>الإشعارات:</b> تذكيرات المهام تنجدول على جهازك نفسه.</li>
 </ul>
 
@@ -74,13 +78,14 @@
   <li><b>الحساب:</b> يبقى لحد ما تحذفه.</li>
   <li><b>رموز الإيميل:</b> تنتهي خلال 10 دقائق.</li>
   <li><b>الحضور والرواتب على السيرفر:</b> تبقى ما دامت الشركة مستخدمة الخدمة، وتنحذف إذا أوقفت الشركة الحضور وحذفت بياناتها.</li>
+  <li><b>نسخة الشركة للمدير:</b> تبقى ما دام تلفون مدير مربوط، وتنحذف من السيرفر أول ما ينفك آخر ربط.</li>
   <li><b>النسخ الاحتياطية:</b> تنمسح تلقائياً بعد 14 يوم، فالبيانات المحذوفة تختفي منها خلال هالمدة.</li>
 </ul>
 
 <h2>حذف حسابك</h2>
 <p>من التطبيق: الإعدادات أو حسابي ← حذف الحساب نهائياً، وتأكد بكلمة المرور. ينحذف حسابك وإيميلك وربطك بالشركة من السيرفر فوراً، ولا يمكن استرجاعها.</p>
 <p>سجلات الحضور (ومن ضمنها الموقع وقت التسجيل) والرواتب تبقى عند شركتك لأنها جزء من سجلاتها، بدون ربطها بحسابك. لطلب حذفها راجع شركتك أو راسلنا.</p>
-<p>حسابات الفري لانسر وأصحاب الشركات المسوّاة بالتلفون تنمسح بياناتها من التلفون بنفس الخطوات. وتگدر تطلب الحذف بالإيميل أيضاً.</p>
+<p>حساب الفري لانسر تنحذف كل بياناته من السيرفر ومن التلفون بنفس الخطوات. وحساب المدير ينفك ربطه، وتبقى دفاتر الشركة على حاسبتها. وتگدر تطلب الحذف بالإيميل أيضاً.</p>
 
 <h2>حقوقك وسحب الموافقة</h2>
 <ul>
@@ -112,7 +117,8 @@
 <ul>
   <li>We collect only what the app needs to work.</li>
   <li>We do not sell your data. There are no ads or analytics tools in the app, and we do not track you across apps or websites.</li>
-  <li>A company's books stay on its own computer. Invoices in freelancer and business accounts created on the phone stay on the phone.</li>
+  <li>A company's books stay on its own computer. If it links a manager's phone, a copy is uploaded for that phone to read, and it is removed when the link ends.</li>
+  <li>Freelancer accounts are stored on the server, so your data comes back on any phone.</li>
   <li>You can permanently delete your account inside the app: Settings or Account → حذف الحساب نهائياً (Delete account permanently).</li>
 </ul>
 </section>
@@ -124,6 +130,9 @@
   <li><b>Attendance records:</b> clock-in and clock-out times and the code of the company's NFC sticker, so your company can see and count your working hours.</li>
   <li><b>Pay and job information:</b> your name, job title, salary, advances, deductions and bonuses. Your company sends these from its desktop app so that you alone can see them.</li>
   <li><b>Company information:</b> the company's name, location, allowed radius and employee pairing codes, sent by its desktop app so attendance can work.</li>
+  <li><b>Company business data:</b> if a company links a manager's phone, its desktop app sends a copy of customers and their phone numbers, invoices, payments, expenses, employees and advance requests for the manager to see. Whatever the manager does on the phone passes through the server until the desktop app receives it.</li>
+  <li><b>Freelancer data:</b> invoices, clients, expenses, projects, tasks and goals, stored on the server under your account so you can get them back on any phone.</li>
+  <li><b>Advance requests:</b> the amount and reason, so they reach your company.</li>
   <li><b>Device information:</b> the device type (iPhone or Android), shown to the company in its list of paired devices. Your IP address is used temporarily to limit repeated sign-in attempts and is not linked to your account.</li>
 </ul>
 
@@ -132,8 +141,8 @@
   <li><b>Face ID and fingerprint:</b> handled entirely by your device's operating system. We never receive biometric data.</li>
   <li><b>Camera:</b> used only to scan the pairing code. No image is stored or sent.</li>
   <li><b>NFC:</b> reads the company sticker only when you clock in.</li>
-  <li><b>Invoices, customers, expenses, tasks and projects:</b> in freelancer and business accounts created on the phone, these are stored on the phone itself. If you share an invoice, it goes wherever you choose to send it.</li>
-  <li><b>Company books:</b> sales, invoices, accounts and payroll are kept on the company's computer.</li>
+  <li><b>Invoices you share:</b> they go wherever you choose to send them.</li>
+  <li><b>The company's full books:</b> accounts, journal entries and payroll are kept on the company's computer. Only the copy described above goes to the server.</li>
   <li><b>Notifications:</b> task reminders are scheduled on your device.</li>
 </ul>
 
@@ -150,13 +159,14 @@
   <li><b>Account:</b> until you delete it.</li>
   <li><b>Email codes:</b> expire within 10 minutes.</li>
   <li><b>Attendance and pay on the server:</b> kept while the company uses the service, and deleted if the company turns attendance off and removes its data.</li>
+  <li><b>The company's copy for managers:</b> kept while a manager's phone is linked, and deleted from the server when the last link ends.</li>
   <li><b>Backups:</b> deleted automatically after 14 days, so deleted data leaves the backups within that time.</li>
 </ul>
 
 <h2>Deleting your account</h2>
 <p>In the app: Settings or Account → حذف الحساب نهائياً, then confirm with your password. Your account, email address and link to the company are deleted from the server immediately and cannot be recovered.</p>
 <p>Attendance records (including location at clock-in) and payroll records remain with your company as part of its records, no longer linked to your account. To have them removed, contact your company or email us.</p>
-<p>Freelancer and business accounts created on the phone have their data erased from the phone by the same steps. You can also request deletion by email.</p>
+<p>A freelancer account has all its data deleted from the server and the phone by the same steps. A manager's account is unlinked, and the company's books stay on its computer. You can also request deletion by email.</p>
 
 <h2>Your rights and withdrawing consent</h2>
 <ul>
