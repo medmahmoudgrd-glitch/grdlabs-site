@@ -141,9 +141,46 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
 .fault:last-child{border-bottom:0}
 .fault .msg{font-family:var(--mono);font-size:12px;direction:ltr;text-align:left;word-break:break-word;flex:1;min-width:0}
 .tag{font-size:11px;border-radius:6px;padding:1px 7px;background:var(--sunk);color:var(--mute);white-space:nowrap}
+/* Interactive layer */
+.kpi,.plan{transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+.kpi[data-go]:hover,.kpi[data-pf]:hover,.plan:hover{transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(20,28,48,.35)}
+.kpi[data-pf][aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.kpi{white-space:normal}
+.kpi .delta,.tip .up,.tip .down{font-weight:600;direction:ltr;unicode-bidi:isolate}
+.kpi .delta.up{color:var(--ok)} .kpi .delta.down{color:var(--bad)}
+.seg.mini button{padding:3px 10px;font-size:12px}
+.chart{position:relative}
+.chart .col{cursor:pointer;outline:none}
+.chart .col .bar{transition:fill .15s,opacity .15s}
+.chart svg:hover .col .bar{opacity:.55}
+.chart svg:hover .col:hover .bar,.chart .col:focus-visible .bar{opacity:1;fill:var(--accent)}
+.chart .col:focus-visible .hit{stroke:var(--accent);stroke-width:1.5}
+.chart .grow{transform-box:fill-box;transform-origin:bottom}
+@media (prefers-reduced-motion:no-preference){.chart .grow{animation:barup .55s cubic-bezier(.2,.8,.2,1) both}@keyframes barup{from{transform:scaleY(0)}}}
+.tip{position:absolute;z-index:5;pointer-events:none;background:var(--fg);color:var(--bg);border-radius:10px;padding:8px 11px;font-size:12px;line-height:1.5;white-space:nowrap;transform:translate(-50%,calc(-100% - 8px));box-shadow:0 8px 20px -8px rgba(0,0,0,.4)}
+.tip b{font-size:14px;font-variant-numeric:tabular-nums}
+.tip .up{color:var(--ok-soft)} .tip .down{color:var(--bad-soft)}
+th.sort{cursor:pointer;user-select:none}
+th.sort:hover{color:var(--fg)}
+th.sort::after{content:"↕";margin-inline-start:5px;opacity:.35;font-size:11px}
+th.sort[aria-sort="ascending"]::after{content:"↑";opacity:1;color:var(--accent)}
+th.sort[aria-sort="descending"]::after{content:"↓";opacity:1;color:var(--accent)}
+tr.fresh td{animation:fresh 3.5s ease-out}
+@keyframes fresh{0%,30%{background:var(--ok-soft)}100%{background:transparent}}
+.li.click{cursor:pointer;border-radius:8px;transition:background .12s}
+.li.click:hover{background:var(--sunk)}
+.livebox{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:16px;z-index:31;display:flex;flex-direction:column;gap:8px;width:min(340px,calc(100% - 32px))}
+.live{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-inline-start:4px solid var(--accent);border-radius:12px;padding:11px 12px;box-shadow:0 14px 34px -16px rgba(20,28,48,.45)}
+.live.ok{border-inline-start-color:var(--ok)} .live.bad{border-inline-start-color:var(--bad)}
+.live .grow{flex:1;min-width:0} .live b{display:block;font-size:13.5px} .live .sub{font-size:12px}
+.live .x{border:0;background:none;color:var(--faint);padding:0 4px;font-size:16px;line-height:1}
+@media (prefers-reduced-motion:no-preference){.live{animation:livein .28s cubic-bezier(.2,.8,.2,1)}@keyframes livein{from{transform:translateX(-20px);opacity:0}}}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;margin-inline-end:6px;position:relative}
+@media (prefers-reduced-motion:no-preference){.pulse::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--ok);animation:pulse 2s ease-out infinite}@keyframes pulse{to{transform:scale(2.6);opacity:0}}}
+.filterline{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mute)}
 @media (max-width:980px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.two{grid-template-columns:1fr}}
 @media (max-width:760px){
-  .app{grid-template-columns:1fr}
+  .app{grid-template-columns:1fr;overflow-x:clip}
   .rail{position:sticky;top:0;height:auto;z-index:10;flex-direction:row;align-items:center;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));gap:10px;border-inline-start:0;border-bottom:1px solid var(--line);overflow-x:auto}
   .brand span,.railfoot{display:none}
   nav{flex-direction:row;gap:4px}
@@ -167,7 +204,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
       <a href="#otp" data-page="otp"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>أكواد التحقق</a>
       <a href="#keys" data-page="keys"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/></svg>المفتاح والأكواد</a>
     </nav>
-    <div class="railfoot"><div><span class="dot" id="keydot"></span><span id="keytext">جارٍ فتح السجل…</span></div><div id="railver"></div></div>
+    <div class="railfoot"><div><span class="dot" id="keydot"></span><span id="keytext">جارٍ فتح السجل…</span></div><div id="livestate" hidden><span class="pulse"></span>متصل · تحديث لحظي</div><div id="railver"></div></div>
   </aside>
 
   <main>
@@ -185,7 +222,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
         <button class="card kpi" type="button" data-go="faults"><small>أعطال جديدة</small><strong id="k-faults">0</strong><em id="k-faults-sub">من تقارير الزبائن</em></button>
       </div>
       <div class="two">
-        <div class="card"><div class="card-h"><h2>الإيراد آخر 6 أشهر</h2><span class="sub" id="rev-total"></span></div><div class="card-b chart" id="rev-chart"></div></div>
+        <div class="card"><div class="card-h"><div><h2 id="rev-title">الإيراد آخر 6 أشهر</h2><span class="sub" id="rev-total"></span></div><div class="seg mini" id="revRange" role="group" aria-label="الفترة"><button type="button" data-r="3">3 أشهر</button><button type="button" data-r="6">6</button><button type="button" data-r="12">12</button></div></div><div class="card-b chart" id="rev-chart"></div></div>
         <div class="card"><div class="card-h"><h2>حالة التطبيق</h2></div><div class="card-b" id="health"></div></div>
       </div>
       <div class="two">
@@ -213,7 +250,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
           </ol>
           <span>كل شركة جديدة تشتغل 14 يوم تجريبي بكل الميزات، وبعدها تحتاج كود منك.</span>
         </div>
-        <div class="tbl" id="c-table" hidden><table style="min-width:820px"><thead><tr><th>الشركة</th><th>رمز الشركة</th><th>الباقة</th><th>ينتهي</th><th>الحالة</th><th>الإصدار</th><th>ميزات مطفأة</th></tr></thead><tbody id="c-rows"></tbody></table></div>
+        <div class="tbl" id="c-table" hidden><table style="min-width:820px"><thead id="c-head"><tr><th class="sort" data-s="name">الشركة</th><th class="sort" data-s="code">رمز الشركة</th><th class="sort" data-s="plan">الباقة</th><th class="sort" data-s="exp">ينتهي</th><th class="sort" data-s="state">الحالة</th><th class="sort" data-s="ver">الإصدار</th><th>ميزات مطفأة</th></tr></thead><tbody id="c-rows"></tbody></table></div>
       </div>
     </section>
 
@@ -228,13 +265,18 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
     <section class="page" id="p-payments" data-title="المدفوعات" hidden>
       <div class="head"><div><h1>المدفوعات</h1><p>كل مبلغ تسجّله عند إصدار كود، أو تضيفه يدوياً.</p></div><button class="primary" type="button" id="newPay">تسجيل دفعة</button></div>
       <div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-        <div class="card kpi" style="cursor:default"><small>هذا الشهر</small><strong id="pay-month">0</strong><em>دولار</em></div>
-        <div class="card kpi" style="cursor:default"><small>هذه السنة</small><strong id="pay-year">0</strong><em>دولار</em></div>
-        <div class="card kpi" style="cursor:default"><small>عدد الدفعات</small><strong id="pay-count">0</strong><em>كل الفترات</em></div>
+        <button class="card kpi" type="button" data-pf="month"><small>هذا الشهر</small><strong id="pay-month">0</strong><em id="pay-month-sub">دولار</em></button>
+        <button class="card kpi" type="button" data-pf="year"><small>هذه السنة</small><strong id="pay-year">0</strong><em>دولار</em></button>
+        <button class="card kpi" type="button" data-pf="all"><small>عدد الدفعات</small><strong id="pay-count">0</strong><em>كل الفترات</em></button>
+      </div>
+      <div class="tools">
+        <div class="grow"><input id="pq" type="search" placeholder="ابحث باسم الشركة أو الرمز أو الملاحظة" aria-label="بحث بالمدفوعات"></div>
+        <div style="width:170px"><select id="pplan" aria-label="الباقة"><option value="">كل الباقات</option></select></div>
+        <div class="filterline" id="pfLine" hidden><span id="pfText"></span><button type="button" class="ghost sm" id="pfClear">إلغاء الفلتر</button></div>
       </div>
       <div class="card">
         <div class="empty" id="pay-empty" style="padding:22px 20px"><b>ما في دفعات مسجّلة.</b><span>اكتب «المبلغ المستلم» عند إصدار كود لأي شركة وتنضاف هنا تلقائياً.</span></div>
-        <div class="tbl" id="pay-table" hidden><table style="min-width:640px"><thead><tr><th>التاريخ</th><th>الشركة</th><th>الباقة</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead><tbody id="pay-rows"></tbody></table></div>
+        <div class="tbl" id="pay-table" hidden><table style="min-width:640px"><thead id="pay-head"><tr><th class="sort" data-s="date">التاريخ</th><th class="sort" data-s="name">الشركة</th><th class="sort" data-s="plan">الباقة</th><th class="sort" data-s="amount">المبلغ</th><th>ملاحظة</th><th></th></tr></thead><tbody id="pay-rows"></tbody></table></div>
       </div>
     </section>
 
@@ -299,6 +341,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
 <div class="scrim" id="scrim" hidden></div>
 <aside class="sheet" id="sheet" hidden dir="rtl" lang="ar" aria-labelledby="sheetTitle"></aside>
 <div class="toast" id="toast" role="status" hidden></div>
+<div class="livebox" id="livebox" aria-live="polite"></div>
 
 <script src="js/nacl-fast.min.js"></script>
 <script src="js/firebase-app-compat.js"></script>
@@ -330,7 +373,10 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
   const PAGES = ['overview','companies','plans','payments','faults','otp','keys'];
   const STATE_AR = { active: 'مفتوح', soon: 'قريب الانتهاء', expired: 'منتهي', suspended: 'مغلق' };
   const $ = (id) => document.getElementById(id);
-  const S = { db: null, downloads: null, key: null, companies: [], plans: [], payments: [], reports: [], page: 'overview', filter: 'all' };
+  const S = { db: null, downloads: null, key: null, companies: [], plans: [], payments: [], reports: [], page: 'overview', filter: 'all',
+    range: 6, animChart: true, csort: { k: 'name', d: 1 }, psort: { k: 'date', d: -1 }, pf: { period: 'all', month: null }, fresh: new Set(), seen: null, wroteAt: 0 };
+  try { const r = Number(localStorage.getItem('grdlabs-rev-range')); if ([3, 6, 12].includes(r)) S.range = r; } catch {}
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
 
   // ---------- helpers ----------
   function h(tag, attrs, ...kids) {
@@ -343,6 +389,27 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
     return el;
   }
   const toast = (t) => { const el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, 2600); };
+  // Numbers glide to their new value instead of jumping; same text in the end either way.
+  function countTo(el, v, fmt = String) {
+    const from = Number(el.dataset.v ?? 0); el.dataset.v = v;
+    cancelAnimationFrame(el._raf);
+    if (from === v || calm.matches || document.hidden) { el.textContent = fmt(v); return; }
+    const t0 = performance.now(), dur = 650;
+    const step = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(from + (v - from) * e); if (k < 1) el._raf = requestAnimationFrame(step); else el.textContent = fmt(v); };
+    el._raf = requestAnimationFrame(step);
+  }
+  const int = (n) => String(Math.round(n));
+  // Live pop-up for things that arrive from outside this tab (a payment, a fault report).
+  function notify(kind, title, text, action) {
+    const box = $('livebox');
+    const card = h('div', { class: 'live ' + kind, role: 'status' },
+      h('div', { class: 'grow' }, h('b', {}, title), h('div', { class: 'sub' }, text),
+        action ? h('button', { class: 'ghost sm', type: 'button', style: 'padding-inline:0;margin-top:2px', onclick: () => { card.remove(); action.fn(); } }, action.label) : null),
+      h('button', { class: 'x', type: 'button', 'aria-label': 'إغلاق', onclick: () => card.remove() }, '×'));
+    box.prepend(card);
+    while (box.children.length > 3) box.lastChild.remove();
+    setTimeout(() => card.remove(), 9000);
+  }
   const money = (n) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(Math.round((n || 0) * 100) / 100);
   const usd = (n) => '$' + money(n);
   const dayStr = (iso) => iso ? new Date(iso).toLocaleDateString('ar-IQ', { year: 'numeric', month: 'short', day: 'numeric' }) : 'بلا انتهاء';
@@ -360,7 +427,8 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
   const pill = (s, text) => h('span', { class: 'pill p-' + s }, text || STATE_AR[s]);
   const reportFor = (code) => S.reports.find(r => r.code === code);
   async function write(fn, ok) {
-    try { await fn(); if (ok) toast(ok); return true; }
+    S.wroteAt = Date.now();
+    try { await fn(); S.wroteAt = Date.now(); if (ok) toast(ok); return true; }
     catch (e) { toast(e && e.code === 'quota_exceeded' ? 'السجل امتلأ؛ احذف سجلات قديمة.' : 'ما انحفظ. تأكد من الاتصال وحاول مرة ثانية.'); return false; }
   }
   async function copy(text, done, fallbackEl) {
@@ -404,18 +472,24 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
 
   function renderOverview(counts, monthRev, newFaults) {
     $('ov-date').textContent = new Date().toLocaleDateString('ar-IQ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    $('k-all').textContent = counts.all; $('k-active').textContent = counts.active + counts.soon;
-    $('k-soon').textContent = counts.soon; $('k-expired').textContent = counts.expired;
+    countTo($('k-all'), counts.all, int); countTo($('k-active'), counts.active + counts.soon, int);
+    countTo($('k-soon'), counts.soon, int); countTo($('k-expired'), counts.expired, int);
     $('k-all-sub').textContent = counts.suspended ? counts.suspended + ' مغلقة' : 'في سجلك';
-    $('k-rev').textContent = money(monthRev);
-    $('k-faults').textContent = newFaults;
+    countTo($('k-rev'), monthRev, money);
+    // Change against last month, so the number has a direction.
+    const now = new Date(), pm = new Date(now.getFullYear(), now.getMonth() - 1, 1), prevRev = S.payments.filter(p => monthKey(new Date(p.at)) === monthKey(pm)).reduce((a, p) => a + (p.amount || 0), 0);
+    const sub = $('k-rev-sub'); sub.replaceChildren('دولار');
+    if (prevRev) { const ch = Math.round((monthRev - prevRev) / prevRev * 100); sub.append(' · ', h('span', { class: 'delta ' + (ch >= 0 ? 'up' : 'down') }, (ch >= 0 ? '▲ ' : '▼ ') + Math.abs(ch) + '%'), ' عن الشهر الماضي'); }
+    countTo($('k-faults'), newFaults, int);
     $('k-faults-sub').textContent = S.reports.length ? S.reports.length + ' تقرير' : 'من تقارير الزبائن';
     // revenue chart
     const months = []; const d = new Date(); d.setDate(1);
-    for (let i = 5; i >= 0; i--) { const m = new Date(d.getFullYear(), d.getMonth() - i, 1); months.push({ k: monthKey(m), label: m.toLocaleDateString('ar-IQ', { month: 'short' }), v: 0 }); }
-    for (const p of S.payments) { const m = months.find(x => x.k === monthKey(new Date(p.at))); if (m) m.v += p.amount || 0; }
+    for (let i = S.range - 1; i >= 0; i--) { const m = new Date(d.getFullYear(), d.getMonth() - i, 1); months.push({ k: monthKey(m), label: m.toLocaleDateString('ar-IQ', { month: 'short' }), full: m.toLocaleDateString('ar-IQ', { month: 'long', year: 'numeric' }), v: 0, n: 0 }); }
+    for (const p of S.payments) { const m = months.find(x => x.k === monthKey(new Date(p.at))); if (m) { m.v += p.amount || 0; m.n++; } }
     const total = months.reduce((a, m) => a + m.v, 0);
-    $('rev-total').textContent = total ? usd(total) : '';
+    $('rev-title').textContent = 'الإيراد آخر ' + S.range + ' أشهر';
+    $('rev-total').textContent = total ? 'المجموع ' + usd(total) + ' · المعدل ' + usd(total / S.range) + ' بالشهر' : '';
+    document.querySelectorAll('#revRange button').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.r) === S.range)));
     $('rev-chart').replaceChildren(revenueChart(months));
     // health
     const box = $('health'); box.replaceChildren();
@@ -431,41 +505,72 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
     const att = $('attention'); att.replaceChildren();
     const need = S.companies.filter(c => ['soon', 'expired'].includes(state(c))).sort((a, b) => Date.parse(a.expiresAt) - Date.parse(b.expiresAt)).slice(0, 6);
     if (!need.length) att.append(h('div', { class: 'empty' }, S.companies.length ? 'كل الشركات تمام، ما في شي ينتهي خلال أسبوع.' : 'تظهر هنا الشركات اللي يقرب انتهاء اشتراكها.'));
-    for (const c of need) att.append(h('div', { class: 'li' },
+    for (const c of need) att.append(h('div', { class: 'li click', tabindex: '0', title: 'فتح الشركة', onclick: (e) => { if (!e.target.closest('button')) openCompany(c); }, onkeydown: (e) => { if (e.key === 'Enter' && e.target === e.currentTarget) openCompany(c); } },
       h('div', { class: 'grow' }, h('div', { class: 'name' }, c.name || c.code), h('div', { class: 'sub num' }, 'ينتهي ' + dayStr(c.expiresAt) + (c.contact ? ' · ' + c.contact : ''))),
       pill(state(c)), h('button', { class: 'sm', type: 'button', onclick: () => openCompany(c, { renew: true }) }, 'تجديد')));
     // recent codes
     const rec = $('recent'); rec.replaceChildren();
     const issued = S.companies.flatMap(c => (c.issued || []).map(x => ({ ...x, c }))).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 6);
     if (!issued.length) rec.append(h('div', { class: 'empty' }, 'لما تصدر كود لأي شركة يظهر هنا.'));
-    for (const x of issued) rec.append(h('div', { class: 'li' },
+    for (const x of issued) rec.append(h('div', { class: 'li click', tabindex: '0', title: 'فتح الشركة', onclick: () => openCompany(x.c), onkeydown: (e) => { if (e.key === 'Enter') openCompany(x.c); } },
       h('div', { class: 'grow' }, h('div', { class: 'name' }, x.c.name || x.c.code), h('div', { class: 'sub' }, whenStr(x.at))),
       x.status === 'suspended' ? pill('suspended', 'إغلاق') : h('span', { class: 'sub' }, (x.plan || '') + ' · حتى ' + dayStr(x.expiresAt))));
   }
 
   function revenueChart(months) {
-    const W = 520, H = 190, pad = { t: 16, b: 28, l: 8, r: 8 };
+    const W = 520, H = 200, pad = { t: 22, b: 28, l: 8, r: 8 };
     const max = Math.max(...months.map(m => m.v), 1);
     const step = (W - pad.l - pad.r) / months.length, bw = Math.min(46, step * 0.56);
     const ns = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(ns, 'svg'); svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('role', 'img');
+    const svg = document.createElementNS(ns, 'svg'); svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('role', 'group');
     svg.setAttribute('aria-label', 'الإيراد الشهري: ' + months.map(m => m.label + ' ' + money(m.v)).join('، '));
-    const el = (t, a) => { const e = document.createElementNS(ns, t); for (const k in a) e.setAttribute(k, a[k]); svg.append(e); return e; };
+    const el = (t, a, parent = svg) => { const e = document.createElementNS(ns, t); for (const k in a) e.setAttribute(k, a[k]); parent.append(e); return e; };
     const base = H - pad.b;
     for (let i = 1; i <= 3; i++) el('line', { x1: pad.l, x2: W - pad.r, y1: base - (base - pad.t) * i / 3, y2: base - (base - pad.t) * i / 3, stroke: 'var(--line)', 'stroke-dasharray': '3 4' });
     el('line', { x1: pad.l, x2: W - pad.r, y1: base, y2: base, stroke: 'var(--line)' });
+    const avg = months.reduce((a, m) => a + m.v, 0) / months.length;
+    if (avg) { const y = base - (base - pad.t) * avg / max; el('line', { x1: pad.l, x2: W - pad.r, y1: y, y2: y, stroke: 'var(--faint)', 'stroke-dasharray': '6 4', 'stroke-width': 1 }); }
+    const wrap = h('div', { style: 'position:relative' });
+    const tip = h('div', { class: 'tip', hidden: true });
+    const show = (m, i, cx, top) => {
+      const prev = months[i - 1];
+      const ch = prev && prev.v ? Math.round((m.v - prev.v) / prev.v * 100) : null;
+      tip.replaceChildren(h('div', {}, m.full), h('b', {}, usd(m.v)), h('div', {}, m.n + (m.n === 1 ? ' دفعة' : ' دفعات') + (ch == null ? '' : ' · '), ch == null ? null : h('span', { class: ch >= 0 ? 'up' : 'down' }, (ch >= 0 ? '▲ ' : '▼ ') + Math.abs(ch) + '%')),
+        h('div', { style: 'opacity:.7;margin-top:2px' }, m.n ? 'اضغط لعرض الدفعات' : ''));
+      const r = svg.getBoundingClientRect(), k = r.width / W;
+      tip.style.left = Math.max(70, Math.min(r.width - 70, cx * k)) + 'px'; tip.style.top = Math.max(top * k, 40) + 'px'; tip.hidden = false;
+    };
+    const hide = () => { tip.hidden = true; };
+    const open = (m) => { if (!m.n) return; S.pf = { period: 'month', month: m.k }; go('payments'); };
+    const anim = S.animChart; S.animChart = false;
     months.forEach((m, i) => {
       // RTL: the newest month sits at the left end, reading order runs right to left.
       const x = W - pad.r - step * (i + 0.5) - bw / 2;
       const hgt = m.v ? Math.max(3, (base - pad.t) * m.v / max) : 0;
       const last = i === months.length - 1;
-      if (hgt) el('rect', { x, y: base - hgt, width: bw, height: hgt, rx: 5, fill: last ? 'var(--accent)' : 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': last ? 0 : 1 });
-      const t = el('text', { x: x + bw / 2, y: H - 9, 'text-anchor': 'middle' }); t.textContent = m.label;
-      if (m.v) { const v = el('text', { x: x + bw / 2, y: base - hgt - 5, 'text-anchor': 'middle' }); v.textContent = m.v >= 1e6 ? (m.v / 1e6).toFixed(1) + ' مليون' : m.v >= 1e3 ? Math.round(m.v / 1e3) + ' ألف' : money(m.v); }
+      const g = el('g', { class: 'col', tabindex: '0', role: 'button', 'aria-label': m.full + ': ' + usd(m.v) });
+      el('rect', { class: 'hit', x: W - pad.r - step * (i + 1) + 2, y: pad.t - 14, width: step - 4, height: base - pad.t + 14, rx: 8, fill: 'transparent' }, g);
+      if (hgt) {
+        const bar = el('rect', { class: 'bar' + (anim ? ' grow' : ''), x, y: base - hgt, width: bw, height: hgt, rx: 5, fill: last ? 'var(--accent)' : 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': last ? 0 : 1 }, g);
+        if (anim) bar.style.animationDelay = (i * 45) + 'ms';
+      }
+      if (months.length <= 6 || (months.length - 1 - i) % 2 === 0) { const t = el('text', { x: x + bw / 2, y: H - 9, 'text-anchor': 'middle' }, g); t.textContent = m.label; }
+      if (m.v && months.length <= 6) { const v = el('text', { x: x + bw / 2, y: base - hgt - 5, 'text-anchor': 'middle' }, g); v.textContent = m.v >= 1e6 ? (m.v / 1e6).toFixed(1) + 'M' : m.v >= 1e4 ? Math.round(m.v / 1e3) + 'k' : money(m.v); }
+      const at = () => show(m, i, x + bw / 2, base - hgt);
+      g.addEventListener('mouseenter', at); g.addEventListener('focus', at);
+      g.addEventListener('mouseleave', hide); g.addEventListener('blur', hide);
+      g.addEventListener('click', () => open(m));
+      g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(m); } });
     });
     if (!months.some(m => m.v)) { const t = el('text', { x: W / 2, y: H / 2, 'text-anchor': 'middle' }); t.textContent = 'سجّل مبلغ عند إصدار الأكواد ويظهر هنا'; }
-    return svg;
+    wrap.append(svg, tip);
+    return wrap;
   }
+  document.querySelectorAll('#revRange button').forEach(b => b.addEventListener('click', () => {
+    S.range = Number(b.dataset.r); S.animChart = true;
+    try { localStorage.setItem('grdlabs-rev-range', S.range); } catch {}
+    render();
+  }));
 
   function renderCompanies() {
     document.querySelectorAll('#chips .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === S.filter)));
@@ -474,7 +579,14 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
       const s = state(c);
       if (S.filter !== 'all' && !(S.filter === s || (S.filter === 'active' && s === 'soon'))) return false;
       return !q || [c.name, c.code, c.contact, c.note].some(v => String(v || '').toLowerCase().includes(q));
-    }).sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'ar'));
+    });
+    const ORDER = { expired: 0, soon: 1, active: 2, suspended: 3 };
+    const ckey = {
+      name: (c) => String(c.name || ''), code: (c) => c.code, plan: (c) => String(c.plan || ''),
+      exp: (c) => c.expiresAt ? Date.parse(c.expiresAt) : Infinity, state: (c) => ORDER[state(c)], ver: (c) => vnum(reportFor(c.code)?.app),
+    }[S.csort.k];
+    shown.sort((a, b) => { const x = ckey(a), y = ckey(b); return S.csort.d * (typeof x === 'string' ? x.localeCompare(y, 'ar') : x - y); });
+    setSortHeads('c-head', S.csort);
     $('c-empty').hidden = S.companies.length > 0; $('c-table').hidden = !S.companies.length;
     const body = $('c-rows'); body.replaceChildren();
     for (const c of shown) {
@@ -492,6 +604,17 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
     if (S.companies.length && !shown.length) body.append(h('tr', {}, h('td', { colspan: '7', class: 'sub' }, 'ما في نتائج.')));
   }
   $('q').addEventListener('input', render);
+  function setSortHeads(id, st) { $(id).querySelectorAll('th.sort').forEach(th => th.setAttribute('aria-sort', th.dataset.s === st.k ? (st.d > 0 ? 'ascending' : 'descending') : 'none')); }
+  // Click a header to sort by it; click again to flip. Dates and amounts start newest/biggest first.
+  function sortable(id, st, firstDesc) {
+    $(id).querySelectorAll('th.sort').forEach(th => {
+      th.tabIndex = 0;
+      const act = () => { if (st.k === th.dataset.s) st.d = -st.d; else { st.k = th.dataset.s; st.d = firstDesc.includes(st.k) ? -1 : 1; } render(); };
+      th.addEventListener('click', act); th.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(); } });
+    });
+  }
+  sortable('c-head', S.csort, ['ver']);
+  sortable('pay-head', S.psort, ['date', 'amount']);
   document.querySelectorAll('#chips .chip').forEach(b => b.addEventListener('click', () => { S.filter = b.dataset.f; render(); }));
 
   function renderPlans() {
@@ -523,22 +646,51 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
 
   function renderPayments() {
     const now = new Date(), m = monthKey(now), y = String(now.getFullYear());
-    $('pay-month').textContent = money(S.payments.filter(p => monthKey(new Date(p.at)) === m).reduce((a, p) => a + p.amount, 0));
-    $('pay-year').textContent = money(S.payments.filter(p => p.at.slice(0, 4) === y).reduce((a, p) => a + p.amount, 0));
-    $('pay-count').textContent = S.payments.length;
+    const monthSum = S.payments.filter(p => monthKey(new Date(p.at)) === m).reduce((a, p) => a + p.amount, 0);
+    countTo($('pay-month'), monthSum, money);
+    countTo($('pay-year'), S.payments.filter(p => p.at.slice(0, 4) === y).reduce((a, p) => a + p.amount, 0), money);
+    countTo($('pay-count'), S.payments.length, int);
+    const nMonth = S.payments.filter(p => monthKey(new Date(p.at)) === m).length;
+    $('pay-month-sub').textContent = nMonth ? 'دولار · ' + nMonth + (nMonth === 1 ? ' دفعة' : ' دفعات') : 'دولار';
+    document.querySelectorAll('[data-pf]').forEach(b => b.setAttribute('aria-pressed', String(S.pf.period === b.dataset.pf && !(b.dataset.pf === 'month' && S.pf.month && S.pf.month !== m))));
+    // plan filter options follow the plans actually used
+    const sel = $('pplan'), keep = sel.value, plans = [...new Set(S.payments.map(p => p.plan).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ar'));
+    if (sel.dataset.list !== plans.join('|')) { sel.dataset.list = plans.join('|'); sel.replaceChildren(h('option', { value: '' }, 'كل الباقات'), ...plans.map(x => h('option', { value: x }, x))); sel.value = plans.includes(keep) ? keep : ''; }
+    const q = $('pq').value.trim().toLowerCase(), plan = sel.value;
+    const nameOf = (p) => S.companies.find(x => x.code === p.code)?.name || p.name || p.code;
+    const fm = S.pf.period === 'month' ? (S.pf.month || m) : null;
+    const shown = S.payments.filter(p => {
+      if (fm && monthKey(new Date(p.at)) !== fm) return false;
+      if (S.pf.period === 'year' && p.at.slice(0, 4) !== y) return false;
+      if (plan && p.plan !== plan) return false;
+      return !q || [nameOf(p), p.code, p.note].some(v => String(v || '').toLowerCase().includes(q));
+    });
+    const pkey = { date: (p) => p.at, name: nameOf, plan: (p) => String(p.plan || ''), amount: (p) => p.amount }[S.psort.k];
+    shown.sort((a, b) => { const x = pkey(a), y2 = pkey(b); return S.psort.d * (typeof x === 'string' ? x.localeCompare(y2, 'ar') : x - y2); });
+    setSortHeads('pay-head', S.psort);
+    const filtered = S.pf.period !== 'all' || plan || q;
+    $('pfLine').hidden = !filtered;
+    if (filtered) {
+      const label = fm ? new Date(fm + '-15').toLocaleDateString('ar-IQ', { month: 'long', year: 'numeric' }) : S.pf.period === 'year' ? 'سنة ' + y : 'كل الفترات';
+      $('pfText').textContent = label + ' · ' + shown.length + ' دفعة · ' + usd(shown.reduce((a, p) => a + p.amount, 0));
+    }
     $('pay-empty').hidden = S.payments.length > 0; $('pay-table').hidden = !S.payments.length;
     const body = $('pay-rows'); body.replaceChildren();
-    for (const p of [...S.payments].sort((a, b) => b.at.localeCompare(a.at))) {
-      const c = S.companies.find(x => x.code === p.code);
-      body.append(h('tr', {},
+    for (const p of shown) {
+      body.append(h('tr', { class: 'click' + (S.fresh.has(p.id) ? ' fresh' : ''), tabindex: '0', onclick: (e) => { if (!e.target.closest('button')) openPayment(p); }, onkeydown: (e) => { if (e.key === 'Enter' && e.target === e.currentTarget) openPayment(p); } },
         h('td', {}, h('span', { class: 'num' }, dayStr(p.at))),
-        h('td', {}, h('div', { class: 'name' }, c?.name || p.name || p.code), h('div', { class: 'sub code' }, p.code)),
+        h('td', {}, h('div', { class: 'name' }, nameOf(p)), h('div', { class: 'sub code' }, p.code)),
         h('td', {}, p.plan || '—'),
         h('td', {}, h('b', { class: 'num' }, usd(p.amount))),
         h('td', {}, h('span', { class: 'sub' }, p.note || '')),
         h('td', {}, h('button', { class: 'ghost sm', type: 'button', onclick: () => openPayment(p) }, 'تعديل'))));
     }
+    if (S.payments.length && !shown.length) body.append(h('tr', {}, h('td', { colspan: '6', class: 'sub' }, 'ما في دفعات بهذا الفلتر.')));
   }
+  document.querySelectorAll('[data-pf]').forEach(b => b.addEventListener('click', () => { S.pf = { period: b.dataset.pf, month: null }; render(); }));
+  $('pq').addEventListener('input', render);
+  $('pplan').addEventListener('change', render);
+  $('pfClear').addEventListener('click', () => { S.pf = { period: 'all', month: null }; $('pq').value = ''; $('pplan').value = ''; render(); });
   $('newPay').addEventListener('click', () => openPayment(null));
 
   function renderFaults() {
@@ -945,8 +1097,33 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu
     }, () => { $('keytext').textContent = 'تعذّر قراءة المفتاح'; $('keydot').classList.add('bad'); });
     S.db.collection('companies').onSnapshot(s => { S.companies = s.docs.map(d => d.data()); render(); }, fail);
     S.db.collection('plans').onSnapshot(s => { S.plans = s.docs.map(d => d.data()); render(); }, fail);
-    S.db.collection('payments').onSnapshot(s => { S.payments = s.docs.map(d => d.data()); render(); }, fail);
-    S.db.collection('reports').onSnapshot(s => { S.reports = s.docs.map(d => d.data()); render(); }, fail);
+    // After the first load, anything that shows up and wasn't saved from this tab in the last few seconds gets a live notice.
+    const outside = () => Date.now() - S.wroteAt > 4000;
+    const markFresh = (id) => { S.fresh.add(id); setTimeout(() => { S.fresh.delete(id); }, 4000); };
+    S.db.collection('payments').onSnapshot(s => {
+      const next = s.docs.map(d => d.data());
+      if (S.seenPay) {
+        for (const p of next.filter(p => !S.seenPay.has(p.id))) {
+          markFresh(p.id);
+          if (outside()) notify('ok', 'دفعة جديدة ' + usd(p.amount), (S.companies.find(c => c.code === p.code)?.name || p.name || p.code) + (p.plan ? ' · ' + p.plan : ''), { label: 'عرض المدفوعات', fn: () => { S.pf = { period: 'all', month: null }; go('payments'); } });
+        }
+      } else S.animChart = true;
+      S.seenPay = new Set(next.map(p => p.id));
+      S.payments = next; render();
+    }, fail);
+    const faultCount = (r) => (r.faults || []).reduce((a, f) => a + (f.n || 1), 0);
+    S.db.collection('reports').onSnapshot(s => {
+      const next = s.docs.map(d => d.data());
+      if (S.seenRep && outside()) {
+        for (const r of next) {
+          const before = S.seenRep.get(r.code) ?? 0, now = faultCount(r);
+          if (now > before && !r.resolved) notify('bad', before ? 'أعطال جديدة' : 'تقرير أعطال جديد', (S.companies.find(c => c.code === r.code)?.name || r.name || r.code) + ' · ' + (now - before) + ' عطل', { label: 'عرض الأعطال', fn: () => go('faults') });
+        }
+      }
+      S.seenRep = new Map(next.map(r => [r.code, faultCount(r)]));
+      S.reports = next; render();
+    }, fail);
+    $('livestate').hidden = false;
     setInterval(render, 60000);
   })();
 })();
