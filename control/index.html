@@ -1,4 +1,4 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="../img/grdlabs-app-icon.svg" type="image/svg+xml"></head><body><title>لوحة تحكم Grdlabs</title>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="brand/grdlabs-app-icon.svg" type="image/svg+xml"></head><body><title>لوحة تحكم Grdlabs</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
@@ -205,14 +205,15 @@ tr.fresh td{animation:fresh 3.5s ease-out}
   --shadow:0 1px 0 rgba(0,19,73,.03),0 14px 36px -22px rgba(0,19,73,.28);
   --sans:"Grdlabs Sans",'IBM Plex Sans Arabic',-apple-system,'SF Arabic','Segoe UI',Tahoma,sans-serif; --r:24px;
   --blob1:rgba(21,67,239,.30); --blob2:rgba(0,19,73,.16); --blob3:rgba(91,140,255,.24); --grain:.05;
+  --mark:#6ceb5e; --brand-green:#6ceb5e; --brand-ink:#0a122e;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#050a1c; --fg:#e9edfb; --mute:#9ea7c4; --faint:#6e7795;
+  --bg:#0a122e; --fg:#e9edfb; --mute:#9ea7c4; --faint:#6e7795;
   --panel:rgba(18,28,58,.5); --rail:rgba(14,22,48,.52); --sunk:rgba(255,255,255,.045); --line:rgba(255,255,255,.08);
   --glass-edge:rgba(255,255,255,.09); --accent:#5b7dff; --accent-ink:#fff; --accent-soft:rgba(91,125,255,.17);
   --shadow:0 18px 40px -24px rgba(0,0,0,.7); --blob1:rgba(21,67,239,.42); --blob2:rgba(0,19,73,.7); --blob3:rgba(91,125,255,.2); --grain:.06}}
 :root[data-theme="dark"]{
-  --bg:#050a1c; --fg:#e9edfb; --mute:#9ea7c4; --faint:#6e7795;
+  --bg:#0a122e; --fg:#e9edfb; --mute:#9ea7c4; --faint:#6e7795;
   --panel:rgba(18,28,58,.5); --rail:rgba(14,22,48,.52); --sunk:rgba(255,255,255,.045); --line:rgba(255,255,255,.08);
   --glass-edge:rgba(255,255,255,.09); --accent:#5b7dff; --accent-ink:#fff; --accent-soft:rgba(91,125,255,.17);
   --shadow:0 18px 40px -24px rgba(0,0,0,.7); --blob1:rgba(21,67,239,.42); --blob2:rgba(0,19,73,.7); --blob3:rgba(91,125,255,.2); --grain:.06}
@@ -278,11 +279,23 @@ tbody tr.click:hover{background:var(--accent-soft)}
   .sheet{border-radius:0}
 }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){:root{--panel:rgba(255,255,255,.94)} :root[data-theme="dark"]{--panel:rgba(18,28,58,.96)}}
+
+/* Logo from the brand file: the blue mark with the navy wordmark (white on dark). */
+.brand{gap:4px;padding:2px 10px 6px}
+.brand .logo{height:34px;width:auto;max-width:100%;align-self:flex-start;object-fit:contain;object-position:right}
+.brand .l-night{display:none}
+:root[data-theme="dark"] .brand .l-day{display:none} :root[data-theme="dark"] .brand .l-night{display:block}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .brand .l-day{display:none}:root:not([data-theme="light"]) .brand .l-night{display:block}}
+.brand .tagline{font-style:normal;font-size:11.5px;color:var(--mute);letter-spacing:.2px;font-family:var(--sans)}
+.brand span{font-size:12px;color:var(--faint)}
+.pulse,.pulse::after{background:var(--brand-green)}
+.dot{background:var(--brand-green)} .dot.bad{background:var(--bad)}
+@media (max-width:760px){.brand{padding:0 4px}.brand .logo{height:26px}.brand .tagline{display:none}}
 </style>
 
 <div class="app" dir="rtl" lang="ar">
   <aside class="rail">
-    <div class="brand"><b>Grdlabs<i>*</i></b><span>لوحة التحكم</span></div>
+    <div class="brand"><img class="logo l-day" src="brand/grdlabs-logo.svg" alt="Grdlabs"><img class="logo l-night" src="brand/grdlabs-logo-white.svg" alt="Grdlabs"><em class="tagline" lang="en" dir="ltr">Managing your life</em><span>لوحة التحكم</span></div>
     <nav id="nav" aria-label="الصفحات">
       <a href="#overview" data-page="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>نظرة عامة</a>
       <a href="#companies" data-page="companies"><svg viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16"/><path d="M15 9h3a2 2 0 0 1 2 2v10"/><path d="M8 7h3M8 11h3M8 15h3M2 21h20"/></svg>الشركات</a>

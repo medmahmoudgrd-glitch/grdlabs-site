@@ -18,7 +18,7 @@
   .gw-box h2{margin:0;font-size:20px}.gw-box p{margin:0;color:var(--mute,#5f6880);font-size:14px}
   .gw-box label{display:grid;gap:6px;font-size:13px;color:var(--mute,#5f6880)}
   .gw-box .gw-err{color:#c92a2a;font-size:13px;min-height:1.2em}
-  .gw-box .gw-logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px}
+  .gw-box .gw-logo{display:flex;align-items:center;gap:10px;font-weight:500;font-size:22px;letter-spacing:-.2px;color:var(--fg,#001349)}.gw-box .gw-logo img{border-radius:10px}
   .gw-box .gw-logo i{width:12px;height:12px;border-radius:4px;background:var(--mark,#3fb34f)}
   .gw-out{position:fixed;inset-inline-start:16px;bottom:16px;z-index:50}`;
   document.head.append(css);
@@ -27,7 +27,7 @@
     return new Promise((resolve) => {
       const scrim = document.createElement('div'); scrim.className = 'gw-scrim';
       const form = document.createElement('form'); form.className = 'gw-box'; form.noValidate = true;
-      form.innerHTML = `<div class="gw-logo"><i></i>Grdlabs</div><h2></h2><p></p>`;
+      form.innerHTML = `<div class="gw-logo"><img src="brand/grdlabs-app-icon.svg" alt="" width="34" height="34">Grdlabs</div><h2></h2><p></p>`;
       form.querySelector('h2').textContent = title; form.querySelector('p').textContent = text || '';
       const inputs = fields.map(f => {
         const l = document.createElement('label'); l.textContent = f.label;

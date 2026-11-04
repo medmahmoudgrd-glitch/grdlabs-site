@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- The Grdlabs mark on the macOS icon grid (824 px tile, transparent margin, soft shadow). -->
+  <defs><filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#001349" flood-opacity=".28"/></filter></defs>
+  <g filter="url(#sh)" transform="matrix(1.84538,0,0,1.84538,25.686,36.324)"><path transform="matrix(1,0,0,-1,344.7027,481.0254)" d="M0 0H-162.345C-240.148 0-303.219 63.071-303.219 140.874V305.646C-303.219 383.448-240.148 446.52-162.345 446.52H0C77.803 446.52 140.874 383.448 140.874 305.646V140.874C140.874 63.071 77.803 0 0 0" fill="#1543EF"/><path transform="matrix(1,0,0,-1,431.5282,180.8653)" d="M0 0C0 51.985-42.142 94.127-94.127 94.127H-232.876V2.042H-93.905V-135.11H0Z" fill="#FFFFFF"/></g>
+</svg>
