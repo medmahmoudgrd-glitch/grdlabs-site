@@ -190,6 +190,94 @@ tr.fresh td{animation:fresh 3.5s ease-out}
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
   .three,.grid2,.feats{grid-template-columns:1fr}
 }
+
+/* ===== Grdlabs identity: brand blue #1543EF + navy #001349, Jost / IBM Plex Sans Arabic, pill controls,
+   on matte frosted glass (blurred and grained, no gloss or shine). Overrides the base rules above. ===== */
+@font-face{font-family:"Grdlabs Sans";font-weight:400;font-display:swap;src:url(fonts/jost-400.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212}
+@font-face{font-family:"Grdlabs Sans";font-weight:500;font-display:swap;src:url(fonts/jost-500.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212}
+@font-face{font-family:"Grdlabs Sans";font-weight:600;font-display:swap;src:url(fonts/jost-600.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212}
+@font-face{font-family:"Grdlabs Sans";font-weight:700 900;font-display:swap;src:url(fonts/jost-700.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212}
+:root{
+  --bg:#eef1f9; --fg:#001349; --mute:#56607d; --faint:#8790ab;
+  --panel:rgba(255,255,255,.58); --rail:rgba(255,255,255,.5); --sunk:rgba(0,19,73,.045); --line:rgba(0,19,73,.09);
+  --glass-edge:rgba(255,255,255,.7); --glass-blur:blur(26px) saturate(135%);
+  --accent:#1543ef; --accent-ink:#fff; --accent-soft:rgba(21,67,239,.11); --navy:#001349;
+  --shadow:0 1px 0 rgba(0,19,73,.03),0 14px 36px -22px rgba(0,19,73,.28);
+  --sans:"Grdlabs Sans",'IBM Plex Sans Arabic',-apple-system,'SF Arabic','Segoe UI',Tahoma,sans-serif; --r:24px;
+  --blob1:rgba(21,67,239,.30); --blob2:rgba(0,19,73,.16); --blob3:rgba(91,140,255,.24); --grain:.05;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#050a1c; --fg:#e9edfb; --mute:#9ea7c4; --faint:#6e7795;
+  --panel:rgba(18,28,58,.5); --rail:rgba(14,22,48,.52); --sunk:rgba(255,255,255,.045); --line:rgba(255,255,255,.08);
+  --glass-edge:rgba(255,255,255,.09); --accent:#5b7dff; --accent-ink:#fff; --accent-soft:rgba(91,125,255,.17);
+  --shadow:0 18px 40px -24px rgba(0,0,0,.7); --blob1:rgba(21,67,239,.42); --blob2:rgba(0,19,73,.7); --blob3:rgba(91,125,255,.2); --grain:.06}}
+:root[data-theme="dark"]{
+  --bg:#050a1c; --fg:#e9edfb; --mute:#9ea7c4; --faint:#6e7795;
+  --panel:rgba(18,28,58,.5); --rail:rgba(14,22,48,.52); --sunk:rgba(255,255,255,.045); --line:rgba(255,255,255,.08);
+  --glass-edge:rgba(255,255,255,.09); --accent:#5b7dff; --accent-ink:#fff; --accent-soft:rgba(91,125,255,.17);
+  --shadow:0 18px 40px -24px rgba(0,0,0,.7); --blob1:rgba(21,67,239,.42); --blob2:rgba(0,19,73,.7); --blob3:rgba(91,125,255,.2); --grain:.06}
+/* The canvas behind the glass: soft brand-colour light, plus a fine grain that keeps every surface matte. */
+body{background:var(--bg)}
+body::before,.gw-scrim::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:radial-gradient(760px 560px at 92% -6%,var(--blob1),transparent 62%),radial-gradient(640px 520px at 4% 104%,var(--blob3),transparent 62%),radial-gradient(900px 700px at 40% 55%,var(--blob2),transparent 70%)}
+body::after{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;opacity:var(--grain);mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.card,.rail,.sheet,.live,.gw-box,.feat{background:var(--panel);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-edge);box-shadow:var(--shadow)}
+.card{border-radius:var(--r)}
+/* Floating rail, like the app's. */
+.app{grid-template-columns:248px minmax(0,1fr)}
+.rail{margin:12px;margin-inline-end:0;height:calc(100vh - 24px);top:12px;border-radius:28px;padding:22px 12px}
+.brand b{font-size:23px;color:var(--fg)}
+nav{gap:4px}
+nav a{border-radius:999px;padding:10px 14px;font-weight:600;color:color-mix(in srgb,var(--fg) 75%,transparent);transition:background .15s,color .15s}
+nav a:hover{background:var(--sunk);color:var(--fg)}
+nav a[aria-current="page"]{background:var(--accent);color:var(--accent-ink);box-shadow:0 10px 22px -12px var(--accent)}
+nav a[aria-current="page"] svg{color:var(--accent-ink)}
+nav a[aria-current="page"] .badge{background:#fff;color:var(--accent)}
+/* Pill controls */
+button{border-radius:999px;border:1px solid transparent;background:var(--sunk);padding:8px 16px;transition:background .15s,border-color .15s,box-shadow .15s}
+button:hover{border-color:transparent;background:color-mix(in srgb,var(--fg) 9%,transparent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:0 10px 22px -12px var(--accent)}
+button.primary:hover{background:color-mix(in srgb,var(--accent) 88%,#000)}
+button.ghost{background:transparent}
+button.ghost:hover{background:var(--accent-soft)}
+button.sm{padding:5px 12px}
+.card.kpi,.card.plan{border-radius:var(--r)}
+.kpi{padding:16px 16px 14px}
+.kpi:hover,.plan:hover{border-color:var(--glass-edge)}
+.kpi[data-pf][aria-pressed="true"]{border-color:var(--accent);box-shadow:var(--shadow),inset 0 0 0 1px var(--accent)}
+.chip{background:var(--sunk);padding:5px 14px}
+.chip[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+:root[data-theme="dark"] .chip[aria-pressed="true"]{background:#fff;color:#001349}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"]{background:#fff;color:#001349}}
+.seg,.seg.mini{border:0;border-radius:999px;background:var(--sunk);padding:3px;gap:2px}
+.seg button{border-radius:999px;background:transparent}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);box-shadow:0 6px 14px -8px var(--accent)}
+input,select,textarea{border-radius:14px;background:var(--sunk);border:1px solid transparent}
+input:focus,select:focus,textarea:focus{background:var(--panel);border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);outline:none}
+.switch span::after{background:#fff}
+th{background:transparent;border-bottom-color:var(--line)}
+tbody tr.click:hover{background:var(--accent-soft)}
+.pill{padding:3px 11px}
+.health .ring{border-radius:14px}
+.sheet{border-radius:0 28px 28px 0}
+.scrim{background:rgba(0,19,73,.22);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.toast,.tip{background:var(--navy);color:#fff;border-radius:14px}
+:root[data-theme="dark"] .toast,:root[data-theme="dark"] .tip{background:#fff;color:#001349}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .toast,:root:not([data-theme="light"]) .tip{background:#fff;color:#001349}}
+.banner{border-radius:var(--r);border:1px solid var(--glass-edge)}
+.gw-scrim{background:var(--bg);isolation:isolate}
+.gw-box{border-radius:28px}
+.live{border-inline-start:4px solid var(--accent);border-radius:18px}
+.live.ok{border-inline-start-color:var(--ok)} .live.bad{border-inline-start-color:var(--bad)}
+.tag{border-radius:999px;background:var(--sunk)}
+@media (max-width:760px){
+  .app{grid-template-columns:1fr}
+  .rail{margin:8px;height:auto;top:8px;border-radius:22px;padding:8px 10px}
+  nav a{padding:7px 12px}
+  .sheet{border-radius:0}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){:root{--panel:rgba(255,255,255,.94)} :root[data-theme="dark"]{--panel:rgba(18,28,58,.96)}}
 </style>
 
 <div class="app" dir="rtl" lang="ar">
@@ -479,7 +567,7 @@ tr.fresh td{animation:fresh 3.5s ease-out}
     // Change against last month, so the number has a direction.
     const now = new Date(), pm = new Date(now.getFullYear(), now.getMonth() - 1, 1), prevRev = S.payments.filter(p => monthKey(new Date(p.at)) === monthKey(pm)).reduce((a, p) => a + (p.amount || 0), 0);
     const sub = $('k-rev-sub'); sub.replaceChildren('دولار');
-    if (prevRev) { const ch = Math.round((monthRev - prevRev) / prevRev * 100); sub.append(' · ', h('span', { class: 'delta ' + (ch >= 0 ? 'up' : 'down') }, (ch >= 0 ? '▲ ' : '▼ ') + Math.abs(ch) + '%'), ' عن الشهر الماضي'); }
+    if (prevRev) { const ch = Math.round((monthRev - prevRev) / prevRev * 100); sub.replaceChildren(h('span', { class: 'delta ' + (ch >= 0 ? 'up' : 'down') }, (ch >= 0 ? '▲ ' : '▼ ') + Math.abs(ch) + '%'), ' عن الشهر الماضي'); }
     countTo($('k-faults'), newFaults, int);
     $('k-faults-sub').textContent = S.reports.length ? S.reports.length + ' تقرير' : 'من تقارير الزبائن';
     // revenue chart
