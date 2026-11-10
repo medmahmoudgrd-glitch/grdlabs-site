@@ -141,7 +141,7 @@
   @media (max-width: 900px) { .safe { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 520px) { .safe { grid-template-columns: 1fr; } }
 
-  /* download */
+  /* start: the trial and subscription band */
   .dl { position: relative; overflow: hidden; color: #fff; border-radius: 30px; padding: 56px 40px; text-align: center;
     background: linear-gradient(140deg, #071330, #0B1E4A 45%, #1A4594); }
   .dl h2 { font-size: clamp(28px, 4vw, 40px); }
@@ -176,8 +176,6 @@
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <symbol id="i-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.1-1.2 2.9-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.5-1-2.5-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4z"/></symbol>
-    <symbol id="i-win" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5.5l7.4-1v7.1H3V5.5zm0 13l7.4 1v-7H3v6zm8.3 1.1L21 21v-8.4h-9.7v7zm0-15.2v7.2H21V3l-9.7 1.4z"/></symbol>
     <symbol id="i-build" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 21V5a2 2 0 012-2h8a2 2 0 012 2v16M16 9h2a2 2 0 012 2v10M8 7h4M8 11h4M8 15h4M2 21h20"/></symbol>
     <symbol id="i-user" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0"/></symbol>
     <symbol id="i-cam" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M15 10l5-3v10l-5-3M3 7h12v10H3z"/></symbol>
@@ -206,7 +204,7 @@
       <a href="#spaces">مساحات العمل</a>
       <a href="#faq">الأسئلة</a>
     </nav>
-    <a class="btn primary" href="#download">نزّل البرنامج</a>
+    <a class="btn primary" href="#start">اطلب البرنامج</a>
   </div>
 </header>
 
@@ -214,12 +212,12 @@
   <section class="hero" id="hero">
     <div class="grid"></div>
     <div class="wrap inner">
-      <span class="chip"><i></i>الإصدار <span data-version>2.8.3</span> · تجربة مجانية 14 يوم</span>
+      <span class="chip"><i></i>ماك وويندوز · تجربة مجانية 14 يوم</span>
       <h1>حسابات شغلك كلها،<br><em>على حاسبتك وتلفونك</em></h1>
       <p class="lead">فواتير، محاسبة، رواتب وحضور بالعربي. للشركات والفري لانسر وصنّاع المحتوى. يشتغل بدون إنترنت، وبياناتك تبقى عندك.</p>
       <div class="cta">
-        <a class="btn primary" href="#download"><svg><use href="#i-apple"/></svg>للماك</a>
-        <a class="btn ghost" href="#download"><svg><use href="#i-win"/></svg>للويندوز</a>
+        <a class="btn primary" href="#start">اطلب البرنامج</a>
+        <a class="btn ghost" href="#features">شوف الميزات</a>
       </div>
       <small>بدون بطاقة دفع. كل الميزات مفتوحة خلال التجربة.</small>
     </div>
@@ -361,17 +359,15 @@
     </div>
   </section>
 
-  <section id="download">
+  <section id="start">
     <div class="wrap">
       <div class="dl reveal">
         <h2>جرّب Grdlabs مجاناً 14 يوم</h2>
-        <p>نزّل البرنامج، اختار نوع حسابك وابدي. بعد التجربة تاخذ كود اشتراك لشركتك وتلصقه بالإعدادات.</p>
+        <p>راسلنا ونوصلك البرنامج لماك أو ويندوز، تختار نوع حسابك وتبدي. بعد التجربة تاخذ كود اشتراك لشركتك وتلصقه بالإعدادات.</p>
         <div class="cta">
-          <a class="btn primary" data-asset="darwin-arm64" href="https://api.grdlabs.site/updates/v2.8.3/Grdlabs-Mac-arm64-2.8.3.tar.xz"><svg><use href="#i-apple"/></svg>ماك (Apple M)</a>
-          <a class="btn ghost" data-asset="darwin-x64" href="https://api.grdlabs.site/updates/v2.8.3/Grdlabs-Mac-x64-2.8.3.tar.xz"><svg><use href="#i-apple"/></svg>ماك (Intel)</a>
-          <a class="btn ghost" data-asset="win32-x64" href="https://api.grdlabs.site/updates/v2.8.3/Grdlabs-Setup-2.8.3.exe"><svg><use href="#i-win"/></svg>ويندوز</a>
+          <a class="btn primary" href="mailto:grdlabs.app@gmail.com?subject=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D8%AC%20Grdlabs">اطلب البرنامج</a>
         </div>
-        <div class="ver">الإصدار <span data-version>2.8.3</span> · التحديثات توصلك من داخل البرنامج · تطبيق الآيفون قريباً على App Store</div>
+        <div class="ver">ماك وويندوز · التحديثات توصلك من داخل البرنامج · تطبيق الآيفون قريباً على App Store</div>
         <div class="plans">
           <div><b>شهري</b><span>مرونة كاملة، تجدد كل شهر</span></div>
           <div><b>3 أشهر</b><span>تجديد كل موسم</span></div>
