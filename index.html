@@ -3,485 +3,423 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Grdlabs · برنامج المبيعات والفواتير والمحاسبة</title>
-<meta name="description" content="Grdlabs برنامج عربي للمبيعات والفواتير والمحاسبة والرواتب، يشتغل على حاسبتك بدون إنترنت. للماك والويندوز.">
+<title>Grdlabs · حسابات شركتك على حاسبتك وتلفونك</title>
+<meta name="description" content="Grdlabs برنامج عربي للفواتير والمحاسبة والرواتب والحضور، على الماك والويندوز ويه تطبيق آيفون. للشركات والفري لانسر وصنّاع المحتوى.">
 <meta property="og:title" content="Grdlabs">
-<meta property="og:description" content="برنامج عربي للمبيعات والفواتير والمحاسبة والرواتب، يشتغل على حاسبتك بدون إنترنت.">
-<meta property="og:image" content="https://grdlabs.site/img/home.webp">
+<meta property="og:description" content="فواتير، محاسبة، رواتب وحضور بالعربي. على حاسبتك وتلفونك، وبياناتك عندك.">
+<meta property="og:image" content="https://grdlabs.site/img/app/home.jpg">
 <meta property="og:url" content="https://grdlabs.site/">
-<meta name="theme-color" content="#f4f7fb">
+<meta name="theme-color" content="#0B1E4A">
 <link rel="icon" href="img/grdlabs-app-icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
 <style>
+  /* Grdlabs blue and white: a deep navy for the top and the closing band, white cards on a pale blue page. */
   :root {
     color-scheme: light;
-    --bg: #f4f7fb; --surface: #ffffff; --ink: #0f1a2b; --muted: #5a6678; --line: #e3e8f0;
-    --blue: #1570ef; --blue-ink: #0b4fc0; --blue-soft: #e8f1fe; --green: #2f9e44; --green-soft: #e7f6ea;
-    --radius: 18px; --shadow: 0 1px 2px rgba(15,26,43,.05), 0 12px 32px -12px rgba(15,26,43,.14);
+    --navy: #0B1E4A; --navy-2: #12306E; --blue: #1543EF; --blue-2: #2F63D0; --sky: #8FB3FF;
+    --bg: #F4F7FD; --card: #FFFFFF; --ink: #0F1A33; --muted: #5A6784; --line: #E1E7F2; --soft: #EAF0FD;
+    --radius: 22px;
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.75 "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.8 "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  img { max-width: 100%; display: block; }
-  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+  img { max-width: 100%; height: auto; display: block; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
+  h1, h2, h3 { line-height: 1.3; margin: 0; }
+  .kicker { display: inline-block; font-size: 13px; font-weight: 600; color: var(--blue); background: var(--soft); border-radius: 999px; padding: 4px 14px; margin-bottom: 14px; }
+  .head { text-align: center; max-width: 720px; margin: 0 auto 44px; }
+  .head h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 700; }
+  .head p { color: var(--muted); font-size: 17px; margin: 14px 0 0; }
+  section { padding: 88px 0; scroll-margin-top: 64px; }
 
-  header { position: sticky; top: 0; z-index: 10; background: rgba(244,247,251,.86); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid transparent; }
-  header.scrolled { border-color: var(--line); }
-  .bar { display: flex; align-items: center; gap: 24px; height: 68px; }
-  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .brand img.icon { width: 36px; height: 36px; }
-  .brand img.word { height: 22px; width: auto; }
-  nav.links { display: flex; gap: 22px; margin-inline-start: auto; }
-  nav.links a { text-decoration: none; color: var(--muted); font-weight: 500; font-size: 15px; }
-  nav.links a:hover { color: var(--ink); }
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 20px; border-radius: 12px; font: 600 15px/1.2 inherit; text-decoration: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink); transition: transform .15s, box-shadow .15s, background .15s; white-space: nowrap; }
-  .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
-  .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
-  .btn.primary:hover { background: var(--blue-ink); }
-  .btn svg { width: 18px; height: 18px; flex: none; }
+  /* buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 14px; font: 600 15px/1.2 inherit; text-decoration: none; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); transition: transform .15s, filter .2s, background .2s; white-space: nowrap; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn.primary { background: linear-gradient(135deg, var(--blue), var(--blue-2)); color: #fff; border-color: transparent; }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .btn.ghost { background: rgb(255 255 255 / .08); color: #fff; border-color: rgb(255 255 255 / .22); }
+  .btn svg { width: 18px; height: 18px; }
 
-  .hero { padding: 72px 0 40px; text-align: center; }
-  .badge { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px; border-radius: 999px; background: var(--green-soft); color: var(--green); font-weight: 600; font-size: 14px; }
-  .badge i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-  h1 { font-size: clamp(32px, 5.4vw, 56px); line-height: 1.25; margin: 22px auto 16px; max-width: 820px; letter-spacing: -.01em; }
-  h1 em { font-style: normal; color: var(--blue); }
-  .lead { font-size: clamp(17px, 2vw, 20px); color: var(--muted); max-width: 640px; margin: 0 auto 32px; }
-  .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .cta .btn { padding: 14px 24px; font-size: 16px; }
-  .fine { color: var(--muted); font-size: 14px; margin-top: 16px; }
+  /* header */
+  header { position: fixed; inset: 0 0 auto; z-index: 20; transition: background .25s, box-shadow .25s; }
+  header.solid { background: rgb(255 255 255 / .9); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 1px 0 var(--line); }
+  .bar { display: flex; align-items: center; gap: 28px; height: 72px; }
+  .brand img { height: 34px; width: auto; }
+  .brand .dark { display: none; }
+  header.solid .brand .light { display: none; } header.solid .brand .dark { display: block; }
+  nav.links { display: flex; gap: 24px; margin-inline-start: auto; }
+  nav.links a { text-decoration: none; color: rgb(255 255 255 / .78); font-weight: 500; font-size: 15px; }
+  nav.links a:hover { color: #fff; }
+  header.solid nav.links a { color: var(--muted); } header.solid nav.links a:hover { color: var(--ink); }
+  header .btn.primary { padding: 10px 18px; }
+  @media (max-width: 860px) { nav.links { display: none; } .bar { justify-content: space-between; } }
 
-  .shot { margin: 48px auto 0; max-width: 1040px; border-radius: 22px; padding: 10px; background: linear-gradient(180deg, #fff, #eef3fa); box-shadow: 0 30px 80px -30px rgba(21,112,239,.35), var(--shadow); border: 1px solid var(--line); }
-  .shot img { border-radius: 14px; width: 100%; height: auto; aspect-ratio: 1440/900; }
+  /* hero: deep navy gradient that drifts, a light under the pointer */
+  .hero { position: relative; overflow: hidden; isolation: isolate; color: #fff; padding: 150px 0 0;
+    background: linear-gradient(140deg, #071330 0%, #0B1E4A 35%, #12306E 65%, #1A4594 100%); background-size: 180% 180%; animation: drift 18s ease-in-out infinite alternate; }
+  @keyframes drift { to { background-position: 100% 100%; } }
+  .hero::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(520px circle at var(--mx, 70%) var(--my, 20%), rgb(96 140 255 / .22), transparent 60%); }
+  .hero .grid { position: absolute; inset: 0; z-index: -1; opacity: .07; pointer-events: none;
+    background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%); mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%); }
+  .hero .inner { text-align: center; max-width: 860px; margin: 0 auto; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 999px; background: rgb(255 255 255 / .1); border: 1px solid rgb(255 255 255 / .18); }
+  .chip i { width: 7px; height: 7px; border-radius: 50%; background: #5EE0A0; }
+  .hero h1 { font-size: clamp(34px, 5.6vw, 62px); font-weight: 700; margin: 22px 0 18px; letter-spacing: -.5px; }
+  .hero h1 em { font-style: normal; color: var(--sky); }
+  .hero p.lead { font-size: clamp(16px, 2vw, 19px); color: rgb(255 255 255 / .78); margin: 0 auto 30px; max-width: 640px; }
+  .hero .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .hero small { display: block; margin-top: 14px; color: rgb(255 255 255 / .6); font-size: 13px; }
+  .stage { position: relative; margin: 60px auto 0; max-width: 1060px; }
+  .stage .desk { border-radius: 18px 18px 0 0; overflow: hidden; border: 1px solid rgb(255 255 255 / .16); border-bottom: 0; box-shadow: 0 -10px 80px rgb(0 0 0 / .35); }
+  .stage .desk img { width: 100%; }
+  .stage .phone { position: absolute; left: -10px; bottom: -30px; width: 210px; border-radius: 34px; padding: 8px; background: #0E1424; box-shadow: 0 30px 70px rgb(0 0 0 / .45); }
+  .stage .phone .scr { border-radius: 27px; overflow: hidden; }
+  /* the phone shots start under the status bar: 160 px of 1179 is cut off the top */
+  .scr img { margin-top: -13.6%; }
+  @media (max-width: 760px) { .stage .phone { width: 130px; left: 4px; bottom: -14px; border-radius: 24px; padding: 5px; } .stage .phone .scr { border-radius: 20px; } }
 
-  section { padding: 88px 0; }
-  .head { text-align: center; max-width: 640px; margin: 0 auto 48px; }
-  .head h2 { font-size: clamp(26px, 3.6vw, 38px); line-height: 1.3; margin: 0 0 12px; }
-  .head p { color: var(--muted); margin: 0; font-size: 17px; }
-  .kicker { color: var(--blue); font-weight: 600; font-size: 14px; margin-bottom: 8px; display: block; }
+  /* account types */
+  .types { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .type { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
+  .type .ic { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: var(--soft); color: var(--blue); margin-bottom: 16px; }
+  .type .ic svg { width: 24px; height: 24px; }
+  .type h3 { font-size: 21px; margin-bottom: 8px; }
+  .type p { color: var(--muted); margin: 0 0 14px; }
+  ul.ticks { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  ul.ticks li { position: relative; padding-inline-start: 26px; font-size: 15px; }
+  ul.ticks li::before { content: ""; position: absolute; inset-inline-start: 0; top: 7px; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.3 2.3 4.7-4.9' fill='none' stroke='%231543EF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat; }
+  @media (max-width: 900px) { .types { grid-template-columns: 1fr; } }
 
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; }
-  .card .ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--blue-soft); color: var(--blue); margin-bottom: 16px; }
-  .card .ic svg { width: 22px; height: 22px; }
-  .card h3 { margin: 0 0 6px; font-size: 18px; }
-  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  /* features */
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .feat { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .feat .ic { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--soft); color: var(--blue); margin-bottom: 14px; }
+  .feat .ic svg { width: 21px; height: 21px; }
+  .feat h3 { font-size: 18px; margin-bottom: 6px; }
+  .feat p { color: var(--muted); margin: 0; font-size: 15px; }
+  .feat .new { font-size: 11px; font-weight: 700; color: var(--blue); background: var(--soft); border-radius: 999px; padding: 2px 9px; margin-inline-start: 6px; vertical-align: 2px; }
+  @media (max-width: 960px) { .features { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 620px) { .features { grid-template-columns: 1fr; } }
 
-  .split { display: grid; grid-template-columns: 1fr 1.25fr; gap: 56px; align-items: center; }
+  /* split rows: words beside a picture */
+  .split { display: grid; grid-template-columns: 1fr 1.2fr; gap: 56px; align-items: center; }
   .split + .split { margin-top: 96px; }
-  .split.flip > :first-child { order: 2; }
-  .split h2 { font-size: clamp(24px, 3vw, 34px); line-height: 1.35; margin: 0 0 14px; }
-  .split p { color: var(--muted); margin: 0 0 18px; }
-  .ticks { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
-  .ticks li { display: flex; gap: 10px; align-items: flex-start; }
-  .ticks li::before { content: ""; flex: none; width: 20px; height: 20px; margin-top: 4px; border-radius: 50%; background: var(--green-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='m6 10.5 2.5 2.5L14 7.5' fill='none' stroke='%232f9e44' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px no-repeat; }
-  .frame { border-radius: 16px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); background: #fff; }
-  .frame img { width: 100%; height: auto; }
+  .split.flip .words { order: 2; }
+  .split .words h2 { font-size: clamp(26px, 3.4vw, 36px); margin-bottom: 14px; }
+  .split .words p { color: var(--muted); font-size: 17px; margin: 0 0 20px; }
+  .shot { border-radius: 18px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 30px 60px -30px rgb(11 30 74 / .35); background: #fff; }
+  @media (max-width: 900px) { .split { grid-template-columns: 1fr; gap: 28px; } .split.flip .words { order: 0; } }
 
-  .band { background: var(--surface); border-block: 1px solid var(--line); }
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; text-align: center; }
-  .stats b { display: block; font-size: 30px; color: var(--blue); line-height: 1.3; }
-  .stats span { color: var(--muted); font-size: 15px; }
+  /* phone app */
+  .band { background: linear-gradient(180deg, #fff, var(--bg)); border-block: 1px solid var(--line); }
+  .phones { display: flex; justify-content: center; gap: 26px; flex-wrap: wrap; margin-top: 10px; }
+  .ph { width: 250px; text-align: center; }
+  .ph .frame { border-radius: 40px; padding: 9px; background: #0E1424; box-shadow: 0 30px 60px -24px rgb(11 30 74 / .45); }
+  .ph .frame .scr { border-radius: 32px; overflow: hidden; }
+  .ph h3 { font-size: 17px; margin: 18px 0 4px; }
+  .ph p { color: var(--muted); font-size: 14px; margin: 0; }
 
-  .dl { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 820px; margin: 0 auto; }
-  .dl .card { display: flex; flex-direction: column; gap: 12px; padding: 30px; }
-  .dl .os { display: flex; align-items: center; gap: 12px; }
-  .dl .os svg { width: 34px; height: 34px; }
-  .dl h3 { font-size: 20px; margin: 0; }
-  .dl .btn { margin-top: auto; }
-  .steps { max-width: 820px; margin: 22px auto 0; color: var(--muted); font-size: 15px; text-align: center; }
+  /* workspaces */
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; counter-reset: s; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 22px; position: relative; }
+  .step::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: var(--navy); color: #fff; font-weight: 700; margin-bottom: 12px; }
+  .step h3 { font-size: 17px; margin-bottom: 4px; } .step p { color: var(--muted); font-size: 14px; margin: 0; }
+  .handle { display: inline-flex; gap: 8px; align-items: center; direction: ltr; font: 600 15px/1 ui-monospace, Menlo, monospace; background: var(--soft); color: var(--navy); padding: 8px 14px; border-radius: 10px; margin-top: 18px; }
+  @media (max-width: 900px) { .flow { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .flow { grid-template-columns: 1fr; } }
 
-  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .plans .card { text-align: center; }
-  .plans .card.hot { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
-  .plans h3 { font-size: 20px; }
-  .plans .price { font-size: 15px; color: var(--muted); margin: 8px 0 18px; }
+  /* safe */
+  .safe { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .safe div { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
+  .safe b { display: block; font-size: 17px; margin-bottom: 4px; } .safe span { color: var(--muted); font-size: 14px; }
+  @media (max-width: 900px) { .safe { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .safe { grid-template-columns: 1fr; } }
 
-  .faq { max-width: 760px; margin: 0 auto; display: grid; gap: 12px; }
-  details { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 0 22px; }
-  summary { cursor: pointer; list-style: none; padding: 18px 0; font-weight: 600; display: flex; justify-content: space-between; gap: 12px; }
+  /* download */
+  .dl { position: relative; overflow: hidden; color: #fff; border-radius: 30px; padding: 56px 40px; text-align: center;
+    background: linear-gradient(140deg, #071330, #0B1E4A 45%, #1A4594); }
+  .dl h2 { font-size: clamp(28px, 4vw, 40px); }
+  .dl p { color: rgb(255 255 255 / .75); margin: 12px auto 28px; max-width: 560px; }
+  .dl .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .dl .ver { margin-top: 18px; font-size: 13px; color: rgb(255 255 255 / .55); }
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 36px; text-align: right; }
+  .plans div { background: rgb(255 255 255 / .07); border: 1px solid rgb(255 255 255 / .14); border-radius: 18px; padding: 20px 22px; }
+  .plans b { display: block; font-size: 18px; } .plans span { color: rgb(255 255 255 / .7); font-size: 14px; }
+  @media (max-width: 760px) { .plans { grid-template-columns: 1fr; } .dl { padding: 44px 20px; } }
+
+  /* faq */
+  .faq { max-width: 780px; margin: 0 auto; display: grid; gap: 10px; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 22px; }
+  summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
   summary::-webkit-details-marker { display: none; }
-  summary::after { content: "+"; color: var(--blue); font-size: 22px; line-height: 1; }
+  summary::after { content: "+"; color: var(--blue); font-size: 20px; line-height: 1; }
   details[open] summary::after { content: "−"; }
-  details p { margin: 0 0 18px; color: var(--muted); }
+  details p { color: var(--muted); margin: 10px 0 0; }
 
-  footer { padding: 40px 0 56px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); }
-  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center; }
+  footer { padding: 40px 0 50px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  footer img { height: 26px; }
+  footer nav { display: flex; gap: 18px; margin-inline-start: auto; flex-wrap: wrap; }
+  footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
 
-  /* 3D matte-glass app icon in the hero. Tilt and light come from --rx/--ry/--lx/--ly set by script. */
-  .mark3d { --rx: -8deg; --ry: 14deg; --lx: 30%; --ly: 22%; position: relative; width: 300px; height: 300px; margin: 0 auto 26px; perspective: 900px; }
-  .mark3d .scene { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(var(--rx)) rotateY(var(--ry)); will-change: transform; }
-  .mark3d .slab { position: absolute; inset: 0; transform-style: preserve-3d; }
-  .mark3d .glyph { position: absolute; left: 50%; top: 50%; width: 250px; height: 250px; margin: -125px 0 0 -125px; overflow: visible; }
-  .mark3d .glyph.g1 { transform: translateZ(0); opacity: .6; }
-  .mark3d .glyph.g2 { transform: translateZ(5px); opacity: .75; }
-  .mark3d .glyph.g3 { transform: translateZ(10px); opacity: .85; }
-  .mark3d .glyph.g4 { transform: translateZ(15px); opacity: .95; }
-  .mark3d .glyph.g5 { transform: translateZ(20px); }
-  .mark3d .glyph.top { transform: translateZ(23px); }
-  .mark3d .ground { position: absolute; left: 26%; right: 26%; bottom: -10px; height: 30px; border-radius: 50%;
-    background: radial-gradient(closest-side, rgba(28,72,40,.28), rgba(28,72,40,0));
-    filter: blur(6px); transform: translateX(calc(var(--ry) * -0.9)); }
-  /* Floating app section icons in the page sky, behind the content. Positions are driven by script. */
-  .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-  main, footer { position: relative; z-index: 1; }
-  .fly { position: absolute; left: 0; top: 0; width: var(--s); height: var(--s); will-change: transform; }
-  .fly .chip { width: 100%; height: 100%; border-radius: 30%; display: grid; place-items: center; color: var(--c);
-    background: linear-gradient(160deg, rgba(255,255,255,.96), var(--t));
-    border: 1px solid rgba(255,255,255,.9);
-    box-shadow: 0 3px 0 rgba(15,26,43,.06), 0 14px 28px -14px rgba(15,26,43,.32), inset 0 -8px 14px rgba(15,26,43,.04), inset 0 1px 0 #fff; }
-  .fly svg { width: 48%; height: 48%; }
-  .band { background: rgba(255,255,255,.8); }
-
-  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
-  .flow .step { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 18px; text-align: center; }
-  .flow .step b { display: grid; place-items: center; width: 34px; height: 34px; margin: 0 auto 12px; border-radius: 50%; background: var(--blue-soft); color: var(--blue); font-size: 15px; }
-  .flow .step h3 { margin: 0 0 6px; font-size: 17px; }
-  .flow .step p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
-  .flow .step:not(:last-child)::after { content: ""; position: absolute; top: 50%; left: -7px; width: 8px; height: 8px; border: solid var(--blue); border-width: 0 0 2px 2px; transform: translate(-50%, -50%) rotate(45deg); z-index: 1; }
-  .note { max-width: 760px; margin: 28px auto 0; text-align: center; color: var(--muted); }
-
-  .modules { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  .modules .card { display: grid; grid-template-columns: 44px 1fr; gap: 4px 16px; align-items: start; }
-  .modules .card .ic { margin: 0; grid-row: span 3; }
-  .modules .card h3 { margin-top: 8px; }
-  .modules .card ul { margin: 10px 0 0; padding: 0 18px 0 0; color: var(--muted); font-size: 15px; display: grid; gap: 4px; }
-  .ic.c2 { background: var(--green-soft); color: var(--green); }
-  .ic.c3 { background: #f0ecff; color: #6d4fe0; }
-  .ic.c4 { background: #fff3e0; color: #c86b00; }
-
-  .who { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-  .who .card { text-align: center; }
-  .who .card .ic { margin: 0 auto 14px; }
-
-  @media (max-width: 900px) {
-    .grid, .plans { grid-template-columns: 1fr 1fr; }
-    .split, .split.flip { grid-template-columns: 1fr; gap: 28px; }
-    .split.flip > :first-child { order: 0; }
-    .stats { grid-template-columns: 1fr 1fr; gap: 28px; }
-    .flow { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
-    .flow .step:not(:last-child)::after { top: auto; bottom: -8px; left: 50%; transform: translate(-50%, 50%) rotate(-45deg); }
-    .modules { grid-template-columns: 1fr; }
-    .who { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 640px) {
-    .wrap { padding: 0 16px; }
-    nav.links { display: none; }
-    .bar .btn { margin-inline-start: auto; padding: 9px 14px; }
-    .hero { padding-top: 44px; }
-    .mark3d { width: 220px; height: 220px; margin-bottom: 20px; }
-    .mark3d .glyph { width: 184px; height: 184px; margin: -92px 0 0 -92px; }
-    .grid, .plans, .dl, .who { grid-template-columns: 1fr; }
-    .modules .card { grid-template-columns: 1fr; }
-    .modules .card .ic { grid-row: auto; }
-    section { padding: 64px 0; }
-    .cta .btn { width: 100%; }
-  }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .6s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .hero { animation: none; } .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
-<div class="sky" id="sky" aria-hidden="true"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.1-1.2 2.9-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.5-1-2.5-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4z"/></symbol>
+    <symbol id="i-win" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5.5l7.4-1v7.1H3V5.5zm0 13l7.4 1v-7H3v6zm8.3 1.1L21 21v-8.4h-9.7v7zm0-15.2v7.2H21V3l-9.7 1.4z"/></symbol>
+    <symbol id="i-build" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 21V5a2 2 0 012-2h8a2 2 0 012 2v16M16 9h2a2 2 0 012 2v10M8 7h4M8 11h4M8 15h4M2 21h20"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0"/></symbol>
+    <symbol id="i-cam" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M15 10l5-3v10l-5-3M3 7h12v10H3z"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8zM14 3v5h5M9 13h6M9 17h4"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11h11L21 7H6.2M9 20a1 1 0 100-2 1 1 0 000 2zm9 0a1 1 0 100-2 1 1 0 000 2z"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 7a2 2 0 012-2h13v4M3 7v10a2 2 0 002 2h15V9H5a2 2 0 01-2-2zm14 7h.01"/></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M8 12l3 3 6-6M12 21a9 9 0 100-18 9 9 0 000 18z"/></symbol>
+    <symbol id="i-kanban" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 4h16v16H4zM9 8v6M15 8v3"/></symbol>
+    <symbol id="i-team" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM2.5 20a6.5 6.5 0 0113 0M16 4.2a3.5 3.5 0 010 6.6M18 14a6.5 6.5 0 013.5 6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol>
+    <symbol id="i-dollar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 2v20M17 6H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></symbol>
+  </defs>
+</svg>
+
 <header id="top">
   <div class="wrap bar">
-    <a class="brand" href="#" aria-label="Grdlabs">
-      <img class="icon" src="img/grdlabs-app-icon.svg" alt="">
-      <img class="word" src="img/grdlabs-logo.svg" alt="Grdlabs">
-    </a>
+    <a class="brand" href="#top" aria-label="Grdlabs"><img class="light" src="img/grdlabs-logo-white.svg" alt="Grdlabs"><img class="dark" src="img/grdlabs-logo.svg" alt="Grdlabs"></a>
     <nav class="links" aria-label="أقسام الصفحة">
+      <a href="#accounts">لمن البرنامج</a>
       <a href="#features">الميزات</a>
-      <a href="#how">كيف يشتغل</a>
-      <a href="#modules">الأقسام</a>
-      <a href="#plans">الاشتراك</a>
+      <a href="#phone">تطبيق الآيفون</a>
+      <a href="#spaces">مساحات العمل</a>
       <a href="#faq">الأسئلة</a>
     </nav>
-    <a class="btn primary" href="#plans">الاشتراك</a>
+    <a class="btn primary" href="#download">نزّل البرنامج</a>
   </div>
 </header>
 
 <main>
-  <div class="hero wrap">
-    <div class="mark3d" id="mark3d" aria-hidden="true">
-      <div class="ground"></div>
-      <div class="scene">
-        <div class="slab">
-          <svg class="glyph g1" viewBox="1062 274 94 94"><path fill="#2e8b3d" d="M1100.023,276.533h17.982l-.299,31.164 26.671-15.884 8.987,15.884-26.969,15.287 26.969,15.28-8.987,15.884-26.671-15.884.299,30.866h-17.982l.299-31.164-26.671,15.884-9.286-15.586 26.969-15.28-26.969-15.287 9.286-16.183 26.671,16.183z"/></svg>
-          <svg class="glyph g2" viewBox="1062 274 94 94"><path fill="#2e8b3d" d="M1100.023,276.533h17.982l-.299,31.164 26.671-15.884 8.987,15.884-26.969,15.287 26.969,15.28-8.987,15.884-26.671-15.884.299,30.866h-17.982l.299-31.164-26.671,15.884-9.286-15.586 26.969-15.28-26.969-15.287 9.286-16.183 26.671,16.183z"/></svg>
-          <svg class="glyph g3" viewBox="1062 274 94 94"><path fill="#33953f" d="M1100.023,276.533h17.982l-.299,31.164 26.671-15.884 8.987,15.884-26.969,15.287 26.969,15.28-8.987,15.884-26.671-15.884.299,30.866h-17.982l.299-31.164-26.671,15.884-9.286-15.586 26.969-15.28-26.969-15.287 9.286-16.183 26.671,16.183z"/></svg>
-          <svg class="glyph g4" viewBox="1062 274 94 94"><path fill="#349a42" d="M1100.023,276.533h17.982l-.299,31.164 26.671-15.884 8.987,15.884-26.969,15.287 26.969,15.28-8.987,15.884-26.671-15.884.299,30.866h-17.982l.299-31.164-26.671,15.884-9.286-15.586 26.969-15.28-26.969-15.287 9.286-16.183 26.671,16.183z"/></svg>
-          <svg class="glyph g5" viewBox="1062 274 94 94"><path fill="#36a045" d="M1100.023,276.533h17.982l-.299,31.164 26.671-15.884 8.987,15.884-26.969,15.287 26.969,15.28-8.987,15.884-26.671-15.884.299,30.866h-17.982l.299-31.164-26.671,15.884-9.286-15.586 26.969-15.28-26.969-15.287 9.286-16.183 26.671,16.183z"/></svg>
-          <svg class="glyph top" viewBox="1062 274 94 94">
-            <defs>
-              <linearGradient id="m3g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#66cb6b"/><stop offset="1" stop-color="#38a648"/></linearGradient>
-              <linearGradient id="m3f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset="1" stop-color="#fff" stop-opacity=".03"/></linearGradient>
-            </defs>
-            <path fill="url(#m3g)" d="M1100.023,276.533h17.982l-.299,31.164 26.671-15.884 8.987,15.884-26.969,15.287 26.969,15.28-8.987,15.884-26.671-15.884.299,30.866h-17.982l.299-31.164-26.671,15.884-9.286-15.586 26.969-15.28-26.969-15.287 9.286-16.183 26.671,16.183z"/>
-            <path fill="url(#m3f)" stroke="rgba(255,255,255,.55)" stroke-width=".7" d="M1100.023,276.533h17.982l-.299,31.164 26.671-15.884 8.987,15.884-26.969,15.287 26.969,15.28-8.987,15.884-26.671-15.884.299,30.866h-17.982l.299-31.164-26.671,15.884-9.286-15.586 26.969-15.28-26.969-15.287 9.286-16.183 26.671,16.183z"/>
-          </svg>
+  <section class="hero" id="hero">
+    <div class="grid"></div>
+    <div class="wrap inner">
+      <span class="chip"><i></i>الإصدار <span data-version>2.8.3</span> · تجربة مجانية 14 يوم</span>
+      <h1>حسابات شغلك كلها،<br><em>على حاسبتك وتلفونك</em></h1>
+      <p class="lead">فواتير، محاسبة، رواتب وحضور بالعربي. للشركات والفري لانسر وصنّاع المحتوى. يشتغل بدون إنترنت، وبياناتك تبقى عندك.</p>
+      <div class="cta">
+        <a class="btn primary" href="#download"><svg><use href="#i-apple"/></svg>للماك</a>
+        <a class="btn ghost" href="#download"><svg><use href="#i-win"/></svg>للويندوز</a>
+      </div>
+      <small>بدون بطاقة دفع. كل الميزات مفتوحة خلال التجربة.</small>
+    </div>
+    <div class="wrap">
+      <div class="stage">
+        <div class="desk"><img src="img/app/home.jpg" alt="الصفحة الرئيسية ببرنامج Grdlabs: السيولة والمبيعات والمقبوضات ومهام اليوم" width="1600" height="1000"></div>
+        <div class="phone"><div class="scr"><img src="img/phone/owner-home.jpg" alt="تطبيق Grdlabs للمدير على الآيفون" width="415" height="900"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="accounts">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="kicker">ثلاث أنواع حسابات</span>
+        <h2>تختار نوع حسابك من أول شاشة</h2>
+        <p>كل حساب ياخذ الأقسام اللي يحتاجها، وتگدر تسوي أكثر من حساب على نفس الحاسبة وتنتقل بينهم بكلمة المرور.</p>
+      </div>
+      <div class="types">
+        <div class="type reveal">
+          <div class="ic"><svg><use href="#i-build"/></svg></div>
+          <h3>شركة</h3>
+          <p>محاسبة كاملة لشركتك وموظفيك وفروعك.</p>
+          <ul class="ticks"><li>فواتير، نقطة بيع ومخزون</li><li>رواتب وحضور بالتلفون</li><li>شركاء بنسب يتقاسمون الربح</li><li>فريق بصلاحيات، ومن حاسبة ثانية</li></ul>
+        </div>
+        <div class="type reveal">
+          <div class="ic"><svg><use href="#i-user"/></svg></div>
+          <h3>فري لانسر</h3>
+          <p>دفترك الخاص بيوزر تشاركه ويه الشركات.</p>
+          <ul class="ticks"><li>فواتير بالدينار أو الدولار</li><li>مشاريع ومؤقت شغل</li><li>نفس الدفتر بالحاسبة والتلفون</li><li>الشركات تضيفك بيوزرك</li></ul>
+        </div>
+        <div class="type reveal">
+          <div class="ic"><svg><use href="#i-cam"/></svg></div>
+          <h3>صانع محتوى UGC</h3>
+          <p>خدماتك وأسعارك وحساباتك بالمنصات بمكان واحد.</p>
+          <ul class="ticks"><li>ملف بخدماتك وأسعارك</li><li>مهام الحملات من الشركات</li><li>فواتيرك ودفعاتك</li><li>يوزر ورابط تشاركه</li></ul>
         </div>
       </div>
     </div>
-    <span class="badge"><i></i>الإصدار 1.9.3 · تجربة مجانية 14 يوم</span>
-    <h1>حسابات شركتك كلها <em>ببرنامج واحد</em>، على حاسبتك</h1>
-    <p class="lead">فواتير، عروض أسعار، مصروفات، رواتب وقيود محاسبية بالعربي. يشتغل بدون إنترنت، وبياناتك تبقى عندك.</p>
-    <div class="cta">
-      <a class="btn primary" href="#plans">اطلب الاشتراك</a>
-      <a class="btn" href="#features">شوف الميزات</a>
-    </div>
-    <p class="fine">بدون بطاقة دفع. كل الميزات مفتوحة خلال التجربة.</p>
-    <div class="shot"><img src="img/home.webp" width="1440" height="900" alt="الصفحة الرئيسية في Grdlabs: المبيعات، المستحقات، صافي الربح، الصندوق وآخر الفواتير"></div>
-  </div>
-
-  <section id="features">
-    <div class="wrap">
-      <div class="head">
-        <span class="kicker">كل اللي تحتاجه الشركة</span>
-        <h2>من عرض السعر لحد القيد المحاسبي</h2>
-        <p>كل عملية تسجّلها تنعكس تلقائياً على الحسابات والتقارير، فما تحتاج تدخّل نفس الرقم مرتين.</p>
-      </div>
-      <div class="grid">
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></div><h3>الفواتير والدفعات</h3><p>فواتير بيع وشراء، دفعات جزئية، وصولات قبض، وتنبيه بالفواتير المتأخرة.</p></div>
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/></svg></div><h3>عروض الأسعار</h3><p>عرض سعر جاهز للطباعة، ولما يوافق الزبون يتحوّل لفاتورة بضغطة.</p></div>
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 7M21 20c0-2.6-1.7-4.9-4-5.7"/></svg></div><h3>الموارد البشرية والرواتب</h3><p>الموظفين، الرواتب الشهرية، المكافآت والخصومات والسلف، وقسيمة راتب لكل موظف.</p></div>
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 4l9 6M5 10v9m4-9v9m6-9v9m4-9v9M3 21h18"/></svg></div><h3>دليل الحسابات والقيود</h3><p>قيود يومية تلقائية ويدوية، ودليل حسابات جاهز تعدّل عليه حسب شغلك.</p></div>
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/></svg></div><h3>التقارير</h3><p>الأرباح والخسائر، الميزانية، ميزان المراجعة وكشف حساب لكل زبون ومورد.</p></div>
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg></div><h3>المشاريع والعقود</h3><p>تابع ربح كل مشروع، وسجّل العقود الشهرية حتى ما يفوتك أي استحقاق.</p></div>
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M2.5 20c0-3 2.5-5.5 5.5-5.5s5.5 2.5 5.5 5.5M14.5 20c0-2.2 1.2-4 3-4.6"/></svg></div><h3>فريق بصلاحيات</h3><p>ادعُ موظفيك بكود دعوة، وكل واحد يشوف بس الأقسام اللي تسمحله بيها.</p></div>
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M8 7h4M8 11h4M8 15h4M2 21h20"/></svg></div><h3>أكثر من شركة</h3><p>كل شركة بملفها المستقل على نفس الحاسبة، وتنتقل بينهن بسهولة.</p></div>
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>بياناتك عندك</h3><p>كل شي محفوظ على حاسبتك، مع نسخة احتياطية تاخذها وترجعها متى ما تريد.</p></div>
-      </div>
-    </div>
   </section>
 
-  <section id="how">
+  <section id="features" class="band">
     <div class="wrap">
-      <div class="head">
-        <span class="kicker">كيف يشتغل</span>
-        <h2>تسجّل العملية مرة وحدة، والباقي يصير لوحده</h2>
-        <p>Grdlabs يربط الأقسام ببعض. كل خطوة تسويها تمشي للخطوة اللي بعدها بدون ما تعيد الكتابة.</p>
+      <div class="head reveal">
+        <span class="kicker">الميزات</span>
+        <h2>كل اللي يحتاجه شغلك، ببرنامج واحد</h2>
+        <p>كل عملية تسجّلها تنعكس على الحسابات والتقارير بنفس اللحظة، فما تكتب نفس الرقم مرتين.</p>
       </div>
-      <div class="flow">
-        <div class="step"><b>1</b><h3>عرض السعر</h3><p>تكتب الأصناف والأسعار وتطبعه أو ترسله للزبون.</p></div>
-        <div class="step"><b>2</b><h3>الفاتورة</h3><p>لما يوافق الزبون يتحوّل العرض لفاتورة بضغطة وحدة.</p></div>
-        <div class="step"><b>3</b><h3>الدفعة</h3><p>تسجّل المبلغ كامل أو على دفعات، ويطلع وصل قبض.</p></div>
-        <div class="step"><b>4</b><h3>القيد المحاسبي</h3><p>البرنامج يسجّل القيد بالحسابات الصحيحة تلقائياً.</p></div>
-        <div class="step"><b>5</b><h3>التقرير</h3><p>الأرباح والميزانية وكشف حساب الزبون تتحدّث بنفس اللحظة.</p></div>
+      <div class="features">
+        <div class="feat reveal"><div class="ic"><svg><use href="#i-doc"/></svg></div><h3>الفواتير والدفعات</h3><p>عروض أسعار، فواتير، دفعات جزئية ووصولات قبض، وتصدير الفواتير PDF باسم الزبون والمشروع.</p></div>
+        <div class="feat reveal"><div class="ic"><svg><use href="#i-dollar"/></svg></div><h3>الدينار والدولار</h3><p>فاتورة بالدولار تبقى بالدولار، والحسابات بالدينار بسعر الصرف، وفرق الصرف ينحسب لوحده.</p></div>
+        <div class="feat reveal"><div class="ic"><svg><use href="#i-cart"/></svg></div><h3>نقطة البيع والمخزون</h3><p>بيع سريع من الشاشة، وكميات المواد تنزل مع كل فاتورة.</p></div>
+        <div class="feat reveal"><div class="ic"><svg><use href="#i-wallet"/></svg></div><h3>المصاريف والميزانيات والفروع</h3><p>كل دينار يطلع بتصنيفه وفرعه، ميزانية لكل باب، وموافقة المدير على المصاريف الكبيرة.</p></div>
+        <div class="feat reveal"><div class="ic"><svg><use href="#i-hand"/></svg></div><h3>الشركاء<span class="new">جديد</span></h3><p>ضيف شركائك بنسبة كل واحد، والربح والمصاريف تتقسم عليكم، ويه رأس المال والمسحوبات.</p></div>
+        <div class="feat reveal"><div class="ic"><svg><use href="#i-kanban"/></svg></div><h3>المشاريع والمهام والوقت</h3><p>ربح كل مشروع، عقود شهرية تفوتر نفسها، مهام بتذكير، ومنو أضاف أو عدّل أو أنجز كل مهمة.</p></div>
+        <div class="feat reveal"><div class="ic"><svg><use href="#i-clock"/></svg></div><h3>الرواتب والحضور</h3><p>مسير رواتب الشهر بدقايق، سلف ومكافآت وخصومات، وحضور الموظفين من تلفوناتهم.</p></div>
+        <div class="feat reveal"><div class="ic"><svg><use href="#i-team"/></svg></div><h3>الفريق ومن حاسبة ثانية<span class="new">جديد</span></h3><p>ادعُ موظفيك بكود، وكل واحد يشوف بس قسمه. والمدير يفتح الشركة من حاسبة ثانية بأي مكان.</p></div>
+        <div class="feat reveal"><div class="ic"><svg><use href="#i-chart"/></svg></div><h3>الحسابات والتقارير</h3><p>دليل حسابات وقيود مزدوجة، الأرباح والخسائر، الميزانية، وكشف حساب لكل زبون.</p></div>
       </div>
-      <p class="note">ونفس الشي للمصروفات والرواتب: تسجّل المصروف أو تصرف رواتب الشهر، والقيد ينزل بدفتر اليومية والمبلغ ينخصم من الصندوق بدون أي خطوة إضافية.</p>
-    </div>
-  </section>
-
-  <section class="band">
-    <div class="wrap stats">
-      <div><b>بالعربي</b><span>واجهة من اليمين لليسار بالكامل</span></div>
-      <div><b>بدون إنترنت</b><span>يشتغل على حاسبتك حتى لو انقطع النت</span></div>
-      <div><b>ماك وويندوز</b><span>نسخة لكل نظام</span></div>
-      <div><b>تحديث تلقائي</b><span>الإصدارات الجديدة توصلك من داخل البرنامج</span></div>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <div class="split">
-        <div>
-          <span class="kicker">الرواتب</span>
-          <h2>مسير رواتب الشهر بدقايق</h2>
-          <p>سجّل المكافأة أو الخصم أو السلفة بوقتها، وبآخر الشهر يطلعلك صافي كل موظف جاهز للصرف.</p>
-          <ul class="ticks">
-            <li>قيد الرواتب ينسجّل بالحسابات تلقائياً</li>
-            <li>قسيمة راتب مطبوعة لكل موظف</li>
-            <li>السلف تنخصم من الراتب بدون حساب يدوي</li>
-          </ul>
+      <div class="split reveal">
+        <div class="words">
+          <span class="kicker">الفواتير</span>
+          <h2>تعرف منو دفع ومنو باقي عليه</h2>
+          <p>كل فاتورة بحالتها: مدفوعة، جزئية أو غير مدفوعة. تعدّل الفاتورة بعد إصدارها والحسابات تبقى صحيحة، وتصدّر الفواتير كلها PDF.</p>
+          <ul class="ticks"><li>دفعات جزئية ووصل قبض مطبوع</li><li>تنبيه بالفواتير المتأخرة</li><li>شعار شركتك ولونها على كل فاتورة</li></ul>
         </div>
-        <div class="frame"><img src="img/hr.webp" width="1440" height="960" alt="صفحة الموارد البشرية: مسير رواتب الشهر مع المكافآت والخصومات والسلف" loading="lazy"></div>
+        <div class="shot"><img src="img/app/invoices.jpg" alt="قائمة الفواتير ببرنامج Grdlabs بحالة كل فاتورة" loading="lazy" width="1600" height="1000"></div>
       </div>
-      <div class="split flip">
-        <div>
-          <span class="kicker">التقارير</span>
-          <h2>تعرف وضع شركتك بنظرة وحدة</h2>
-          <p>المبيعات، المقبوضات، المصروفات وصافي الربح لأي فترة تختارها، وتطبعها أو تصدّرها.</p>
-          <ul class="ticks">
-            <li>الأرباح والخسائر والميزانية العمومية</li>
-            <li>كشف حساب لكل زبون ومورد</li>
-            <li>بحث سريع بكل البرنامج من لوحة المفاتيح</li>
-          </ul>
+      <div class="split flip reveal">
+        <div class="words">
+          <span class="kicker">الشركاء</span>
+          <h2>الربح يتقسم عليكم بنسبة كل شريك</h2>
+          <p>تضيف شركائك بنسبهم، وتسجّل رأس مال كل واحد ومسحوباته. صافي الربح والمصاريف تطلع لكل شريك بحصته.</p>
+          <ul class="ticks"><li>رأس المال والمسحوبات بقيودها</li><li>حصة كل شريك من الربح</li></ul>
         </div>
-        <div class="frame"><img src="img/reports.webp" width="1440" height="900" alt="صفحة التقارير في Grdlabs" loading="lazy"></div>
+        <div class="shot"><img src="img/app/partners.jpg" alt="صفحة الشركاء بنسبة كل شريك" loading="lazy" width="1600" height="1000"></div>
+      </div>
+      <div class="split reveal">
+        <div class="words">
+          <span class="kicker">الموارد البشرية</span>
+          <h2>مسير الرواتب جاهز بآخر الشهر</h2>
+          <p>ملف لكل موظف براتبه، والمكافآت والخصومات والسلف تنحسب لوحدها، وقيد الرواتب ينسجّل بالحسابات.</p>
+          <ul class="ticks"><li>قسيمة راتب لكل موظف</li><li>طلبات السلف والإجازات من التلفون</li></ul>
+        </div>
+        <div class="shot"><img src="img/app/hr.jpg" alt="صفحة الموارد البشرية والرواتب" loading="lazy" width="1600" height="1000"></div>
       </div>
     </div>
   </section>
 
-  <section id="modules">
+  <section id="phone" class="band">
     <div class="wrap">
-      <div class="head">
-        <span class="kicker">الأقسام بالتفصيل</span>
-        <h2>شنو تكدر تسوي بكل قسم</h2>
-        <p>كل قسم تكدر تفتحه أو تسدّه حسب اشتراكك، والأقسام الأساسية دائماً مفتوحة.</p>
+      <div class="head reveal">
+        <span class="kicker">تطبيق الآيفون</span>
+        <h2>شركتك كلها بجيبك</h2>
+        <p>تطبيق Grdlabs يتحدّث ويه برنامج الحاسبة: المدير يتابع ويصدر الفواتير، الموظف يسجّل حضوره، والفري لانسر يشتغل من وين ما كان.</p>
       </div>
-      <div class="modules">
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></div><h3>المبيعات والفواتير</h3><p>قلب البرنامج. تسوي فاتورة لزبونك وتتابع شكد دفع وشكد باقي عليه.</p><ul><li>دفعات جزئية ووصولات قبض مطبوعة</li><li>تعديل الفاتورة بعد إصدارها مع بقاء الحسابات صحيحة</li><li>قائمة بالفواتير المتأخرة حتى تطالب بيها بوقتها</li></ul></div>
-        <div class="card"><div class="ic c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14.5h2"/></svg></div><h3>المصروفات والصندوق</h3><p>كل دينار يطلع من الشركة تسجّله بتصنيفه، فتعرف وين راحت فلوسك.</p><ul><li>تصنيفات للمصروفات حسب شغلك</li><li>رصيد الصندوق يتحدّث مع كل قبض وصرف</li><li>ربط المصروف بمشروع معيّن</li></ul></div>
-        <div class="card"><div class="ic c3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 7M21 20c0-2.6-1.7-4.9-4-5.7"/></svg></div><h3>الموارد البشرية والرواتب</h3><p>ملف لكل موظف براتبه الأساسي، وبآخر الشهر مسير رواتب جاهز.</p><ul><li>مكافآت وخصومات وسلف تنحسب تلقائياً</li><li>قسيمة راتب مطبوعة لكل موظف</li><li>قيد الرواتب ينسجّل بالحسابات لوحده</li></ul></div>
-        <div class="card"><div class="ic c4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 4l9 6M5 10v9m4-9v9m6-9v9m4-9v9M3 21h18"/></svg></div><h3>المحاسبة ودفتر اليومية</h3><p>للي يريد الحسابات بالتفصيل: دليل حسابات كامل وقيود مزدوجة.</p><ul><li>دليل حسابات جاهز تضيف عليه وتعدّل</li><li>قيود يدوية للتسويات والحالات الخاصة</li><li>ميزان مراجعة يتوازن دائماً</li></ul></div>
-        <div class="card"><div class="ic c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/></svg></div><h3>التقارير</h3><p>تختار الفترة وتشوف وضع الشركة بالأرقام، وتطبع أو تصدّر.</p><ul><li>الأرباح والخسائر والميزانية العمومية</li><li>كشف حساب لكل زبون ومورد</li><li>ملخص المبيعات والمقبوضات والمصروفات</li></ul></div>
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg></div><h3>المشاريع والعقود</h3><p>للمقاولين وشركات الخدمات: ربح كل مشروع لوحده، والعقود الشهرية مرتبة.</p><ul><li>إيرادات ومصروفات كل مشروع بمكان واحد</li><li>العقود الشهرية مع مواعيد الاستحقاق</li><li>تعرف المشروع الرابح من الخسران</li></ul></div>
-        <div class="card"><div class="ic c3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M2.5 20c0-3 2.5-5.5 5.5-5.5s5.5 2.5 5.5 5.5M14.5 20c0-2.2 1.2-4 3-4.6"/></svg></div><h3>الفريق والصلاحيات</h3><p>موظفينك يشتغلون وياك، وكل واحد يشوف بس اللي يخصه.</p><ul><li>دعوة بكود، مؤقت أو دائم</li><li>ثلاث أدوار: مدير، محاسب، ومبيعات</li><li>توقف حساب أي موظف بأي وقت</li></ul></div>
-        <div class="card"><div class="ic c4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>شركاتك ونسخك الاحتياطية</h3><p>أكثر من شركة على نفس الحاسبة، وكل وحدة بملفها المستقل.</p><ul><li>تنتقل بين الشركات من القائمة</li><li>نسخة احتياطية تاخذها وترجعها على أي جهاز</li><li>تحديثات البرنامج توصلك من داخله</li></ul></div>
+      <div class="phones">
+        <div class="ph reveal"><div class="frame"><div class="scr"><img src="img/phone/owner-home.jpg" alt="شاشة المدير بالتطبيق" loading="lazy" width="415" height="900"></div></div><h3>المدير</h3><p>المبيعات والسيولة، وموافقة السلف، وإصدار أي فاتورة PDF.</p></div>
+        <div class="ph reveal"><div class="frame"><div class="scr"><img src="img/phone/emp-home.jpg" alt="شاشة الموظف وتسجيل الحضور" loading="lazy" width="415" height="900"></div></div><h3>الموظف</h3><p>حضور بلمسة على ستيكر NFC ويه Face ID والموقع، وراتبه وطلباته.</p></div>
+        <div class="ph reveal"><div class="frame"><div class="scr"><img src="img/phone/free-home.jpg" alt="شاشة الفري لانسر بالتطبيق" loading="lazy" width="415" height="900"></div></div><h3>الفري لانسر</h3><p>نفس دفتر الحاسبة: فواتير ومشاريع وعملاء، يتحدّثون كل دقيقة.</p></div>
       </div>
     </div>
   </section>
 
-  <section id="who">
+  <section id="spaces">
     <div class="wrap">
-      <div class="head">
-        <span class="kicker">لمن البرنامج</span>
-        <h2>مصمم للشركات الصغيرة والمتوسطة</h2>
-        <p>ما تحتاج تكون محاسب حتى تستخدمه، وإذا عندك محاسب راح يلكه كل التفاصيل اللي يحتاجها.</p>
+      <div class="head reveal">
+        <span class="kicker">مساحات العمل</span>
+        <h2>الشركة والفري لانسر يشتغلون بمكان واحد</h2>
+        <p>كل فري لانسر وصانع محتوى عنده يوزر خاص بيه. الشركة تضيفه بيوزره لمساحة عمل، وكل طرف يشوف المهام والفواتير والدفعات من برنامجه.</p>
+        <span class="handle">@ali.hasan</span>
       </div>
-      <div class="who">
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18l-1.5-5h-15zM4 9v11h16V9M9 20v-6h6v6"/></svg></div><h3>المحلات والتجارة</h3><p>فواتير يومية، دفعات الزبائن والديون، ومصروفات المحل.</p></div>
-        <div class="card"><div class="ic c4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg></div><h3>المقاولات والمشاريع</h3><p>ربح كل مشروع، عروض الأسعار، والعقود الشهرية.</p></div>
-        <div class="card"><div class="ic c3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 7M21 20c0-2.6-1.7-4.9-4-5.7"/></svg></div><h3>المكاتب والخدمات</h3><p>رواتب الموظفين، المصروفات الثابتة، وفواتير العملاء.</p></div>
-        <div class="card"><div class="ic c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M8 7h4M8 11h4M8 15h4M2 21h20"/></svg></div><h3>أصحاب أكثر من شركة</h3><p>كل شركة بحساباتها المستقلة، وكلها على نفس الحاسبة.</p></div>
+      <div class="flow">
+        <div class="step reveal"><h3>سوّ حسابك</h3><p>فري لانسر أو UGC، بإيميلك ويوزر تختاره.</p></div>
+        <div class="step reveal"><h3>الشركة تضيفك</h3><p>تكتب يوزرك أو تلصق رابطك بمساحة العمل.</p></div>
+        <div class="step reveal"><h3>المهام والفواتير</h3><p>المهام تجيك بأسعار خدماتك، والفاتورة تطلع منها.</p></div>
+        <div class="step reveal"><h3>الدفعة توصلك</h3><p>تأكد إنك استلمتها، وتنسجّل مصروف بحسابات الشركة.</p></div>
       </div>
     </div>
   </section>
 
-  <section id="plans">
+  <section class="band">
     <div class="wrap">
-      <div class="head">
-        <span class="kicker">الاشتراك</span>
-        <h2>ادفع على قد احتياجك</h2>
-        <p>بعد التجربة تاخذ كود اشتراك لشركتك وتلصقه بالإعدادات. ما يحتاج إنترنت حتى يشتغل.</p>
+      <div class="head reveal">
+        <span class="kicker">بياناتك بأمان</span>
+        <h2>بياناتك عندك، ومحفوظة</h2>
       </div>
-      <div class="plans">
-        <div class="card"><h3>شهري</h3><p class="price">مرونة كاملة، تجدد كل شهر</p><a class="btn" href="#contact">اطلب الاشتراك</a></div>
-        <div class="card"><h3>3 أشهر</h3><p class="price">تجديد كل موسم</p><a class="btn" href="#contact">اطلب الاشتراك</a></div>
-        <div class="card hot"><h3>سنوي</h3><p class="price">أوفر خيار للشركات</p><a class="btn primary" href="#contact">اطلب الاشتراك</a></div>
+      <div class="safe">
+        <div class="reveal"><b>على حاسبتك</b><span>البرنامج يشتغل بدون إنترنت، والحسابات محفوظة عندك.</span></div>
+        <div class="reveal"><b>نسخ احتياطي تلقائي</b><span>نسخة لكل شركة كل يوم بمجلد المستندات، آخر 30 يوم.</span></div>
+        <div class="reveal"><b>ترجع شركتك</b><span>من ملف النسخة حتى على حاسبة جديدة أو تنصيب جديد.</span></div>
+        <div class="reveal"><b>نسيت كلمة المرور؟</b><span>صاحب الشركة يوصله كود على إيميله ويغيّرها.</span></div>
       </div>
     </div>
   </section>
 
-  <section id="faq" class="band">
+  <section id="download">
     <div class="wrap">
-      <div class="head"><span class="kicker">أسئلة شائعة</span><h2>قبل ما تبدأ</h2></div>
+      <div class="dl reveal">
+        <h2>جرّب Grdlabs مجاناً 14 يوم</h2>
+        <p>نزّل البرنامج، اختار نوع حسابك وابدي. بعد التجربة تاخذ كود اشتراك لشركتك وتلصقه بالإعدادات.</p>
+        <div class="cta">
+          <a class="btn primary" data-asset="darwin-arm64" href="https://api.grdlabs.site/updates/v2.8.3/Grdlabs-Mac-arm64-2.8.3.tar.xz"><svg><use href="#i-apple"/></svg>ماك (Apple M)</a>
+          <a class="btn ghost" data-asset="darwin-x64" href="https://api.grdlabs.site/updates/v2.8.3/Grdlabs-Mac-x64-2.8.3.tar.xz"><svg><use href="#i-apple"/></svg>ماك (Intel)</a>
+          <a class="btn ghost" data-asset="win32-x64" href="https://api.grdlabs.site/updates/v2.8.3/Grdlabs-Setup-2.8.3.exe"><svg><use href="#i-win"/></svg>ويندوز</a>
+        </div>
+        <div class="ver">الإصدار <span data-version>2.8.3</span> · التحديثات توصلك من داخل البرنامج · تطبيق الآيفون قريباً على App Store</div>
+        <div class="plans">
+          <div><b>شهري</b><span>مرونة كاملة، تجدد كل شهر</span></div>
+          <div><b>3 أشهر</b><span>تجديد كل موسم</span></div>
+          <div><b>سنوي</b><span>أوفر خيار للشركات</span></div>
+        </div>
+        <p style="margin:24px auto 0">للاشتراك أو أي سؤال: <a href="mailto:grdlabs.app@gmail.com" style="color:#fff;font-weight:600">grdlabs.app@gmail.com</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="head reveal"><span class="kicker">أسئلة شائعة</span><h2>قبل ما تبدي</h2></div>
       <div class="faq">
-        <details><summary>وين تنحفظ بياناتي؟</summary><p>على حاسبتك فقط. البرنامج ما يرفع حساباتك لأي مكان، وتكدر تاخذ نسخة احتياطية من الإعدادات وترجعها على أي جهاز.</p></details>
-        <details><summary>شنو يصير بعد انتهاء التجربة؟</summary><p>البرنامج يوقف لحد ما تدخل كود الاشتراك، بس بياناتك تبقى محفوظة كاملة وترجع تشتغل عليها أول ما تفعّل.</p></details>
-        <details><summary>أكدر أخلّي موظفيني يستخدمونه؟</summary><p>نعم. تدعوهم من صفحة الفريق بكود دعوة، وكل واحد يدخل بحسابه الخاص ويشوف بس الأقسام اللي تسمحله بيها.</p></details>
-        <details><summary>هل يحتاج إنترنت؟</summary><p>لا. يحتاج إنترنت بس إذا تريد يجيك تحديث جديد.</p></details>
-        <details><summary>أكدر أطبع الفواتير والقسائم؟</summary><p>نعم. الفواتير، عروض الأسعار، وصولات القبض، قسائم الرواتب والتقارير كلها جاهزة للطباعة.</p></details>
-        <details><summary>إذا بدّلت حاسبتي شلون أنقل بياناتي؟</summary><p>تاخذ نسخة احتياطية من الإعدادات، وتنصب البرنامج على الحاسبة الجديدة وترجع النسخة. كل شي يرجع مثل ما كان.</p></details>
-        <details><summary>شلون توصلني التحديثات؟</summary><p>البرنامج يبلغك لما يطلع إصدار جديد، وتحدّثه من داخله بضغطة بدون ما تفقد أي بيانات.</p></details>
-        <details><summary>كيف أحصل على كود الاشتراك؟</summary><p>افتح الإعدادات ← الاشتراك، انسخ رمز شركتك وأرسله إلنا، ونرجعلك الكود.</p></details>
+        <details><summary>وين تنحفظ بياناتي؟</summary><p>على حاسبتك. البرنامج ياخذ نسخة احتياطية تلقائية كل يوم، وتگدر تاخذ نسخة بيدك وترجعها متى ما تريد.</p></details>
+        <details><summary>هل يحتاج إنترنت؟</summary><p>الحسابات تشتغل بدون إنترنت. الإنترنت تحتاجه بس لتطبيق التلفون، ومساحات العمل، والدخول من حاسبة ثانية.</p></details>
+        <details><summary>أگدر أفتح شركتي من حاسبة ثانية؟</summary><p>إي. من «الفريق» شغّل الدخول من حاسبة ثانية، وبالحاسبة الثانية اختار «عندي شركة» واكتب مفتاح الشركة.</p></details>
+        <details><summary>شلون أفتح حساب الفري لانسر بالتلفون؟</summary><p>بتطبيق Grdlabs اكتب اليوزر أو الإيميل وكلمة المرور. الفواتير والمشاريع تطلع نفس اللي بالحاسبة وتتحدّث كل دقيقة.</p></details>
+        <details><summary>شلون يسجّل الموظف حضوره؟</summary><p>بتطبيق الآيفون يقرّب التلفون من ستيكر NFC بمدخل الشركة، والتطبيق يتأكد بـ Face ID ومن موقعه.</p></details>
+        <details><summary>عندي أكثر من شركة، أحتاج أكثر من برنامج؟</summary><p>لا. كل شركة بملفها المستقل على نفس الحاسبة، وتنتقل بينهن بكلمة المرور.</p></details>
+        <details><summary>شنو يصير بعد انتهاء التجربة؟</summary><p>بياناتك تبقى. تطلب كود اشتراك لشركتك وتلصقه بالإعدادات حتى تكمل.</p></details>
+        <details><summary>شلون توصلني التحديثات؟</summary><p>من داخل البرنامج. من يطلع إصدار جديد يوصلك تنبيه وتحدّث بضغطة.</p></details>
       </div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <div class="wrap head" style="margin-bottom:0">
-      <h2>جاهز تنظّم حسابات شركتك؟</h2>
-      <p style="margin-bottom:26px">جرّب البرنامج 14 يوم مجاناً بكل الميزات.</p>
-      <div class="cta"><a class="btn primary" href="#plans">اطلب الاشتراك</a></div>
     </div>
   </section>
 </main>
 
 <footer>
   <div class="wrap">
+    <img src="img/grdlabs-logo.svg" alt="Grdlabs">
     <span>© <span id="y">2026</span> Grdlabs</span>
-    <a href="#top">للأعلى ↑</a>
+    <nav><a href="support/">الدعم</a><a href="privacy/">سياسة الخصوصية</a><a href="mailto:grdlabs.app@gmail.com">راسلنا</a><a href="#top">للأعلى ↑</a></nav>
   </div>
 </footer>
+
 <script>
   (() => {
-    const el = document.getElementById('mark3d');
-    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let tx = 0, ty = 0, x = 0, y = 0, last = -1e9;
-    addEventListener('pointermove', e => {
-      if (e.pointerType === 'touch') return;
-      const r = el.getBoundingClientRect();
-      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-      tx = Math.max(-1, Math.min(1, (e.clientX - cx) / (innerWidth / 2)));
-      ty = Math.max(-1, Math.min(1, (e.clientY - cy) / (innerHeight / 2)));
-      last = performance.now();
-    }, { passive: true });
-    const tick = t => {
-      if (t - last > 2500) { tx = Math.sin(t / 1900) * .45; ty = Math.cos(t / 2300) * .35; }
-      x += (tx - x) * .08; y += (ty - y) * .08;
-      const s = el.style;
-      s.setProperty('--ry', (x * 24).toFixed(2) + 'deg');
-      s.setProperty('--rx', (-y * 20).toFixed(2) + 'deg');
-      s.setProperty('--lx', (50 - x * 32).toFixed(1) + '%');
-      s.setProperty('--ly', (40 - y * 30).toFixed(1) + '%');
-      requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
+    document.getElementById('y').textContent = new Date().getFullYear();
+    // The header turns white once the page leaves the navy top.
+    const header = document.getElementById('top'), hero = document.getElementById('hero');
+    const solid = () => header.classList.toggle('solid', scrollY > hero.offsetHeight - 520);
+    addEventListener('scroll', solid, { passive: true }); solid();
+    // A soft light follows the pointer over the top.
+    hero.addEventListener('pointermove', (e) => { const r = hero.getBoundingClientRect(); hero.style.setProperty('--mx', (e.clientX - r.left) + 'px'); hero.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
+    // Blocks rise in as they come into view.
+    const io = new IntersectionObserver((list) => list.forEach((x) => { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }), { threshold: .12 });
+    document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
   })();
-  (() => {
-    const sky = document.getElementById('sky');
-    if (!sky) return;
-    const I = {
-      hr: '<circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 7M21 20c0-2.6-1.7-4.9-4-5.7"/>',
-      invoice: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
-      quote: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>',
-      bank: '<path d="M3 10 12 4l9 6M5 10v9m4-9v9m6-9v9m4-9v9M3 21h18"/>',
-      reports: '<path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/>',
-      projects: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
-      team: '<circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M2.5 20c0-3 2.5-5.5 5.5-5.5s5.5 2.5 5.5 5.5M14.5 20c0-2.2 1.2-4 3-4.6"/>',
-      company: '<path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M8 7h4M8 11h4M8 15h4M2 21h20"/>',
-      shield: '<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
-      wallet: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14.5h2"/>',
-      receipt: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
-      calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-      pie: '<path d="M11 4a8 8 0 1 0 9 9h-9z"/><path d="M14 3v7h7a7 7 0 0 0-7-7z"/>'
-    };
-    // [icon, color, tint, x%, y%, depth 0..1]
-    const L = [
-      ['hr', '#6d4fe0', '#ece6ff', 6, 14, 1], ['invoice', '#1570ef', '#e3eefe', 92, 10, .9],
-      ['reports', '#2f9e44', '#e2f4e6', 90, 46, 1], ['bank', '#c86b00', '#fff0db', 4, 52, .8],
-      ['quote', '#0e9f9a', '#ddf5f3', 13, 82, .6], ['projects', '#e8590c', '#ffe9dc', 84, 80, .7],
-      ['team', '#d6336c', '#ffe3ec', 20, 32, .45], ['wallet', '#c86b00', '#fff0db', 79, 24, .5],
-      ['receipt', '#1570ef', '#e3eefe', 97, 68, .4], ['calendar', '#0e9f9a', '#ddf5f3', 1, 72, .45],
-      ['company', '#475569', '#e9edf2', 72, 60, .35], ['shield', '#2f9e44', '#e2f4e6', 27, 64, .35],
-      ['pie', '#6d4fe0', '#ece6ff', 66, 6, .35]
-    ];
-    const phone = matchMedia('(max-width: 640px)').matches;
-    const list = (phone ? L.filter(l => l[5] >= .6) : L).map((l, i) => {
-      const [k, c, t, x, y, d] = l;
-      const el = document.createElement('div');
-      el.className = 'fly';
-      const s = Math.round((phone ? 34 : 44) + d * (phone ? 14 : 30));
-      el.style.cssText = `--s:${s}px;--c:${c};--t:${t};opacity:${(.45 + d * .55).toFixed(2)}`;
-      el.innerHTML = `<div class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${I[k]}</svg></div>`;
-      sky.appendChild(el);
-      return { el, x: x / 100, y: y / 100, d, s, ph: i * 1.7, sp: .6 + (i % 4) * .15 };
-    });
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let mx = 0, my = 0, sx = 0, sy = 0;
-    addEventListener('pointermove', e => { if (e.pointerType !== 'touch') { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; } }, { passive: true });
-    const draw = t => {
-      const w = innerWidth, h = innerHeight, span = h + 160, sc = scrollY;
-      sx += (mx - sx) * .05; sy += (my - sy) * .05;
-      for (const f of list) {
-        const k = t / 1000 * f.sp + f.ph;
-        const bob = still ? 0 : Math.sin(k) * 14 * f.d;
-        let y = f.y * h - sc * (.12 + f.d * .28) + bob - sy * 30 * f.d;
-        y = ((y + 80) % span + span) % span - 80;
-        const x = f.x * w - f.s / 2 + (still ? 0 : Math.cos(k * .8) * 10 * f.d) - sx * 40 * f.d;
-        const rz = still ? 0 : Math.sin(k * .7) * 10, rx = still ? 0 : Math.cos(k) * 14 + sy * 20, ry = still ? 0 : Math.sin(k * .9) * 16 + sx * 24;
-        f.el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) perspective(400px) rotateX(${rx.toFixed(1)}deg) rotateY(${ry.toFixed(1)}deg) rotate(${rz.toFixed(1)}deg)`;
-      }
-      if (!still) requestAnimationFrame(draw);
-    };
-    if (still) { draw(0); addEventListener('scroll', () => draw(0), { passive: true }); addEventListener('resize', () => draw(0)); }
-    else requestAnimationFrame(draw);
-  })();
-  document.getElementById('y').textContent = new Date().getFullYear();
-  const hd = document.querySelector('header');
-  addEventListener('scroll', () => hd.classList.toggle('scrolled', scrollY > 8), { passive: true });
 </script>
 </body>
 </html>
