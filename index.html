@@ -169,7 +169,7 @@
   .tier .price { line-height: 1; display: flex; align-items: baseline; gap: 8px; } .tier .price b { font-size: 42px; font-weight: 800; unicode-bidi: isolate; }
   .tier .price small { font-size: 15px; color: var(--muted); font-weight: 500; }
   .tier ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; flex: 1; align-content: start; font-size: 15px; }
-  .tier li { display: flex; gap: 8px; } .tier li::before { content: "✓"; color: var(--blue); font-weight: 800; }
+  .tier li { display: flex; gap: 8px; } .tier li::before { content: "✓"; color: var(--blue); font-weight: 800; } .tier li.no { color: var(--muted); } .tier li.no::before { content: "✕"; color: #c2410c; }
   .tiers-title { font-size: 15px; font-weight: 700; color: var(--muted); margin: 34px 0 12px; text-align: center; }
   @media (max-width: 900px) { .tiers.three, .tiers.two { grid-template-columns: 1fr; } }
 
@@ -406,11 +406,11 @@
       <div class="tiers three">
         <div class="tier reveal"><h3>الأساسية</h3><div class="who">للمكاتب والشركات الصغيرة</div>
           <div class="price"><b dir="ltr" data-m="$19" data-y="$190">$19</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
-          <ul><li>كل أقسام البرنامج: المحاسبة والفواتير والتقارير والرواتب والحضور</li><li>حتى 3 مستخدمين و15 موظف</li><li>تطبيق الآيفون للمدير والموظفين</li><li>مساحات العمل ويه الفري لانسرية</li></ul>
+          <ul><li>كل أقسام البرنامج: المحاسبة والفواتير والتقارير والرواتب والحضور</li><li>حتى 3 مستخدمين و15 موظف</li><li class="no">بدون تطبيق التلفون</li><li class="no">بدون مساحات العمل</li></ul>
           <a class="btn" href="mailto:info@grdlabs.site?subject=%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D8%A7%D9%84%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A9">اشترك</a></div>
         <div class="tier best reveal"><span class="tag">الأكثر طلباً</span><h3>الأعمال</h3><div class="who">للشركات اللي تكبر</div>
           <div class="price"><b dir="ltr" data-m="$39" data-y="$390">$39</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
-          <ul><li>كل شي بالأساسية</li><li>حتى 10 مستخدمين و60 موظف</li><li>أولوية بالدعم</li></ul>
+          <ul><li>كل شي بالأساسية</li><li>تطبيق الآيفون للمدير والموظفين</li><li>مساحات العمل ويه الفري لانسرية</li><li>حتى 10 مستخدمين و60 موظف</li><li>أولوية بالدعم</li></ul>
           <a class="btn primary" href="mailto:info@grdlabs.site?subject=%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84">اشترك</a></div>
         <div class="tier reveal"><h3>المؤسسات</h3><div class="who">للشركات الكبيرة والمجموعات</div>
           <div class="price"><b dir="ltr" data-m="$79" data-y="$790">$79</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
