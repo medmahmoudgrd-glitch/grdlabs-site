@@ -153,6 +153,26 @@
   .plans b { display: block; font-size: 18px; } .plans span { color: rgb(255 255 255 / .7); font-size: 14px; }
   @media (max-width: 760px) { .plans { grid-template-columns: 1fr; } .dl { padding: 44px 20px; } }
 
+  /* pricing */
+  .period { display: inline-flex; background: var(--card); border: 1px solid var(--line); border-radius: 99px; padding: 4px; margin-top: 18px; }
+  .period button { border: 0; background: transparent; font: 600 14px/1 inherit; padding: 10px 18px; border-radius: 99px; color: var(--muted); cursor: pointer; }
+  .period button.on { background: var(--ink); color: #fff; }
+  .period small { color: #16a34a; font-weight: 700; }
+  .period button.on small { color: #86efac; }
+  .tiers { display: grid; gap: 16px; }
+  .tiers.two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 760px; margin: 0 auto; }
+  .tiers.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tier { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 26px 24px; display: flex; flex-direction: column; gap: 14px; position: relative; }
+  .tier.best { border: 2px solid var(--blue); box-shadow: 0 24px 50px -30px rgb(21 67 239 / .55); }
+  .tier .tag { position: absolute; top: -12px; inset-inline-start: 22px; background: var(--blue); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 99px; }
+  .tier h3 { margin: 0; font-size: 20px; } .tier .who { color: var(--muted); font-size: 14px; margin-top: -8px; }
+  .tier .price { line-height: 1; display: flex; align-items: baseline; gap: 8px; } .tier .price b { font-size: 42px; font-weight: 800; unicode-bidi: isolate; }
+  .tier .price small { font-size: 15px; color: var(--muted); font-weight: 500; }
+  .tier ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; flex: 1; align-content: start; font-size: 15px; }
+  .tier li { display: flex; gap: 8px; } .tier li::before { content: "✓"; color: var(--blue); font-weight: 800; }
+  .tiers-title { font-size: 15px; font-weight: 700; color: var(--muted); margin: 34px 0 12px; text-align: center; }
+  @media (max-width: 900px) { .tiers.three, .tiers.two { grid-template-columns: 1fr; } }
+
   /* faq */
   .faq { max-width: 780px; margin: 0 auto; display: grid; gap: 10px; }
   details { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 22px; }
@@ -202,6 +222,7 @@
       <a href="#features">الميزات</a>
       <a href="#phone">تطبيق الآيفون</a>
       <a href="#spaces">مساحات العمل</a>
+      <a href="#pricing">الأسعار</a>
       <a href="#faq">الأسئلة</a>
     </nav>
     <a class="btn primary" href="#start">اطلب البرنامج</a>
@@ -359,21 +380,56 @@
     </div>
   </section>
 
+  <section id="pricing">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="kicker">الأسعار</span>
+        <h2>باقة لكل شغل</h2>
+        <p>14 يوم تجربة مجانية بكل الميزات. بعدها تختار باقتك، والسنوي بيه شهرين مجاناً.</p>
+        <div class="period" role="tablist">
+          <button type="button" class="on" data-p="m">شهري</button>
+          <button type="button" data-p="y">سنوي <small>شهرين مجاناً</small></button>
+        </div>
+      </div>
+      <div class="tiers-title">للفري لانسر وصنّاع المحتوى</div>
+      <div class="tiers two">
+        <div class="tier reveal"><h3>فري لانسر</h3><div class="who">للمصممين والمبرمجين والمونتيرية وكل من يشتغل لحسابه</div>
+          <div class="price"><b dir="ltr" data-m="$5.99" data-y="$59.90">$5.99</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
+          <ul><li>فواتير وسندات قبض بشعارك وPDF</li><li>مشاريع وعملاء ومصاريف</li><li>مساحات العمل ويه الشركات</li><li>التطبيق على الآيفون ويه الحاسبة</li><li>نسخة على السيرفر وتزامن خلال ثواني</li></ul>
+          <a class="btn primary" href="mailto:info@grdlabs.site?subject=%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D8%B1%D9%8A%20%D9%84%D8%A7%D9%86%D8%B3%D8%B1">اشترك</a></div>
+        <div class="tier reveal"><h3>صانع محتوى UGC</h3><div class="who">لصنّاع المحتوى والمؤثرين</div>
+          <div class="price"><b dir="ltr" data-m="$5.99" data-y="$59.90">$5.99</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
+          <ul><li>ملف بأسعارك وحساباتك وعدد متابعينك</li><li>فواتير بالدينار والدولار</li><li>مهام الشركات وتعليقاتها وتنبيهاتها</li><li>التطبيق على الآيفون ويه الحاسبة</li><li>نسخة على السيرفر وتزامن خلال ثواني</li></ul>
+          <a class="btn primary" href="mailto:info@grdlabs.site?subject=%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20UGC">اشترك</a></div>
+      </div>
+      <div class="tiers-title">للشركات</div>
+      <div class="tiers three">
+        <div class="tier reveal"><h3>الأساسية</h3><div class="who">للمكاتب والشركات الصغيرة</div>
+          <div class="price"><b dir="ltr" data-m="$19" data-y="$190">$19</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
+          <ul><li>كل أقسام البرنامج: المحاسبة والفواتير والتقارير والرواتب والحضور</li><li>حتى 3 مستخدمين و15 موظف</li><li>تطبيق الآيفون للمدير والموظفين</li><li>مساحات العمل ويه الفري لانسرية</li></ul>
+          <a class="btn" href="mailto:info@grdlabs.site?subject=%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D8%A7%D9%84%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A9">اشترك</a></div>
+        <div class="tier best reveal"><span class="tag">الأكثر طلباً</span><h3>الأعمال</h3><div class="who">للشركات اللي تكبر</div>
+          <div class="price"><b dir="ltr" data-m="$39" data-y="$390">$39</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
+          <ul><li>كل شي بالأساسية</li><li>حتى 10 مستخدمين و60 موظف</li><li>أولوية بالدعم</li></ul>
+          <a class="btn primary" href="mailto:info@grdlabs.site?subject=%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84">اشترك</a></div>
+        <div class="tier reveal"><h3>المؤسسات</h3><div class="who">للشركات الكبيرة والمجموعات</div>
+          <div class="price"><b dir="ltr" data-m="$79" data-y="$790">$79</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
+          <ul><li>كل شي بالأعمال</li><li>مستخدمين وموظفين بلا حد</li><li>دعم مباشر وأولوية بالطلبات</li></ul>
+          <a class="btn" href="mailto:info@grdlabs.site?subject=%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D8%A7%D9%84%D9%85%D8%A4%D8%B3%D8%B3%D8%A7%D8%AA">اشترك</a></div>
+      </div>
+    </div>
+  </section>
+
   <section id="start">
     <div class="wrap">
       <div class="dl reveal">
         <h2>جرّب Grdlabs مجاناً 14 يوم</h2>
         <p>راسلنا ونوصلك البرنامج لماك أو ويندوز، تختار نوع حسابك وتبدي. بعد التجربة تاخذ كود اشتراك لشركتك وتلصقه بالإعدادات.</p>
         <div class="cta">
-          <a class="btn primary" href="mailto:grdlabs.app@gmail.com?subject=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D8%AC%20Grdlabs">اطلب البرنامج</a>
+          <a class="btn primary" href="mailto:info@grdlabs.site?subject=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D8%AC%20Grdlabs">اطلب البرنامج</a>
         </div>
         <div class="ver">ماك وويندوز · التحديثات توصلك من داخل البرنامج · تطبيق الآيفون قريباً على App Store</div>
-        <div class="plans">
-          <div><b>شهري</b><span>مرونة كاملة، تجدد كل شهر</span></div>
-          <div><b>3 أشهر</b><span>تجديد كل موسم</span></div>
-          <div><b>سنوي</b><span>أوفر خيار للشركات</span></div>
-        </div>
-        <p style="margin:24px auto 0">للاشتراك أو أي سؤال: <a href="mailto:grdlabs.app@gmail.com" style="color:#fff;font-weight:600">grdlabs.app@gmail.com</a></p>
+        <p style="margin:24px auto 0">للاشتراك أو أي سؤال: <a href="mailto:info@grdlabs.site" style="color:#fff;font-weight:600">info@grdlabs.site</a></p>
       </div>
     </div>
   </section>
@@ -399,7 +455,7 @@
   <div class="wrap">
     <img src="img/grdlabs-logo.svg" alt="Grdlabs">
     <span>© <span id="y">2026</span> Grdlabs</span>
-    <nav><a href="support/">الدعم</a><a href="privacy/">سياسة الخصوصية</a><a href="mailto:grdlabs.app@gmail.com">راسلنا</a><a href="#top">للأعلى ↑</a></nav>
+    <nav><a href="support/">الدعم</a><a href="privacy/">سياسة الخصوصية</a><a href="mailto:info@grdlabs.site">راسلنا</a><a href="#top">للأعلى ↑</a></nav>
   </div>
 </footer>
 
@@ -415,6 +471,12 @@
     // Blocks rise in as they come into view.
     const io = new IntersectionObserver((list) => list.forEach((x) => { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }), { threshold: .12 });
     document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    // Prices: monthly or yearly (ten months, two free).
+    document.querySelectorAll('.period button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('.period button').forEach((x) => x.classList.toggle('on', x === b));
+      const k = b.dataset.p;
+      document.querySelectorAll('.tier .price').forEach((p) => { const n = p.querySelector('b'), s = p.querySelector('small'); n.textContent = n.dataset[k]; s.textContent = s.dataset[k]; });
+    }));
   })();
 </script>
 </body>
