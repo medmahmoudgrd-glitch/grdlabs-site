@@ -1,0 +1,50 @@
+// Grdlabs: replies to every new email sent to info@grdlabs.site, from info@grdlabs.site itself (a verified Gmail
+// "Send mail as" address of grdlabs.app@gmail.com). Runs in Google Apps Script on that account, every minute.
+// Install: paste into a new Apps Script project, run setup() once and allow access. To stop: run stop().
+
+const INFO = 'info@grdlabs.site';
+const DONE = 'grdlabs-auto-replied';
+const SEARCH = 'to:' + INFO + ' newer_than:2d -label:' + DONE + ' -from:' + INFO + ' -from:grdlabs.app@gmail.com';
+
+const HTML = '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="560" style="width:560px;max-width:100%;border-collapse:separate;border:1px solid #e3e7f0;border-radius:16px;overflow:hidden;font-family:Tahoma,Arial,sans-serif">'
+  + '<tr><td style="padding:0;background:#001349"><img src="https://grdlabs.site/img/email-header.png" width="560" alt="Grdlabs" style="display:block;width:100%;max-width:560px;height:auto;border:0"></td></tr>'
+  + '<tr><td dir="rtl" style="padding:28px 32px 8px;text-align:right;color:#0f172a">'
+  + '<div style="font-size:20px;font-weight:bold;margin:0 0 10px">\u0634\u0643\u0631\u0627\u064b \u0644\u062a\u0648\u0627\u0635\u0644\u0643 \u0648\u064a\u0627 Grdlabs</div>'
+  + '<div style="font-size:15px;line-height:1.9;color:#334155">\u0648\u0635\u0644\u062a\u0646\u0627 \u0631\u0633\u0627\u0644\u062a\u0643\u060c \u0648\u0646\u0631\u062f \u0639\u0644\u064a\u0643 \u062e\u0644\u0627\u0644 <b style="color:#1543EF">48 \u0633\u0627\u0639\u0629</b>.</div></td></tr>'
+  + '<tr><td style="padding:0 32px"><div style="border-top:1px solid #e3e7f0;margin:18px 0"></div></td></tr>'
+  + '<tr><td dir="ltr" style="padding:0 32px 24px;text-align:left;color:#0f172a">'
+  + '<div style="font-size:18px;font-weight:bold;margin:0 0 10px">Thanks for contacting Grdlabs</div>'
+  + '<div style="font-size:15px;line-height:1.7;color:#334155">We received your message and will reply within <b style="color:#1543EF">48 hours</b>.</div></td></tr>'
+  + '<tr><td style="padding:16px 32px;background:#f5f7fb;text-align:center;font-size:12px;color:#64748b">'
+  + '<a href="https://grdlabs.site" style="color:#1543EF;text-decoration:none;font-weight:bold">grdlabs.site</a> &nbsp;\u00b7&nbsp; '
+  + '<a href="mailto:info@grdlabs.site" style="color:#64748b;text-decoration:none">info@grdlabs.site</a></td></tr></table>';
+
+const TEXT = '\u0634\u0643\u0631\u0627\u064b \u0644\u062a\u0648\u0627\u0635\u0644\u0643 \u0648\u064a\u0627 Grdlabs. \u0648\u0635\u0644\u062a\u0646\u0627 \u0631\u0633\u0627\u0644\u062a\u0643\u060c \u0648\u0646\u0631\u062f \u0639\u0644\u064a\u0643 \u062e\u0644\u0627\u0644 48 \u0633\u0627\u0639\u0629.\n\n'
+  + 'Thanks for contacting Grdlabs. We received your message and will reply within 48 hours.\n\ngrdlabs.site';
+
+/** Run once: marks what is already there as answered (no replies to old mail) and starts the one-minute timer. */
+function setup() {
+  const label = GmailApp.getUserLabelByName(DONE) || GmailApp.createLabel(DONE);
+  GmailApp.search(SEARCH, 0, 100).forEach(function (t) { t.addLabel(label); });
+  stop();
+  ScriptApp.newTrigger('replyInfo').timeBased().everyMinutes(1).create();
+}
+
+/** Removes the timer. */
+function stop() {
+  ScriptApp.getProjectTriggers().forEach(function (t) { ScriptApp.deleteTrigger(t); });
+}
+
+/** Answers each new thread once. Skips robots and mailing lists so two auto-replies never answer each other. */
+function replyInfo() {
+  const label = GmailApp.getUserLabelByName(DONE) || GmailApp.createLabel(DONE);
+  GmailApp.search(SEARCH, 0, 20).forEach(function (thread) {
+    const msg = thread.getMessages().filter(function (m) { return (m.getTo() + ',' + m.getCc()).toLowerCase().indexOf(INFO) >= 0; }).pop();
+    const from = msg ? msg.getFrom().toLowerCase() : '';
+    const robot = !msg || /no-?reply|mailer-daemon|postmaster|notifications?@/.test(from)
+      || /^auto-/i.test(msg.getHeader('Auto-Submitted')) || /^(bulk|list|junk)/i.test(msg.getHeader('Precedence'))
+      || msg.getHeader('List-Id') !== '';
+    if (!robot) msg.reply(TEXT, { htmlBody: HTML, from: INFO, name: 'Grdlabs' });
+    thread.addLabel(label);
+  });
+}
