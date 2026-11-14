@@ -57,12 +57,17 @@
   header .btn.primary { padding: 10px 18px; }
   @media (max-width: 860px) { nav.links { display: none; } .bar { justify-content: space-between; } }
 
-  /* hero: deep navy gradient that drifts, a light under the pointer */
-  .hero { position: relative; overflow: hidden; isolation: isolate; color: #fff; padding: 150px 0 0;
-    background: linear-gradient(140deg, #071330 0%, #0B1E4A 35%, #12306E 65%, #1A4594 100%); background-size: 180% 180%; animation: drift 18s ease-in-out infinite alternate; }
-  @keyframes drift { to { background-position: 100% 100%; } }
-  .hero::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-    background: radial-gradient(520px circle at var(--mx, 70%) var(--my, 20%), rgb(96 140 255 / .22), transparent 60%); }
+  /* hero: deep navy with two soft lights that drift, and one under the pointer. Only transform and opacity move,
+     so the browser never repaints the big gradient (that is what made the page stutter). */
+  .hero { position: relative; overflow: hidden; isolation: isolate; color: #fff; padding: 128px 0 0;
+    background: linear-gradient(140deg, #071330 0%, #0B1E4A 35%, #12306E 65%, #1A4594 100%); }
+  .hero .blob { position: absolute; z-index: -1; pointer-events: none; border-radius: 50%; filter: blur(60px); will-change: transform; }
+  .hero .blob.a { width: 620px; height: 620px; top: -220px; right: -120px; background: rgb(47 99 208 / .45); animation: floatA 16s ease-in-out infinite alternate; }
+  .hero .blob.b { width: 520px; height: 520px; top: 240px; left: -180px; background: rgb(21 67 239 / .35); animation: floatB 19s ease-in-out infinite alternate; }
+  @keyframes floatA { to { transform: translate3d(-120px, 90px, 0) scale(1.12); } }
+  @keyframes floatB { to { transform: translate3d(140px, -60px, 0) scale(.92); } }
+  .hero .glow { position: absolute; top: 0; left: 0; width: 560px; height: 560px; margin: -280px 0 0 -280px; z-index: -1; pointer-events: none; border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(110 150 255 / .28), transparent); will-change: transform; transform: translate3d(70vw, 160px, 0); }
   .hero .grid { position: absolute; inset: 0; z-index: -1; opacity: .07; pointer-events: none;
     background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 48px 48px;
     -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%); mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%); }
@@ -188,9 +193,26 @@
   footer nav { display: flex; gap: 18px; margin-inline-start: auto; flex-wrap: wrap; }
   footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
 
-  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .6s cubic-bezier(.2,.7,.2,1); }
+  .reveal { opacity: 0; transform: translate3d(0, 18px, 0); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
   .reveal.in { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce) { .hero { animation: none; } .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+
+  /* the 3D mark at the top: follows the pointer, drag to spin it, tap to make it jump */
+  .mark3d { position: relative; width: 250px; height: 250px; margin: 0 auto 6px; cursor: grab; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
+  .mark3d:active { cursor: grabbing; }
+  .mark3d canvas, .mark3d img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .mark3d img { padding: 34px; transition: opacity .5s; }
+  .mark3d.live img { opacity: 0; }
+  .mark3d .shadow { position: absolute; left: 50%; bottom: 8px; width: 150px; height: 26px; margin-left: -75px; border-radius: 50%; background: radial-gradient(closest-side, rgb(0 8 30 / .55), transparent); filter: blur(4px); will-change: transform, opacity; }
+  @media (max-width: 760px) { .mark3d { width: 190px; height: 190px; } .mark3d .shadow { width: 110px; margin-left: -55px; } }
+
+  /* WhatsApp: the button that floats in the corner */
+  .wa { position: fixed; left: 20px; bottom: 20px; z-index: 30; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; background: #25D366; color: #fff;
+    box-shadow: 0 14px 30px -10px rgb(0 0 0 / .4); transition: transform .2s; }
+  .wa:hover { transform: scale(1.08); }
+  .wa svg { width: 30px; height: 30px; }
+  .btn.wa-btn { background: #25D366; color: #fff; border-color: transparent; }
+  .btn.wa-btn svg { width: 18px; height: 18px; }
+  @media (prefers-reduced-motion: reduce) { .hero .blob { animation: none; } .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
@@ -231,8 +253,10 @@
 
 <main>
   <section class="hero" id="hero">
+    <div class="blob a"></div><div class="blob b"></div><div class="glow"></div>
     <div class="grid"></div>
     <div class="wrap inner">
+      <div class="mark3d" id="mark3d" role="img" aria-label="شعار Grdlabs ثلاثي الأبعاد"><img src="img/grdlabs-app-icon.svg" alt="" width="250" height="250"><span class="shadow"></span></div>
       <span class="chip"><i></i>ماك وويندوز · تجربة مجانية 14 يوم</span>
       <h1>حسابات شغلك كلها،<br><em>على حاسبتك وتلفونك</em></h1>
       <p class="lead">فواتير، محاسبة، رواتب وحضور بالعربي. للشركات والفري لانسر وصنّاع المحتوى. يشتغل حتى بدون إنترنت، وكل شي يتزامن ويه التلفون والسيرفر خلال ثواني.</p>
@@ -244,7 +268,7 @@
     </div>
     <div class="wrap">
       <div class="stage">
-        <div class="desk"><img src="img/app/home.jpg" alt="الصفحة الرئيسية ببرنامج Grdlabs: السيولة والمبيعات والمقبوضات ومهام اليوم" width="1600" height="1000"></div>
+        <div class="desk"><img fetchpriority="high" src="img/app/home.jpg" alt="الصفحة الرئيسية ببرنامج Grdlabs: السيولة والمبيعات والمقبوضات ومهام اليوم" width="1600" height="1000"></div>
         <div class="phone"><div class="scr"><img src="img/phone/owner-home.jpg" alt="تطبيق Grdlabs للمدير على الآيفون" width="415" height="900"></div></div>
       </div>
     </div>
@@ -396,26 +420,26 @@
         <div class="tier reveal"><h3>فري لانسر</h3><div class="who">للمصممين والمبرمجين والمونتيرية وكل من يشتغل لحسابه</div>
           <div class="price"><b dir="ltr" data-m="$5.99" data-y="$59.90">$5.99</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
           <ul><li>فواتير وسندات قبض بشعارك وPDF</li><li>مشاريع وعملاء ومصاريف</li><li>مساحات العمل ويه الشركات</li><li>التطبيق على الآيفون ويه الحاسبة</li><li>نسخة على السيرفر وتزامن خلال ثواني</li></ul>
-          <a class="btn primary" href="mailto:info@grdlabs.site?subject=%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D8%B1%D9%8A%20%D9%84%D8%A7%D9%86%D8%B3%D8%B1">اشترك</a></div>
+          <a class="btn primary" href="https://wa.me/9647865259676?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Grdlabs%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A3%D8%B4%D8%AA%D8%B1%D9%83%20%D8%A8%D8%A8%D8%A7%D9%82%D8%A9%20%C2%AB%D9%81%D8%B1%D9%8A%20%D9%84%D8%A7%D9%86%D8%B3%D8%B1%C2%BB." target="_blank" rel="noopener" data-plan="فري لانسر">اشترك</a></div>
         <div class="tier reveal"><h3>صانع محتوى UGC</h3><div class="who">لصنّاع المحتوى والمؤثرين</div>
           <div class="price"><b dir="ltr" data-m="$5.99" data-y="$59.90">$5.99</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
           <ul><li>ملف بأسعارك وحساباتك وعدد متابعينك</li><li>فواتير بالدينار والدولار</li><li>مهام الشركات وتعليقاتها وتنبيهاتها</li><li>التطبيق على الآيفون ويه الحاسبة</li><li>نسخة على السيرفر وتزامن خلال ثواني</li></ul>
-          <a class="btn primary" href="mailto:info@grdlabs.site?subject=%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20UGC">اشترك</a></div>
+          <a class="btn primary" href="https://wa.me/9647865259676?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Grdlabs%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A3%D8%B4%D8%AA%D8%B1%D9%83%20%D8%A8%D8%A8%D8%A7%D9%82%D8%A9%20%C2%AB%D8%B5%D8%A7%D9%86%D8%B9%20%D9%85%D8%AD%D8%AA%D9%88%D9%89%20UGC%C2%BB." target="_blank" rel="noopener" data-plan="صانع محتوى UGC">اشترك</a></div>
       </div>
       <div class="tiers-title">للشركات</div>
       <div class="tiers three">
         <div class="tier reveal"><h3>الأساسية</h3><div class="who">للمكاتب والشركات الصغيرة</div>
           <div class="price"><b dir="ltr" data-m="$19" data-y="$190">$19</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
           <ul><li>كل أقسام البرنامج: المحاسبة والفواتير والتقارير والرواتب والحضور</li><li>حتى 3 مستخدمين و15 موظف</li><li class="no">بدون تطبيق التلفون</li><li class="no">بدون مساحات العمل</li></ul>
-          <a class="btn" href="mailto:info@grdlabs.site?subject=%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D8%A7%D9%84%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A9">اشترك</a></div>
+          <a class="btn" href="https://wa.me/9647865259676?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Grdlabs%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A3%D8%B4%D8%AA%D8%B1%D9%83%20%D8%A8%D8%A8%D8%A7%D9%82%D8%A9%20%C2%AB%D8%A7%D9%84%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A9%C2%BB." target="_blank" rel="noopener" data-plan="الأساسية">اشترك</a></div>
         <div class="tier best reveal"><span class="tag">الأكثر طلباً</span><h3>الأعمال</h3><div class="who">للشركات اللي تكبر</div>
           <div class="price"><b dir="ltr" data-m="$39" data-y="$390">$39</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
           <ul><li>كل شي بالأساسية</li><li>تطبيق الآيفون للمدير والموظفين</li><li>مساحات العمل ويه الفري لانسرية</li><li>حتى 10 مستخدمين و60 موظف</li><li>أولوية بالدعم</li></ul>
-          <a class="btn primary" href="mailto:info@grdlabs.site?subject=%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84">اشترك</a></div>
+          <a class="btn primary" href="https://wa.me/9647865259676?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Grdlabs%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A3%D8%B4%D8%AA%D8%B1%D9%83%20%D8%A8%D8%A8%D8%A7%D9%82%D8%A9%20%C2%AB%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84%C2%BB." target="_blank" rel="noopener" data-plan="الأعمال">اشترك</a></div>
         <div class="tier reveal"><h3>المؤسسات</h3><div class="who">للشركات الكبيرة والمجموعات</div>
           <div class="price"><b dir="ltr" data-m="$79" data-y="$790">$79</b> <small data-m="بالشهر" data-y="بالسنة">بالشهر</small></div>
           <ul><li>كل شي بالأعمال</li><li>مستخدمين وموظفين بلا حد</li><li>دعم مباشر وأولوية بالطلبات</li></ul>
-          <a class="btn" href="mailto:info@grdlabs.site?subject=%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D8%A7%D9%84%D9%85%D8%A4%D8%B3%D8%B3%D8%A7%D8%AA">اشترك</a></div>
+          <a class="btn" href="https://wa.me/9647865259676?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Grdlabs%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A3%D8%B4%D8%AA%D8%B1%D9%83%20%D8%A8%D8%A8%D8%A7%D9%82%D8%A9%20%C2%AB%D8%A7%D9%84%D9%85%D8%A4%D8%B3%D8%B3%D8%A7%D8%AA%C2%BB." target="_blank" rel="noopener" data-plan="المؤسسات">اشترك</a></div>
       </div>
     </div>
   </section>
@@ -426,10 +450,10 @@
         <h2>جرّب Grdlabs مجاناً 14 يوم</h2>
         <p>راسلنا ونوصلك البرنامج لماك أو ويندوز، تختار نوع حسابك وتبدي. بعد التجربة تاخذ كود اشتراك لشركتك وتلصقه بالإعدادات.</p>
         <div class="cta">
-          <a class="btn primary" href="mailto:info@grdlabs.site?subject=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D8%AC%20Grdlabs">اطلب البرنامج</a>
+          <a class="btn wa-btn" href="https://wa.me/9647865259676?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Grdlabs%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A3%D8%AC%D8%B1%D8%A8%20%D8%A7%D9%84%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D8%AC." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm0 18.2a8.2 8.2 0 01-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1112 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 01-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 00-.7.3 3 3 0 00-.9 2.2c0 1.3.9 2.5 1 2.7.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>راسلنا على واتساب</a>
         </div>
         <div class="ver">ماك وويندوز · التحديثات توصلك من داخل البرنامج · تطبيق الآيفون قريباً على App Store</div>
-        <p style="margin:24px auto 0">للاشتراك أو أي سؤال: <a href="mailto:info@grdlabs.site" style="color:#fff;font-weight:600">info@grdlabs.site</a></p>
+        <p style="margin:24px auto 0">للاشتراك أو أي سؤال: واتساب <a href="https://wa.me/9647865259676?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Grdlabs" target="_blank" rel="noopener" style="color:#fff;font-weight:600" dir="ltr">+964 786 525 9676</a> أو <a href="mailto:info@grdlabs.site" style="color:#fff;font-weight:600">info@grdlabs.site</a></p>
       </div>
     </div>
   </section>
@@ -451,25 +475,39 @@
   </section>
 </main>
 
+<a class="wa" href="https://wa.me/9647865259676?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Grdlabs%D8%8C%20%D8%B9%D9%86%D8%AF%D9%8A%20%D8%B3%D8%A4%D8%A7%D9%84%20%D8%B9%D9%86%20%D8%A7%D9%84%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D8%AC." target="_blank" rel="noopener" aria-label="راسلنا على واتساب"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm0 18.2a8.2 8.2 0 01-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1112 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 01-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 00-.7.3 3 3 0 00-.9 2.2c0 1.3.9 2.5 1 2.7.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg></a>
+
 <footer>
   <div class="wrap">
     <img src="img/grdlabs-logo.svg" alt="Grdlabs">
     <span>© <span id="y">2026</span> Grdlabs</span>
-    <nav><a href="support/">الدعم</a><a href="privacy/">سياسة الخصوصية</a><a href="mailto:info@grdlabs.site">راسلنا</a><a href="#top">للأعلى ↑</a></nav>
+    <nav><a href="support/">الدعم</a><a href="privacy/">سياسة الخصوصية</a><a href="https://wa.me/9647865259676?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Grdlabs" target="_blank" rel="noopener">واتساب</a><a href="mailto:info@grdlabs.site">راسلنا</a><a href="#top">للأعلى ↑</a></nav>
   </div>
 </footer>
 
 <script>
   (() => {
     document.getElementById('y').textContent = new Date().getFullYear();
-    // The header turns white once the page leaves the navy top.
+    // The header turns white once the page leaves the navy top (watched, not measured on every scroll).
     const header = document.getElementById('top'), hero = document.getElementById('hero');
-    const solid = () => header.classList.toggle('solid', scrollY > hero.offsetHeight - 520);
-    addEventListener('scroll', solid, { passive: true }); solid();
-    // A soft light follows the pointer over the top.
-    hero.addEventListener('pointermove', (e) => { const r = hero.getBoundingClientRect(); hero.style.setProperty('--mx', (e.clientX - r.left) + 'px'); hero.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
-    // Blocks rise in as they come into view.
-    const io = new IntersectionObserver((list) => list.forEach((x) => { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }), { threshold: .12 });
+    const mark = document.createElement('div');
+    mark.style.cssText = 'position:absolute;left:0;bottom:520px;width:1px;height:1px;pointer-events:none';
+    hero.appendChild(mark);
+    new IntersectionObserver(([x]) => header.classList.toggle('solid', !x.isIntersecting && x.boundingClientRect.top < 0)).observe(mark);
+    // A soft light follows the pointer over the top, eased, moved by transform only, once per frame.
+    const glow = hero.querySelector('.glow');
+    let gx = innerWidth * .7, gy = 160, tx = gx, ty = gy, moving = false;
+    const ease = () => {
+      gx += (tx - gx) * .14; gy += (ty - gy) * .14;
+      glow.style.transform = `translate3d(${gx.toFixed(1)}px, ${gy.toFixed(1)}px, 0)`;
+      if (Math.abs(tx - gx) + Math.abs(ty - gy) > .5) requestAnimationFrame(ease); else moving = false;
+    };
+    hero.addEventListener('pointermove', (e) => {
+      const r = hero.getBoundingClientRect(); tx = e.clientX - r.left; ty = e.clientY - r.top;
+      if (!moving) { moving = true; requestAnimationFrame(ease); }
+    }, { passive: true });
+    // Blocks rise in as they come into view, a little before they reach the screen.
+    const io = new IntersectionObserver((list) => list.forEach((x) => { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }), { threshold: .08, rootMargin: '0px 0px -6% 0px' });
     document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
     // Prices: monthly or yearly (ten months, two free).
     document.querySelectorAll('.period button').forEach((b) => b.addEventListener('click', () => {
@@ -478,6 +516,14 @@
       document.querySelectorAll('.tier .price').forEach((p) => { const n = p.querySelector('b'), s = p.querySelector('small'); n.textContent = n.dataset[k]; s.textContent = s.dataset[k]; });
     }));
   })();
+</script>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+</script>
+<script type="module">
+  // The 3D mark loads after the page shows; until then (or without WebGL) the flat logo stays.
+  const go = () => { try { if (document.createElement('canvas').getContext('webgl2')) import('./js/mark3d.js').catch(() => {}); } catch { /* flat logo stays */ } };
+  if (document.readyState === 'complete') go(); else addEventListener('load', go);
 </script>
 </body>
 </html>
